@@ -15,6 +15,7 @@ import ProductDetail from './pages/ProductDetail'
 import Search from './pages/Search'
 import Checkout from './pages/Checkout'
 import Success from './pages/Success'
+import Admin from './pages/Admin'
 
 export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false)
@@ -27,11 +28,13 @@ export default function App() {
 
   if (!ready) return null
 
+  const isAdmin = window.location.hash.startsWith('#/admin')
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-      {showOnboarding && <Onboarding onDone={() => setShowOnboarding(false)} />}
+      {showOnboarding && !isAdmin && <Onboarding onDone={() => setShowOnboarding(false)} />}
       <ToastHost />
-      <InstallPrompt />
+      {!isAdmin && <InstallPrompt />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -44,10 +47,11 @@ export default function App() {
         <Route path="/success/:id" element={<Success />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Home />} />
       </Routes>
 
-      <BottomNav />
+      {!isAdmin && <BottomNav />}
     </div>
   )
 }
