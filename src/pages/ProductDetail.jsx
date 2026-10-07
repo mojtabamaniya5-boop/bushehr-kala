@@ -79,6 +79,7 @@ export default function ProductDetail() {
     : 0
 
   const handleAdd = () => {
+    alert('دکمه کلیک شد! تعداد: ' + qty)
     try {
       addToCart(product, qty)
       setAdded(true)
