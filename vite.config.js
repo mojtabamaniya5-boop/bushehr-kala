@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon.svg', 'icon.png'],
+      includeAssets: ['icon.svg', 'favicon.svg'],
       strategies: 'generateSW',
       manifest: {
         name: 'بوشهر کالا',
@@ -22,9 +22,8 @@ export default defineConfig({
         lang: 'fa',
         dir: 'rtl',
         icons: [
-          { src: 'icon.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: 'icon.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-          { src: 'icon.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+          { src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'maskable' },
         ],
       },
       workbox: {
