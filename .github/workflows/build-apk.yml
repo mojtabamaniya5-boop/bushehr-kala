@@ -40,8 +40,8 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq imagemagick
           mkdir -p assets
-          convert -background none -resize 1024x1024 public/icon.svg assets/icon.png || \
-          magick -background none -resize 1024x1024 public/icon.svg assets/icon.png
+          ls -la public/
+          convert -background none -density 300 -resize 1024x1024 public/icon.svg assets/icon.png
           ls -la assets/
 
       - name: Add Android platform
