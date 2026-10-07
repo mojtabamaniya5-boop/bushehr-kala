@@ -111,7 +111,7 @@ export default function ProductDetail() {
         <div className="max-w-lg mx-auto flex gap-2">
           <button
             type="button"
-            onClick={handleAdd}
+            onPointerDown={() => setDbg(d => ({ ...d, clicks: d.clicks + 100, status: "pointer-down OK" }))} onClick={handleAdd}
             className={'flex-1 font-bold py-3 rounded-xl ' + (justAdded ? 'bg-green-500 text-white' : 'bg-slate-800 text-white')}
           >
             {justAdded ? '✓ اضافه شد' : 'افزودن به سبد'}
