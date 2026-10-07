@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import { formatPrice } from '../utils/storage'
-import { addToCart, isFavorite, toggleFavorite } from '../utils/cart'
+import { addToCart, isFavorite, toggleFavorite, cartCount } from '../utils/cart'
 import { Heart, ShoppingCart, Star, Check, Minus, Plus, Loader2 } from 'lucide-react'
 import { toast } from '../components/Toast'
 import { supabase } from '../utils/supabase'
@@ -14,45 +14,59 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true)
   const [qty, setQty] = useState(1)
   const [fav, setFav] = useState(false)
-  const [added, setAdded] = useState(false)
+  const [cartBadge, setCartBadge] = useState(cartCount())
+  const [justAdded, setJustAdded] = useState(false)
 
   useEffect(() => {
     let mounted = true
-    ;(async () => {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('id', id)
-        .single()
-
-      if (mounted) {
-        if (error || !data) {
-          setProduct(null)
-        } else {
-          setProduct({
-            id: data.id,
-            title: data.title,
-            category: data.category,
-            brand: data.brand,
-            price: data.price,
-            oldPrice: data.old_price,
-            stock: data.stock,
-            rating: Number(data.rating),
-            image: data.image,
-            description: data.description,
-            features: data.features || [],
-            bestSeller: data.best_seller,
-          })
+    supabase
+      .from('products')
+      .select('*')
+      .eq('id', id)
+      .single()
+      .then(({ data }) => {
+        if (mounted) {
+          if (data) {
+            setProduct({
+              id: data.id,
+              title: data.title,
+              category: data.category,
+              brand: data.brand,
+              price: data.price,
+              oldPrice: data.old_price,
+              stock: data.stock,
+              rating: Number(data.rating),
+              image: data.image,
+              description: data.description,
+              features: data.features || [],
+              bestSeller: data.best_seller,
+            })
+          }
+          setLoading(false)
         }
-        setLoading(false)
-      }
-    })()
+      })
     return () => { mounted = false }
   }, [id])
 
   useEffect(() => {
     if (product) setFav(isFavorite(product.id))
   }, [product])
+
+  const handleAddToCart = () => {
+    if (!product) return
+    addToCart(product, qty)
+    const newCount = cartCount()
+    setCartBadge(newCount)
+    setJustAdded(true)
+    toast.success(qty + ' عدد اضافه شد — سبد: ' + newCount + ' کالا')
+    setTimeout(() => setJustAdded(false), 2000)
+  }
+
+  const handleBuyNow = () => {
+    if (!product) return
+    addToCart(product, qty)
+    navigate('/cart')
+  }
 
   if (loading) {
     return (
@@ -77,23 +91,6 @@ export default function ProductDetail() {
   const discount = product.oldPrice
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0
-
-  const handleAdd = () => { alert('V3 - id=' + product.id + ' type=' + typeof product.id + ' qty=' + qty + ' tQty=' + typeof qty)
-    try {
-      addToCart(product, qty)
-      setAdded(true)
-      toast.success(qty + ' عدد به سبد اضافه شد')
-      setTimeout(() => setAdded(false), 1800)
-    } catch (e) {
-      console.error('handleAdd error:', e)
-      toast.error('خطا در افزودن به سبد')
-    }
-  }
-
-  const handleBuyNow = () => {
-    addToCart(product, qty)
-    navigate('/cart')
-  }
 
   return (
     <>
@@ -156,22 +153,18 @@ export default function ProductDetail() {
           <div className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
             <span className="text-sm font-medium">تعداد</span>
             <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setQty(q => Math.max(1, q - 1))}
-                className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center active:scale-90"
-              >
+              <button type="button" onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center active:scale-90">
                 <Minus size={14} />
               </button>
               <span className="font-bold w-6 text-center">{qty}</span>
-              <button
-                type="button"
-                onClick={() => setQty(q => Math.min(product.stock, q + 1))}
-                className="w-8 h-8 rounded-lg bg-brand text-white flex items-center justify-center active:scale-90"
-              >
+              <button type="button" onClick={() => setQty(q => Math.min((product.stock || 99), q + 1))} className="w-8 h-8 rounded-lg bg-brand text-white flex items-center justify-center active:scale-90">
                 <Plus size={14} />
               </button>
             </div>
+          </div>
+
+          <div className="text-center text-xs text-slate-500 mt-4">
+            در سبد شما: <b className="text-brand">{cartBadge}</b> کالا
           </div>
         </div>
       </main>
@@ -180,14 +173,10 @@ export default function ProductDetail() {
         <div className="max-w-lg mx-auto flex gap-2">
           <button
             type="button"
-            onClick={handleAdd}
-            className={'flex-1 font-bold py-3 rounded-xl active:scale-[0.98] transition flex items-center justify-center gap-2 ' + (added ? 'bg-green-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white')}
+            onClick={handleAddToCart}
+            className={'flex-1 font-bold py-3 rounded-xl active:scale-[0.98] transition flex items-center justify-center gap-2 ' + (justAdded ? 'bg-green-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white')}
           >
-            {added ? (
-              <><Check size={18} /> اضافه شد</>
-            ) : (
-              <><ShoppingCart size={18} /> افزودن به سبد</>
-            )}
+            {justAdded ? (<><Check size={18} /> اضافه شد</>) : (<><ShoppingCart size={18} /> افزودن به سبد</>)}
           </button>
           <button
             type="button"
