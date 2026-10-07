@@ -5,7 +5,8 @@ import { getCart, cartTotal, clearCart } from '../utils/cart'
 import { storage, formatPrice, uid } from '../utils/storage'
 import { SHOP_INFO } from '../data/products'
 import { sendOrderToTelegram } from '../utils/telegram'
-import { User, Phone, MapPin, MessageSquare, CreditCard, Wallet, AlertCircle, Check } from 'lucide-react'
+import { User, Phone, MapPin, CreditCard, Wallet, AlertCircle, Check } from 'lucide-react'
+import { toast } from '../components/Toast'
 
 export default function Checkout() {
   const navigate = useNavigate()
@@ -48,14 +49,18 @@ export default function Checkout() {
     try {
       await navigator.clipboard.writeText(SHOP_INFO.card.number)
       setCopied(true)
+      toast.success('شماره کارت کپی شد')
       setTimeout(() => setCopied(false), 1500)
     } catch {
-      // fallback
+      toast.error('کپی نشد، دستی یادداشت کن')
     }
   }
 
   const handleSubmit = async () => {
-    if (!validate()) return
+    if (!validate()) {
+      toast.error('لطفاً خطاهای فرم را برطرف کن')
+      return
+    }
     setSubmitting(true)
 
     const order = {
@@ -65,7 +70,7 @@ export default function Checkout() {
       items: items.map(i => ({ id: i.id, title: i.title, price: i.price, qty: i.qty })),
       subtotal, shipping, total,
       payment,
-      status: payment === 'card' ? 'pending' : 'pending',
+      status: 'pending',
     }
 
     // ذخیره در localStorage
@@ -75,19 +80,36 @@ export default function Checkout() {
     storage.set('user', { name: form.name, phone: form.phone })
     storage.set('last-address', form.address)
 
-    // ارسال به تلگرام (اگه تنظیم شده)
-    await sendOrderToTelegram(order)
+    // ارسال به تلگرام
+    let tgOk = false
+    try {
+      const result = await sendOrderToTelegram(order)
+      tgOk = result.ok
+      if (!result.ok) {
+        console.warn('Telegram failed:', result)
+      }
+    } catch (e) {
+      console.error('Telegram error:', e)
+    }
+
+    // نمایش نتیجه
+    if (tgOk) {
+      toast.success('سفارش ثبت و به فروشگاه ارسال شد ✅')
+    } else {
+      toast.info('سفارش ثبت شد — در حال ارسال به فروشگاه...')
+    }
 
     clearCart()
-    navigate(`/success/${order.id}`, { replace: true })
+    setTimeout(() => {
+      navigate(`/success/${order.id}`, { replace: true })
+    }, 500)
   }
 
   return (
     <>
       <Header title="تسویه حساب" back />
-      <main className="max-w-lg mx-auto px-4 pb-40 pt-3 fade-up space-y-3">
+      <main className="max-w-lg mx-auto px-4 pb-44 pt-3 fade-up space-y-3">
 
-        {/* اطلاعات گیرنده */}
         <section className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
           <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
             <User size={16} className="text-brand" /> اطلاعات گیرنده
@@ -148,35 +170,31 @@ export default function Checkout() {
           </div>
         </section>
 
-        {/* روش پرداخت */}
         <section className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
           <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
             <Wallet size={16} className="text-brand" /> روش پرداخت
           </h3>
 
-          <div className="space-y-2">
-            <button
-              onClick={() => setPayment('card')}
-              className={`w-full flex items-center gap-3 p-3 rounded-xl border transition text-right ${
-                payment === 'card'
-                  ? 'border-brand bg-brand/5'
-                  : 'border-slate-200 dark:border-slate-700'
-              }`}
-            >
-              <CreditCard size={18} className={payment === 'card' ? 'text-brand' : ''} />
-              <div className="flex-1">
-                <div className="text-sm font-medium">کارت به کارت</div>
-                <div className="text-[10px] text-slate-500">پرداخت به شماره کارت فروشگاه</div>
-              </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                payment === 'card' ? 'border-brand' : 'border-slate-300 dark:border-slate-600'
-              }`}>
-                {payment === 'card' && <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>}
-              </div>
-            </button>
-          </div>
+          <button
+            onClick={() => setPayment('card')}
+            className={`w-full flex items-center gap-3 p-3 rounded-xl border transition text-right ${
+              payment === 'card'
+                ? 'border-brand bg-brand/5'
+                : 'border-slate-200 dark:border-slate-700'
+            }`}
+          >
+            <CreditCard size={18} className={payment === 'card' ? 'text-brand' : ''} />
+            <div className="flex-1">
+              <div className="text-sm font-medium">کارت به کارت</div>
+              <div className="text-[10px] text-slate-500">پرداخت به شماره کارت فروشگاه</div>
+            </div>
+            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+              payment === 'card' ? 'border-brand' : 'border-slate-300 dark:border-slate-600'
+            }`}>
+              {payment === 'card' && <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>}
+            </div>
+          </button>
 
-          {/* کارت */}
           {payment === 'card' && (
             <div className="mt-3 bg-gradient-to-l from-brand to-brand-dark text-white rounded-2xl p-4">
               <div className="text-[10px] opacity-80 mb-2">شماره کارت</div>
@@ -196,14 +214,13 @@ export default function Checkout() {
               <div className="mt-3 pt-3 border-t border-white/20 flex items-start gap-2">
                 <AlertCircle size={14} className="flex-shrink-0 mt-0.5" />
                 <p className="text-[10px] leading-5 opacity-90">
-                  پس از پرداخت، رسید را به پشتیبانی (تلگرام <b>@{SHOP_INFO.telegram}</b>) ارسال کنید.
+                  پس از پرداخت، رسید را به پشتیبانی تلگرام <b>@{SHOP_INFO.telegram}</b> ارسال کنید.
                 </p>
               </div>
             </div>
           )}
         </section>
 
-        {/* خلاصه سفارش */}
         <section className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
           <h3 className="font-bold text-sm mb-3">خلاصه سفارش</h3>
           <div className="space-y-2 text-xs mb-3">
@@ -228,7 +245,6 @@ export default function Checkout() {
         </section>
       </main>
 
-      {/* دکمه ثبت */}
       <div className="fixed bottom-16 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 p-3 z-40">
         <div className="max-w-lg mx-auto">
           <button

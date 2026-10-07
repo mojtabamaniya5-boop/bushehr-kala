@@ -1,10 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import Header from '../components/Header'
-import { findProduct, SHOP_INFO } from '../data/products'
+import { findProduct } from '../data/products'
 import { formatPrice } from '../utils/storage'
 import { addToCart, isFavorite, toggleFavorite } from '../utils/cart'
 import { Heart, ShoppingCart, Star, Check, Minus, Plus } from 'lucide-react'
+import { toast } from '../components/Toast'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -30,6 +31,7 @@ export default function ProductDetail() {
   const handleAdd = () => {
     addToCart(product, qty)
     setAdded(true)
+    toast.success(`به سبد اضافه شد (${qty} عدد)`)
     setTimeout(() => setAdded(false), 1500)
   }
 
@@ -41,8 +43,7 @@ export default function ProductDetail() {
   return (
     <>
       <Header title={product.brand} back search />
-      <main className="max-w-lg mx-auto pb-32 fade-up">
-        {/* تصویر */}
+      <main className="max-w-lg mx-auto pb-44 fade-up">
         <div className="relative aspect-square bg-slate-100 dark:bg-slate-800">
           <img src={product.image} alt={product.title} className="w-full h-full object-cover" />
           {discount > 0 && (
@@ -59,17 +60,14 @@ export default function ProductDetail() {
         </div>
 
         <div className="px-4 pt-4">
-          {/* عنوان */}
           <h1 className="font-bold text-base leading-6 mb-2">{product.title}</h1>
 
-          {/* امتیاز */}
           <div className="flex items-center gap-1 mb-3">
             <Star size={14} className="fill-amber-400 text-amber-400" />
             <span className="text-xs font-bold">{product.rating}</span>
             <span className="text-xs text-slate-500">امتیاز کاربران</span>
           </div>
 
-          {/* قیمت */}
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xl font-bold text-brand">{formatPrice(product.price)}</span>
             {product.oldPrice && (
@@ -77,19 +75,16 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {/* موجودی */}
           <div className="flex items-center gap-2 text-xs mb-4">
             <span className={`w-2 h-2 rounded-full ${product.stock > 0 ? 'bg-green-500' : 'bg-red-500'}`}></span>
             <span>{product.stock > 0 ? `موجود در انبار (${product.stock} عدد)` : 'ناموجود'}</span>
           </div>
 
-          {/* توضیحات */}
           <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 mb-3 border border-slate-200 dark:border-slate-700">
             <h3 className="font-bold text-sm mb-2">توضیحات</h3>
             <p className="text-xs leading-6 text-slate-600 dark:text-slate-300">{product.description}</p>
           </div>
 
-          {/* ویژگی‌ها */}
           <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 mb-3 border border-slate-200 dark:border-slate-700">
             <h3 className="font-bold text-sm mb-3">ویژگی‌ها</h3>
             <ul className="space-y-2">
@@ -102,7 +97,6 @@ export default function ProductDetail() {
             </ul>
           </div>
 
-          {/* تعداد */}
           <div className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
             <span className="text-sm font-medium">تعداد</span>
             <div className="flex items-center gap-3">
@@ -124,8 +118,7 @@ export default function ProductDetail() {
         </div>
       </main>
 
-      {/* دکمه‌های پایین */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 p-3 z-40">
+      <div className="fixed bottom-16 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 p-3 z-40">
         <div className="max-w-lg mx-auto flex gap-2">
           <button
             onClick={handleAdd}
@@ -136,13 +129,9 @@ export default function ProductDetail() {
             }`}
           >
             {added ? (
-              <>
-                <Check size={18} /> اضافه شد
-              </>
+              <><Check size={18} /> اضافه شد</>
             ) : (
-              <>
-                <ShoppingCart size={18} /> افزودن به سبد
-              </>
+              <><ShoppingCart size={18} /> افزودن به سبد</>
             )}
           </button>
           <button
