@@ -4388,7 +4388,7 @@ precacheAndRoute([{
   "revision": "402b66900e731ca748771b6fc5e7a068"
 }, {
   "url": "index.html",
-  "revision": "40f3c32b171218c23e11c16ee595c4dd"
+  "revision": "61b601343835a7b70d7a2c3d5f5dd642"
 }, {
   "url": "icons.svg",
   "revision": "3b4fcfcf393eca4d264dca4a4663bc37"
@@ -4399,10 +4399,10 @@ precacheAndRoute([{
   "url": "favicon.svg",
   "revision": "7e840862161341271697daa99a40d76b"
 }, {
-  "url": "assets/index-CjCJhBxe.css",
+  "url": "assets/index-krxqphLI.js",
   "revision": null
 }, {
-  "url": "assets/index-1dnffsD2.js",
+  "url": "assets/index-CjCJhBxe.css",
   "revision": null
 }, {
   "url": "favicon.svg",

@@ -4,7 +4,6 @@ import Header from '../components/Header'
 import { getCart, cartTotal, clearCart } from '../utils/cart'
 import { storage, formatPrice, uid } from '../utils/storage'
 import { SHOP_INFO } from '../data/products'
-import { sendOrderToTelegram } from '../utils/telegram'
 import { saveOrderToDB } from '../utils/supabase'
 import { User, Phone, MapPin, CreditCard, Wallet, AlertCircle, Check } from 'lucide-react'
 import { toast } from '../components/Toast'
@@ -74,32 +73,24 @@ export default function Checkout() {
       status: 'pending',
     }
 
-    // ذخیره در localStorage
+    // ذخیره در localStorage (نسخه محلی)
     const orders = storage.get('orders', [])
     orders.push(order)
     storage.set('orders', orders)
     storage.set('user', { name: form.name, phone: form.phone })
     storage.set('last-address', form.address)
 
-    // ارسال به تلگرام
-    await saveOrderToDB(order)
-
-    let tgOk = false
+    // ذخیره در Supabase (تیگر DB، خودش به بله پیام می‌ده)
     try {
-      const result = await sendOrderToTelegram(order)
-      tgOk = result.ok
-      if (!result.ok) {
-        console.warn('Telegram failed:', result)
+      const result = await saveOrderToDB(order)
+      if (result.ok) {
+        toast.success('سفارش ثبت شد ✅')
+      } else {
+        console.warn('DB error:', result.error)
+        toast.info('سفارش ذخیره شد، در حال ارسال...')
       }
     } catch (e) {
-      console.error('Telegram error:', e)
-    }
-
-    // نمایش نتیجه
-    if (tgOk) {
-      toast.success('سفارش ثبت و به فروشگاه ارسال شد ✅')
-    } else {
-      toast.info('سفارش ثبت شد — در حال ارسال به فروشگاه...')
+      console.error('saveOrderToDB:', e)
     }
 
     clearCart()
