@@ -1,12 +1,10 @@
-// ⚠️ برای فعال‌سازی، این دو مقدار رو بعداً از @BotFather و @userinfobot پر کن
-const BOT_TOKEN = '' // مثال: '123456:ABC-DEF...'
-const CHAT_ID = ''   // مثال: '123456789'
+import { BOT_TOKEN, CHAT_ID } from './telegram-config'
 
-export const isTelegramReady = () => BOT_TOKEN && CHAT_ID
+export const isTelegramReady = () => Boolean(BOT_TOKEN && CHAT_ID)
 
 export async function sendOrderToTelegram(order) {
   if (!isTelegramReady()) {
-    console.warn('Telegram Bot تنظیم نشده — سفارش فقط لوکال ذخیره شد')
+    console.warn('Telegram Bot تنظیم نشده')
     return { ok: false, reason: 'not-configured' }
   }
 
@@ -14,7 +12,7 @@ export async function sendOrderToTelegram(order) {
   lines.push('🛒 *سفارش جدید از بوشهر کالا*')
   lines.push('')
   lines.push(`👤 نام: ${order.customer.name}`)
-  lines.push(`📞 موبایل: ${order.customer.phone}`)
+  lines.push(`📞 موبایل: \`${order.customer.phone}\``)
   lines.push(`📍 آدرس: ${order.customer.address}`)
   if (order.customer.note) lines.push(`📝 یادداشت: ${order.customer.note}`)
   lines.push('')
@@ -46,5 +44,26 @@ export async function sendOrderToTelegram(order) {
     return { ok: data.ok, data }
   } catch (e) {
     return { ok: false, reason: 'network', error: e.message }
+  }
+}
+
+// تابع تست
+export async function sendTestMessage() {
+  if (!isTelegramReady()) {
+    return { ok: false, reason: 'not-configured' }
+  }
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: '✅ اتصال بوشهر کالا به تلگرام برقرار شد!\n\nاز این پس، سفارش‌های مشتریان به این چت ارسال می‌شن.',
+        parse_mode: 'Markdown',
+      }),
+    })
+    return await res.json()
+  } catch (e) {
+    return { ok: false, error: e.message }
   }
 }

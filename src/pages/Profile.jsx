@@ -4,12 +4,15 @@ import Header from '../components/Header'
 import { storage, formatPrice } from '../utils/storage'
 import { getFavorites } from '../utils/cart'
 import { PRODUCTS, SHOP_INFO } from '../data/products'
-import { Heart, Phone, Send, MapPin, MessageCircle, Trash2, ShoppingBag } from 'lucide-react'
+import { sendTestMessage } from '../utils/telegram'
+import { Heart, Phone, Send, MapPin, Trash2, ShoppingBag, Bell, Check } from 'lucide-react'
+import { toast } from '../components/Toast'
 
 export default function Profile() {
   const [user, setUser] = useState(storage.get('user', { name: '', phone: '' }))
   const [favCount, setFavCount] = useState(getFavorites().length)
   const [ordersCount, setOrdersCount] = useState(storage.get('orders', []).length)
+  const [testing, setTesting] = useState(false)
 
   useEffect(() => {
     const update = () => setFavCount(getFavorites().length)
@@ -23,8 +26,19 @@ export default function Profile() {
     storage.set('user', u)
   }
 
+  const handleTest = async () => {
+    setTesting(true)
+    const res = await sendTestMessage()
+    setTesting(false)
+    if (res.ok) {
+      toast.success('پیام تست به تلگرام ارسال شد ✅')
+    } else {
+      toast.error('خطا در ارسال: ' + (res.description || res.error || 'نامشخص'))
+    }
+  }
+
   const clearAll = () => {
-    if (confirm('همه اطلاعات (سبد، سفارش‌ها، علاقه‌مندی‌ها) پاک شود؟')) {
+    if (confirm('همه اطلاعات پاک شود؟')) {
       storage.clear()
       location.reload()
     }
@@ -36,7 +50,6 @@ export default function Profile() {
     <>
       <Header title="پروفایل" />
       <main className="max-w-lg mx-auto px-4 pb-24 pt-3 fade-up">
-        {/* کارت کاربر */}
         <div className="bg-gradient-to-l from-brand to-brand-dark text-white rounded-2xl p-5 mb-4">
           <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold mb-3">
             {user.name ? user.name[0] : '👤'}
@@ -56,7 +69,6 @@ export default function Profile() {
           />
         </div>
 
-        {/* آمار */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           <Link to="/orders" className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 flex items-center gap-3">
             <ShoppingBag className="text-brand" size={22} />
@@ -74,7 +86,6 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* علاقه‌مندی‌ها */}
         {favProducts.length > 0 && (
           <>
             <h3 className="font-bold text-sm mb-3">❤️ علاقه‌مندی‌ها</h3>
@@ -92,7 +103,6 @@ export default function Profile() {
           </>
         )}
 
-        {/* راه‌های تماس */}
         <h3 className="font-bold text-sm mb-3">📞 ارتباط با ما</h3>
         <div className="space-y-2 mb-4">
           <a href={`tel:${SHOP_INFO.phone}`} className="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
@@ -111,7 +121,6 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* کارت */}
         <h3 className="font-bold text-sm mb-3">💳 اطلاعات پرداخت</h3>
         <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 mb-4">
           <div className="text-xs text-slate-500 mb-1">شماره کارت</div>
@@ -120,6 +129,21 @@ export default function Profile() {
           </div>
           <div className="text-xs text-slate-500">به نام {SHOP_INFO.card.holder}</div>
         </div>
+
+        {/* تست تلگرام */}
+        <h3 className="font-bold text-sm mb-3">🔔 تست اتصال</h3>
+        <button
+          onClick={handleTest}
+          disabled={testing}
+          className="w-full bg-blue-500 text-white font-medium text-sm py-3 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-60 mb-4"
+        >
+          {testing ? 'در حال ارسال...' : (
+            <>
+              <Bell size={16} />
+              ارسال پیام تست به تلگرام
+            </>
+          )}
+        </button>
 
         <button
           onClick={clearAll}
