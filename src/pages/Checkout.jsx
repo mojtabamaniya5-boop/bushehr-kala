@@ -5,6 +5,7 @@ import { getCart, cartTotal, clearCart } from '../utils/cart'
 import { storage, formatPrice, uid } from '../utils/storage'
 import { SHOP_INFO } from '../data/products'
 import { sendOrderToTelegram } from '../utils/telegram'
+import { saveOrderToDB } from '../utils/supabase'
 import { User, Phone, MapPin, CreditCard, Wallet, AlertCircle, Check } from 'lucide-react'
 import { toast } from '../components/Toast'
 
@@ -81,6 +82,8 @@ export default function Checkout() {
     storage.set('last-address', form.address)
 
     // ارسال به تلگرام
+    await saveOrderToDB(order)
+
     let tgOk = false
     try {
       const result = await sendOrderToTelegram(order)
