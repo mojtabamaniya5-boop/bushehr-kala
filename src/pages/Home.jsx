@@ -4,7 +4,7 @@ import Header from '../components/Header'
 import BannerSlider from '../components/BannerSlider'
 import ProductCard from '../components/ProductCard'
 import { SHOP_INFO } from '../data/products'
-import { fetchProducts } from '../utils/supabase'
+import { supabase } from '../utils/supabase'
 import { Zap, Truck, ShieldCheck } from 'lucide-react'
 
 const CATEGORIES_STATIC = [
@@ -21,15 +21,49 @@ const CATEGORIES_STATIC = [
 export default function Home() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     let mounted = true
-    fetchProducts().then(data => {
-      if (mounted) {
-        setProducts(data)
-        setLoading(false)
+    ;(async () => {
+      try {
+        console.log('Fetching products from Supabase...')
+        const { data, error: err } = await supabase
+          .from('products')
+          .select('*')
+          .eq('active', true)
+          .order('created_at', { ascending: false })
+
+        console.log('Response:', { data, err })
+
+        if (err) throw err
+
+        if (mounted) {
+          const normalized = (data || []).map(p => ({
+            id: p.id,
+            title: p.title,
+            category: p.category,
+            brand: p.brand,
+            price: p.price,
+            oldPrice: p.old_price,
+            stock: p.stock,
+            rating: Number(p.rating),
+            image: p.image,
+            description: p.description,
+            features: p.features || [],
+            bestSeller: p.best_seller,
+          }))
+          setProducts(normalized)
+          setLoading(false)
+        }
+      } catch (e) {
+        console.error('Home fetch error:', e)
+        if (mounted) {
+          setError(e.message || 'خطای نامشخص')
+          setLoading(false)
+        }
       }
-    })
+    })()
     return () => { mounted = false }
   }, [])
 
@@ -70,13 +104,22 @@ export default function Home() {
           ))}
         </div>
 
-        {loading ? (
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4 mb-5">
+            <p className="text-xs text-red-500 font-bold mb-1">خطا در خواندن محصولات:</p>
+            <p className="text-[10px] text-red-400 font-mono break-all">{error}</p>
+          </div>
+        )}
+
+        {loading && !error && (
           <div className="grid grid-cols-2 gap-3 mb-5">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl h-56 animate-pulse" />
             ))}
           </div>
-        ) : (
+        )}
+
+        {!loading && !error && (
           <>
             {bestSellers.length > 0 && (
               <>

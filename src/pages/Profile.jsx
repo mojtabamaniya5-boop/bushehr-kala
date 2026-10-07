@@ -4,15 +4,12 @@ import Header from '../components/Header'
 import { storage, formatPrice } from '../utils/storage'
 import { getFavorites } from '../utils/cart'
 import { PRODUCTS, SHOP_INFO } from '../data/products'
-import { sendTestMessage } from '../utils/telegram'
-import { Heart, Phone, Send, MapPin, Trash2, ShoppingBag, Bell, Check } from 'lucide-react'
-import { toast } from '../components/Toast'
+import { Heart, Phone, Send, MapPin, Trash2, ShoppingBag } from 'lucide-react'
 
 export default function Profile() {
   const [user, setUser] = useState(storage.get('user', { name: '', phone: '' }))
   const [favCount, setFavCount] = useState(getFavorites().length)
   const [ordersCount, setOrdersCount] = useState(storage.get('orders', []).length)
-  const [testing, setTesting] = useState(false)
 
   useEffect(() => {
     const update = () => setFavCount(getFavorites().length)
@@ -24,17 +21,6 @@ export default function Profile() {
     const u = { ...user, [field]: val }
     setUser(u)
     storage.set('user', u)
-  }
-
-  const handleTest = async () => {
-    setTesting(true)
-    const res = await sendTestMessage()
-    setTesting(false)
-    if (res.ok) {
-      toast.success('پیام تست به تلگرام ارسال شد ✅')
-    } else {
-      toast.error('خطا در ارسال: ' + (res.description || res.error || 'نامشخص'))
-    }
   }
 
   const clearAll = () => {
@@ -129,21 +115,6 @@ export default function Profile() {
           </div>
           <div className="text-xs text-slate-500">به نام {SHOP_INFO.card.holder}</div>
         </div>
-
-        {/* تست تلگرام */}
-        <h3 className="font-bold text-sm mb-3">🔔 تست اتصال</h3>
-        <button
-          onClick={handleTest}
-          disabled={testing}
-          className="w-full bg-blue-500 text-white font-medium text-sm py-3 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-60 mb-4"
-        >
-          {testing ? 'در حال ارسال...' : (
-            <>
-              <Bell size={16} />
-              ارسال پیام تست به بله
-            </>
-          )}
-        </button>
 
         <button
           onClick={clearAll}
