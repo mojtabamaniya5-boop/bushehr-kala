@@ -140,7 +140,7 @@ export default function Profile() {
           {testing ? 'در حال ارسال...' : (
             <>
               <Bell size={16} />
-              ارسال پیام تست به تلگرام
+              ارسال پیام تست به بله
             </>
           )}
         </button>

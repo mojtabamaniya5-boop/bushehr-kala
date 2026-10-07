@@ -1,3 +1,3 @@
-// ⚠️ هشدار امنیتی: این فایل روی GitHub عمومی هست
-export const BOT_TOKEN = '8920301313:AAHZfBeMRVltEw8HRuQb-uzmVsXWhqCBLT4'
-export const CHAT_ID = '6373398181'
+// Bale Messenger Bot — بوشهر کالا
+export const BALE_TOKEN = '1616526857:DNSbvqPSQFTVT5BbHLqnpUCD9Ob24LP9j1M'
+export const BALE_CHAT_ID = '1827687804'
