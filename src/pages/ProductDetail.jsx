@@ -78,8 +78,7 @@ export default function ProductDetail() {
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0
 
-  const handleAdd = () => {
-    alert('دکمه کلیک شد! تعداد: ' + qty)
+  const handleAdd = () => { alert('V3 - id=' + product.id + ' type=' + typeof product.id + ' qty=' + qty + ' tQty=' + typeof qty)
     try {
       addToCart(product, qty)
       setAdded(true)
