@@ -118,7 +118,7 @@ export default function Profile() {
 
         <button
           onClick={clearAll}
-          className="w-full bg-red-500/10 text-red-500 font-medium text-sm py-3 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98]"
+          className="w-full bg-danger/10 text-danger font-medium text-sm py-3 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98]"
         >
           <Trash2 size={16} />
           پاک کردن همه اطلاعات
