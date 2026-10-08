@@ -15,6 +15,7 @@ import ProductDetail from './pages/ProductDetail'
 import Search from './pages/Search'
 import Checkout from './pages/Checkout'
 import Success from './pages/Success'
+import Favorites from './pages/Favorites'
 import Admin from './pages/Admin'
 
 export default function App() {
@@ -51,6 +52,7 @@ export default function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/success/:id" element={<Success />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/favorites" element={<Favorites />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Home />} />
