@@ -1,16 +1,14 @@
 import { NavLink, useLocation } from 'react-router-dom'
-import { Home, Search, ShoppingCart, Heart, User } from 'lucide-react'
+import { Home, ShoppingCart, Heart, User, Package } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cartCount } from '../utils/cart'
 
-// RTL display from right: Home, Search, Cart, Favorites, Profile
-// Array order in RTL flex: first item is rightmost
 const items = [
-  { path: '/',          label: 'خانه',        icon: Home, end: true },
-  { path: '/search',    label: 'جستجو',      icon: Search },
-  { path: '/cart',      label: 'سبد خرید',   icon: ShoppingCart, badge: true, big: true },
-  { path: '/favorites', label: 'علاقه‌مندی‌ها', icon: Heart },
-  { path: '/profile',   label: 'پروفایل',    icon: User },
+  { path: '/',          label: 'خانه',           icon: Home, end: true },
+  { path: '/favorites', label: 'علاقه‌مندی‌ها',    icon: Heart },
+  { path: '/cart',      label: 'سبد خرید',        icon: ShoppingCart, badge: true, big: true },
+  { path: '/orders',    label: 'پیگیری سفارشات', icon: Package },
+  { path: '/profile',   label: 'پروفایل',         icon: User },
 ]
 
 export default function BottomNav() {
@@ -30,7 +28,7 @@ export default function BottomNav() {
     <nav className="fixed bottom-3 left-3 right-3 z-40">
       <div className="relative max-w-lg mx-auto">
         <div className="bg-white rounded-3xl shadow-[0_8px_28px_rgba(0,0,0,0.10)] px-2"
-          style={{ height: '66px' }}>
+          style={{ height: '64px' }}>
           <div className="flex justify-around items-center h-full">
             {items.map(({ path, label, icon: Icon, badge, big, end }) => {
               const active = isActive(path, end)
@@ -42,15 +40,15 @@ export default function BottomNav() {
                     <div
                       className="absolute rounded-full bg-brand flex items-center justify-center"
                       style={{
-                        width: '58px',
-                        height: '58px',
-                        bottom: '8px',
+                        width: '56px',
+                        height: '56px',
+                        bottom: '6px',
                         boxShadow: '0 6px 18px rgba(46,125,50,0.40)',
                         zIndex: 5,
                       }}>
-                      <ShoppingCart size={26} className="text-white" strokeWidth={2.5} />
+                      <ShoppingCart size={24} className="text-white" strokeWidth={2.5} />
                       {badge && count > 0 && (
-                        <span className="absolute -top-0.5 -right-0.5 bg-danger text-white text-[10px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 border-2 border-white">
+                        <span className="absolute -top-0.5 -right-0.5 bg-danger text-white text-[9px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 border-2 border-white">
                           {count}
                         </span>
                       )}
@@ -61,9 +59,9 @@ export default function BottomNav() {
 
               return (
                 <NavLink key={path} to={path} end={end}
-                  className="flex-1 flex flex-col items-center justify-center gap-1">
+                  className="flex-1 flex flex-col items-center justify-center gap-0.5">
                   <Icon
-                    size={22}
+                    size={20}
                     className={active ? 'text-brand' : 'text-muted'}
                     strokeWidth={active ? 2.6 : 2.2}
                   />

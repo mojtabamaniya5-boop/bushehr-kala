@@ -14,12 +14,10 @@ export default function Home() {
 
   return (
     <>
-      <Header search />
+      <Header />
       <main className="max-w-lg mx-auto px-4 pb-32 pt-1 fade-up">
-        {/* Hero Banner */}
         <BannerSlider />
 
-        {/* Categories */}
         <div className="flex items-center justify-between mb-3 mt-1">
           <h3 className="font-extrabold text-sm text-ink">دسته‌بندی‌ها</h3>
           <Link to="/category" className="text-[11px] text-brand font-bold">مشاهده همه</Link>
@@ -28,10 +26,8 @@ export default function Home() {
           {CATEGORIES.map(c => <CategoryChip key={c.id} category={c} />)}
         </div>
 
-        {/* Divider */}
         <div className="h-px bg-gradient-to-l from-transparent via-border to-transparent mb-5 mt-1"></div>
 
-        {/* پرفروش‌ها */}
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-extrabold text-sm text-ink">پرفروش‌ترین‌ها</h3>
           <Link to="/category" className="text-[11px] text-brand font-bold">همه</Link>
@@ -40,10 +36,9 @@ export default function Home() {
           {bestSellers.slice(0, 4).map(p => <ProductCard key={p.id} product={p} />)}
         </div>
 
-        {/* تخفیف ویژه */}
-        <div className="rounded-3xl p-4 mb-6 flex items-center justify-between overflow-hidden relative"
+        <div className="rounded-3xl p-4 mb-6 flex items-center justify-between overflow-hidden"
           style={{ background: 'linear-gradient(135deg, #FFF3E0 0%, #FFF8E8 100%)' }}>
-          <div className="relative z-10">
+          <div>
             <p className="text-[10px] text-accent font-bold mb-0.5">پیشنهاد ویژه</p>
             <h3 className="font-extrabold text-base text-ink mb-2">تا ۲۰٪ تخفیف</h3>
             <Link to="/category"
@@ -54,7 +49,6 @@ export default function Home() {
           <div className="text-5xl">🫙</div>
         </div>
 
-        {/* تازه‌رسیده‌ها */}
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-extrabold text-sm text-ink">تازه‌رسیده‌ها</h3>
         </div>
@@ -62,7 +56,6 @@ export default function Home() {
           {newArrivals.map(p => <ProductCard key={p.id} product={p} />)}
         </div>
 
-        {/* مزیت‌ها */}
         <div className="grid grid-cols-3 gap-2 mb-4">
           {[
             { icon: Leaf, t: 'مواد تازه', s: 'کیفیت تضمینی' },

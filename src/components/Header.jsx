@@ -1,12 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Search, ShoppingBag, Menu } from 'lucide-react'
+import { Search, ShoppingBag, Menu, ArrowRight } from 'lucide-react'
 import { cartCount } from '../utils/cart'
 import { useEffect, useState } from 'react'
 import Logo from './Logo'
 
-export default function Header({ title, back = false, search = false, simple = false }) {
-  const navigate = useNavigate()
+export default function Header({ title, back, search, simple }) {
   const [count, setCount] = useState(cartCount())
+  const navigate = useNavigate()
 
   useEffect(() => {
     const update = () => setCount(cartCount())
@@ -14,56 +14,62 @@ export default function Header({ title, back = false, search = false, simple = f
     return () => window.removeEventListener('cart-updated', update)
   }, [])
 
-  if (simple && title) {
+  // حالت ساده — برای صفحات داخلی
+  if (title || simple) {
     return (
       <header className="sticky top-0 z-30 bg-cream border-b border-border">
         <div className="flex items-center gap-3 px-4 h-14 max-w-lg mx-auto">
-          {back && (
-            <button onClick={() => navigate(-1)} className="p-1 -mr-1 active:scale-95 text-ink">←</button>
-          )}
+          {back ? (
+            <button onClick={() => navigate(-1)} className="p-1 -mr-1 active:scale-95 text-ink">
+              <ArrowRight size={22} />
+            </button>
+          ) : <div className="w-7"></div>}
           <h1 className="flex-1 font-bold text-base truncate text-ink text-center">{title}</h1>
-          <div className="w-7"></div>
+          <Link to="/cart" className="p-1 relative active:scale-95 text-ink">
+            <ShoppingBag size={20} />
+            {count > 0 && (
+              <span className="absolute -top-1 -left-1 bg-brand text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                {count}
+              </span>
+            )}
+          </Link>
         </div>
       </header>
     )
   }
 
+  // حالت اصلی — Home
   return (
     <header className="sticky top-0 z-30 bg-cream">
-      <div className="max-w-lg mx-auto px-4 pt-3 pb-2">
-        <div className="flex items-center justify-between mb-3">
-          {/* دکمه منو */}
-          <button className="p-2 -mr-2 active:scale-95 text-ink">
-            <Menu size={24} />
+      <div className="max-w-lg mx-auto px-4 pt-2 pb-3">
+        <div className="flex items-start justify-between mb-2">
+          <button className="p-1.5 mt-1 active:scale-95 text-ink">
+            <Menu size={22} />
           </button>
 
-          {/* لوگو + عنوان */}
           <Link to="/" className="flex flex-col items-center">
-            <Logo size={56} />
-            <h1 className="font-extrabold text-xl text-brand leading-tight mt-1">کافه ترشی</h1>
-            <p className="text-[10px] text-muted font-medium mt-0.5">طعم اصیل، با ارسال سریع</p>
-            {/* خط زرد منحنی زیر tagline */}
-            <svg viewBox="0 0 120 8" width="90" height="8" className="mt-0.5">
-              <path d="M 4 5 Q 30 1 60 3 Q 90 5 116 2" stroke="#F8C02D" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+            <Logo size={38} />
+            <h1 className="font-extrabold text-base text-brand leading-none mt-0.5">کافه ترشی</h1>
+            <p className="text-[9px] text-muted font-medium mt-0.5">طعم اصیل، با ارسال سریع</p>
+            <svg viewBox="0 0 100 6" width="66" height="6" className="mt-0.5">
+              <path d="M 4 4 Q 25 1 50 3 Q 75 5 96 2" stroke="#F8C02D" strokeWidth="2" fill="none" strokeLinecap="round"/>
             </svg>
           </Link>
 
-          {/* سبد خرید */}
-          <Link to="/cart" className="p-2 -ml-2 relative active:scale-95 text-ink">
-            <ShoppingBag size={24} />
+          <Link to="/cart" className="p-1.5 mt-1 relative active:scale-95 text-ink">
+            <ShoppingBag size={22} />
             {count > 0 && (
-              <span className="absolute top-0 left-0 bg-brand text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+              <span className="absolute -top-1 -left-1 bg-brand text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
                 {count}
               </span>
             )}
           </Link>
         </div>
 
-        {/* نوار جستجو — pill shaped */}
         <Link to="/search"
-          className="flex items-center gap-3 bg-white rounded-full px-4 py-3 mb-2 border border-border shadow-[0_2px_8px_rgba(0,0,0,0.04)] active:scale-[0.99] transition">
-          <Search size={18} className="text-muted flex-shrink-0" />
-          <span className="text-xs text-muted flex-1">جستجوی ترشی، خیارشور، زیتون و ...</span>
+          className="flex items-center gap-2 bg-white rounded-full px-4 py-2.5 border border-border shadow-[0_2px_8px_rgba(0,0,0,0.04)] active:scale-[0.99] transition">
+          <Search size={16} className="text-muted flex-shrink-0" />
+          <span className="text-[11px] text-muted flex-1">جستجوی ترشی، خیارشور، زیتون و ...</span>
         </Link>
       </div>
     </header>
