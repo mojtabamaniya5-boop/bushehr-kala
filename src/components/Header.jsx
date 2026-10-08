@@ -1,28 +1,56 @@
-import { useNavigate } from 'react-router-dom'
-import { Search, ArrowRight } from 'lucide-react'
-import ThemeToggle from './ThemeToggle'
+import { Link, useNavigate } from 'react-router-dom'
+import { Search, ShoppingBag, ArrowRight, MapPin } from 'lucide-react'
+import { SHOP_INFO } from '../data/products'
+import { cartCount } from '../utils/cart'
+import { useEffect, useState } from 'react'
 
-export default function Header({ title, back = false, search = false }) {
+export default function Header({ title, back = false, search = false, simple = false }) {
   const navigate = useNavigate()
+  const [count, setCount] = useState(cartCount())
+
+  useEffect(() => {
+    const update = () => setCount(cartCount())
+    window.addEventListener('cart-updated', update)
+    return () => window.removeEventListener('cart-updated', update)
+  }, [])
+
   return (
-    <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-      <div className="flex items-center gap-3 px-4 h-14 max-w-lg mx-auto">
+    <header className="sticky top-0 z-30 bg-cream border-b border-border">
+      <div className="flex items-center gap-3 px-4 h-16 max-w-lg mx-auto">
         {back ? (
-          <button onClick={() => navigate(-1)} className="p-1 -mr-1 active:scale-95">
+          <button onClick={() => navigate(-1)} className="p-1 -mr-1 active:scale-95 text-ink">
             <ArrowRight size={22} />
           </button>
         ) : (
-          <div className="w-7 h-7 rounded-lg bg-brand flex items-center justify-center text-white font-bold text-sm">
-            ب
-          </div>
+          <button className="flex items-center gap-1 text-ink">
+            <MapPin size={16} className="text-brand" />
+            <span className="text-[10px] font-bold">بوشهر</span>
+          </button>
         )}
-        <h1 className="flex-1 font-bold text-base truncate">{title}</h1>
+
+        {title ? (
+          <h1 className="flex-1 font-bold text-base truncate text-ink text-center">{title}</h1>
+        ) : (
+          <Link to="/" className="flex-1 flex flex-col items-center">
+            <span className="font-extrabold text-lg text-brand leading-tight">کافه ترشی</span>
+            <span className="text-[9px] text-muted">{SHOP_INFO.tagline}</span>
+          </Link>
+        )}
+
         {search && (
-          <button onClick={() => navigate('/search')} className="p-2 active:scale-95">
+          <button onClick={() => navigate('/search')} className="p-2 active:scale-95 text-ink">
             <Search size={20} />
           </button>
         )}
-        <ThemeToggle />
+
+        <Link to="/cart" className="p-2 relative active:scale-95 text-ink">
+          <ShoppingBag size={20} />
+          {count > 0 && (
+            <span className="absolute top-0.5 left-0.5 bg-brand text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+              {count}
+            </span>
+          )}
+        </Link>
       </div>
     </header>
   )

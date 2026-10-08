@@ -4,25 +4,25 @@ import { Link } from 'react-router-dom'
 
 const BANNERS = [
   {
-    title: 'تا ۲۵٪ تخفیف',
-    subtitle: 'لوازم جانبی اصل و گارانتی‌دار',
+    title: 'خیارشورهای خانم',
+    subtitle: 'با طعم اصیل و تازه',
     cta: 'مشاهده محصولات',
-    link: '/category',
-    gradient: 'from-brand to-brand-dark',
+    link: '/category/cucumber',
+    bg: 'from-brand to-brand-dark',
   },
   {
-    title: 'ارسال سریع',
-    subtitle: 'به تمام نقاط کشور در کمترین زمان',
+    title: 'ترشی‌های خونگی',
+    subtitle: 'بدون مواد نگهدارنده',
     cta: 'خرید کنید',
-    link: '/category',
-    gradient: 'from-amber-500 to-orange-600',
+    link: '/category/mixed',
+    bg: 'from-accent to-brand',
   },
   {
-    title: 'پشتیبانی تلگرام',
-    subtitle: 'همیشه در دسترس، همیشه پاسخگو',
-    cta: 'تماس با ما',
-    link: '/profile',
-    gradient: 'from-emerald-500 to-teal-600',
+    title: 'زیتون پرورده اصل',
+    subtitle: 'دست‌ساز از شمال',
+    cta: 'همین حالا',
+    link: '/category/olive',
+    bg: 'from-brown to-ink',
   },
 ]
 
@@ -37,35 +37,27 @@ export default function BannerSlider() {
   const b = BANNERS[idx]
 
   return (
-    <div className="relative rounded-2xl overflow-hidden mb-5 h-40">
+    <div className="relative rounded-2xl overflow-hidden mb-5 h-44">
       <AnimatePresence mode="wait">
-        <motion.div
-          key={idx}
+        <motion.div key={idx}
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.4 }}
-          className={`absolute inset-0 bg-gradient-to-l ${b.gradient} text-white p-5 flex flex-col justify-center`}
-        >
+          className={`absolute inset-0 bg-gradient-to-l ${b.bg} text-white p-5 flex flex-col justify-center`}>
           <p className="text-xs opacity-90 mb-1">{b.subtitle}</p>
-          <h2 className="text-xl font-bold mb-3">{b.title}</h2>
-          <Link to={b.link} className="inline-block bg-white text-slate-900 text-xs font-bold px-4 py-2 rounded-full self-start">
+          <h2 className="text-xl font-extrabold mb-3">{b.title}</h2>
+          <Link to={b.link} className="inline-block bg-white text-brand text-xs font-bold px-4 py-2 rounded-full self-start">
             {b.cta}
           </Link>
           <div className="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-white/10"></div>
+          <div className="absolute -left-2 -top-8 w-20 h-20 rounded-full bg-white/10"></div>
         </motion.div>
       </AnimatePresence>
-
-      {/* dots */}
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
         {BANNERS.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setIdx(i)}
-            className={`h-1.5 rounded-full transition-all ${
-              i === idx ? 'w-5 bg-white' : 'w-1.5 bg-white/50'
-            }`}
-          />
+          <button key={i} onClick={() => setIdx(i)}
+            className={`h-1.5 rounded-full transition-all ${i === idx ? 'w-5 bg-white' : 'w-1.5 bg-white/50'}`} />
         ))}
       </div>
     </div>

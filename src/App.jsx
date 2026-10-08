@@ -3,7 +3,6 @@ import { Routes, Route } from 'react-router-dom'
 import BottomNav from './components/BottomNav'
 import ToastHost from './components/Toast'
 import Onboarding from './components/Onboarding'
-import InstallPrompt from './components/InstallPrompt'
 import { storage } from './utils/storage'
 
 import Home from './pages/Home'
@@ -22,7 +21,7 @@ export default function App() {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    setShowOnboarding(!storage.get('onboarded'))
+    setShowOnboarding(false)
     setReady(true)
   }, [])
 
@@ -31,10 +30,9 @@ export default function App() {
   const isAdmin = window.location.hash.startsWith('#/admin')
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen bg-cream text-ink">
       {showOnboarding && !isAdmin && <Onboarding onDone={() => setShowOnboarding(false)} />}
       <ToastHost />
-      {!isAdmin && <InstallPrompt />}
 
       <Routes>
         <Route path="/" element={<Home />} />
