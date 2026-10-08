@@ -3,7 +3,8 @@ import JarIllustration from './JarIllustration'
 
 export default function CategoryIcon({ category, size = 64, active = false }) {
   const [err, setErr] = useState(false)
-  const src = `/assets/categories/${category.id}.png`
+  // استفاده از BASE_URL برای کارکرد در GitHub Pages
+  const src = `${import.meta.env.BASE_URL}assets/categories/${category.id}.png`
 
   return (
     <div className="rounded-full flex items-center justify-center transition active:scale-95"
