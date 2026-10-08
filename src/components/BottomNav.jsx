@@ -1,14 +1,16 @@
 import { NavLink, useLocation } from 'react-router-dom'
-import { Home, ShoppingCart, Heart, User, Package } from 'lucide-react'
+import { Home, Search, ShoppingCart, Heart, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cartCount } from '../utils/cart'
 
+// RTL display from right: Home, Search, Cart, Favorites, Profile
+// Array order in RTL flex: first item is rightmost
 const items = [
-  { path: '/',          label: 'خانه',           icon: Home, end: true },
-  { path: '/favorites', label: 'علاقه‌مندی‌ها',    icon: Heart },
-  { path: '/cart',      label: 'سبد خرید',        icon: ShoppingCart, badge: true, big: true },
-  { path: '/orders',    label: 'پیگیری سفارشات', icon: Package },
-  { path: '/profile',   label: 'پروفایل',         icon: User },
+  { path: '/',          label: 'خانه',        icon: Home, end: true },
+  { path: '/search',    label: 'جستجو',      icon: Search },
+  { path: '/cart',      label: 'سبد خرید',   icon: ShoppingCart, badge: true, big: true },
+  { path: '/favorites', label: 'علاقه‌مندی‌ها', icon: Heart },
+  { path: '/profile',   label: 'پروفایل',    icon: User },
 ]
 
 export default function BottomNav() {
