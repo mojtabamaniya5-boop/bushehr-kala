@@ -4388,7 +4388,7 @@ precacheAndRoute([{
   "revision": "402b66900e731ca748771b6fc5e7a068"
 }, {
   "url": "index.html",
-  "revision": "5c81a41e191e8e798280509a53b4b1f3"
+  "revision": "5e88d27d7dbf88e1dde206516798c153"
 }, {
   "url": "icons.svg",
   "revision": "3b4fcfcf393eca4d264dca4a4663bc37"
@@ -4399,10 +4399,10 @@ precacheAndRoute([{
   "url": "favicon.svg",
   "revision": "7e840862161341271697daa99a40d76b"
 }, {
-  "url": "assets/index-jFEqfNVy.js",
+  "url": "assets/index-zegnMkqy.css",
   "revision": null
 }, {
-  "url": "assets/index-C-HLfj2A.css",
+  "url": "assets/index-cEd6SA_m.js",
   "revision": null
 }, {
   "url": "assets/categories/vegetables.png",

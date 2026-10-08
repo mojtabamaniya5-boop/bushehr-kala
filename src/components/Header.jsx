@@ -2,11 +2,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Search, ShoppingBag, Menu, ArrowRight } from 'lucide-react'
 import { cartCount } from '../utils/cart'
 import { useEffect, useState } from 'react'
-import Logo from './Logo'
 
-export default function Header({ title, back, search, simple }) {
+export default function Header({ title, back }) {
   const [count, setCount] = useState(cartCount())
   const navigate = useNavigate()
+  const base = import.meta.env.BASE_URL
 
   useEffect(() => {
     const update = () => setCount(cartCount())
@@ -14,8 +14,7 @@ export default function Header({ title, back, search, simple }) {
     return () => window.removeEventListener('cart-updated', update)
   }, [])
 
-  // حالت ساده — برای صفحات داخلی
-  if (title || simple) {
+  if (title) {
     return (
       <header className="sticky top-0 z-30 bg-cream border-b border-border">
         <div className="flex items-center gap-3 px-4 h-14 max-w-lg mx-auto">
@@ -38,7 +37,6 @@ export default function Header({ title, back, search, simple }) {
     )
   }
 
-  // حالت اصلی — Home
   return (
     <header className="sticky top-0 z-30 bg-cream">
       <div className="max-w-lg mx-auto px-4 pt-2 pb-3">
@@ -48,7 +46,12 @@ export default function Header({ title, back, search, simple }) {
           </button>
 
           <Link to="/" className="flex flex-col items-center">
-            <Logo size={38} />
+            {/* آیکون ترشی مخلوط بالای کافه ترشی */}
+            <img
+              src={`${base}assets/categories/mixed.png`}
+              alt="کافه ترشی"
+              className="w-12 h-12 object-contain"
+            />
             <h1 className="font-extrabold text-base text-brand leading-none mt-0.5">کافه ترشی</h1>
             <p className="text-[9px] text-muted font-medium mt-0.5">طعم اصیل، با ارسال سریع</p>
             <svg viewBox="0 0 100 6" width="66" height="6" className="mt-0.5">
