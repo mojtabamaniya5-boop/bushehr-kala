@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <>
       <Header search />
-      <main className="max-w-lg mx-auto px-4 pb-28 pt-3 fade-up">
+      <main className="max-w-lg mx-auto px-4 pb-32 pt-3 fade-up">
         {/* Search */}
         <Link to="/search" className="flex items-center gap-2 bg-white border border-border rounded-input px-4 py-3 mb-4">
           <span className="text-xs text-muted">جستجو در ترشی‌ها، خیارشور و ...</span>
