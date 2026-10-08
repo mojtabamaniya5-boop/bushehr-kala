@@ -30,45 +30,36 @@ export default function Search() {
   return (
     <>
       <Header title="جستجو" back />
-      <main className="max-w-lg mx-auto px-4 pb-24 pt-3 fade-up">
+      <main className="max-w-lg mx-auto px-4 pb-32 pt-3 fade-up">
         {/* نوار جستجو */}
         <div className="relative mb-3">
-          <SearchIcon size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <SearchIcon size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted" />
           <input
             autoFocus
             value={q}
             onChange={e => setQ(e.target.value)}
             placeholder="اسم محصول، برند..."
-            className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 pr-10 pl-10 text-sm outline-none focus:border-brand transition"
+            className="w-full bg-white border border-border rounded-full py-3 pr-11 pl-11 text-sm outline-none focus:border-brand transition"
           />
           {q && (
-            <button
-              onClick={() => setQ('')}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            >
+            <button onClick={() => setQ('')}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted">
               <X size={16} />
             </button>
           )}
         </div>
 
         {/* فیلتر دسته */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-3">
-          <button
-            onClick={() => setCat('all')}
-            className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-              cat === 'all' ? 'bg-brand text-white border-brand' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
-            }`}
-          >
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-3 -mx-4 px-4">
+          <button onClick={() => setCat('all')}
+            className={'flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold border transition ' +
+              (cat === 'all' ? 'bg-brand text-white border-brand' : 'bg-white border-border text-ink')}>
             همه
           </button>
           {CATEGORIES.map(c => (
-            <button
-              key={c.id}
-              onClick={() => setCat(c.id)}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition flex items-center gap-1 ${
-                cat === c.id ? 'bg-brand text-white border-brand' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
-              }`}
-            >
+            <button key={c.id} onClick={() => setCat(c.id)}
+              className={'flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold border transition flex items-center gap-1 ' +
+                (cat === c.id ? 'bg-brand text-white border-brand' : 'bg-white border-border text-ink')}>
               <span>{c.icon}</span><span>{c.name}</span>
             </button>
           ))}
@@ -76,16 +67,12 @@ export default function Search() {
 
         {/* مرتب‌سازی */}
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs text-slate-500">{results.length} نتیجه</span>
+          <span className="text-xs text-muted">{results.length} نتیجه</span>
           <div className="flex gap-1">
             {SORTS.map(s => (
-              <button
-                key={s.id}
-                onClick={() => setSort(s.id)}
-                className={`text-[10px] px-2 py-1 rounded-full transition ${
-                  sort === s.id ? 'bg-brand text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                }`}
-              >
+              <button key={s.id} onClick={() => setSort(s.id)}
+                className={'text-[10px] px-2.5 py-1 rounded-full font-bold transition ' +
+                  (sort === s.id ? 'bg-brand text-white' : 'bg-white border border-border text-muted')}>
                 {s.label}
               </button>
             ))}
@@ -94,10 +81,12 @@ export default function Search() {
 
         {/* نتایج */}
         {results.length === 0 ? (
-          <div className="text-center py-20 text-slate-400">
-            <p className="text-4xl mb-2">🔍</p>
-            <p className="text-sm">چیزی پیدا نشد</p>
-            <p className="text-xs mt-1">یه کلمه دیگه امتحان کن</p>
+          <div className="text-center py-20">
+            <div className="w-20 h-20 rounded-full bg-brand-light flex items-center justify-center mx-auto mb-4">
+              <SearchIcon size={32} className="text-brand" />
+            </div>
+            <p className="font-extrabold text-ink mb-1">چیزی پیدا نشد</p>
+            <p className="text-xs text-muted">یه کلمه دیگه امتحان کن</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
