@@ -6,7 +6,7 @@ import { storage } from '../utils/storage'
 const SLIDES = [
   {
     icon: ShoppingBag,
-    title: 'به بوشهر کالا خوش آمدی',
+    title: 'به کافه ترشی خوش آمدی',
     desc: 'فروشگاه تخصصی لوازم جانبی دیجیتال — اصل، گارانتی‌دار، با ارسال سریع',
     color: 'from-brand to-brand-dark',
   },

@@ -40,7 +40,7 @@ export default function InstallPrompt() {
           ب
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-bold mb-0.5">نصب بوشهر کالا</p>
+          <p className="text-xs font-bold mb-0.5">نصب کافه ترشی</p>
           <p className="text-[10px] text-slate-500">دسترسی سریع از صفحه اصلی گوشی</p>
         </div>
         <button

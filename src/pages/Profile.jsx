@@ -125,7 +125,7 @@ export default function Profile() {
         </button>
 
         <p className="text-center text-[10px] text-slate-400 mt-6">
-          بوشهر کالا — نسخه ۱.۰
+          کافه ترشی — نسخه ۱.۰
         </p>
       </main>
     </>

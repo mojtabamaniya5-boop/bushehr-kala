@@ -102,7 +102,7 @@ function Dashboard({ onLogout }) {
             <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center text-white font-bold text-sm">ب</div>
             <div>
               <div className="font-bold text-sm">پنل مدیریت</div>
-              <div className="text-[10px] text-slate-400">بوشهر کالا</div>
+              <div className="text-[10px] text-slate-400">کافه ترشی</div>
             </div>
           </div>
           <button onClick={onLogout} className="p-2 rounded-lg bg-slate-700 text-slate-300 active:scale-95"><LogOut size={16} /></button>

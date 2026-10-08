@@ -25,7 +25,7 @@ export async function sendOrderToTelegram(order) {
   if (!isTelegramReady()) return { ok: false, reason: 'not-configured' }
 
   const lines = []
-  lines.push('🛒 سفارش جدید از بوشهر کالا')
+  lines.push('🛒 سفارش جدید از کافه ترشی')
   lines.push('')
   lines.push(`👤 نام: ${order.customer.name}`)
   lines.push(`📞 موبایل: ${order.customer.phone}`)
@@ -53,6 +53,6 @@ export async function sendOrderToTelegram(order) {
 export async function sendTestMessage() {
   return baleRequest('sendMessage', {
     chat_id: BALE_CHAT_ID,
-    text: '✅ اتصال بوشهر کالا به بله برقرار شد!\n\nاز این پس، سفارش‌های مشتریان به این چت ارسال می‌شن.',
+    text: '✅ اتصال کافه ترشی به بله برقرار شد!\n\nاز این پس، سفارش‌های مشتریان به این چت ارسال می‌شن.',
   })
 }
