@@ -135,7 +135,7 @@ export default function ProductDetail() {
         </div>
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 p-3 z-[60] pb-20">
+      <div className="fixed bottom-16 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 p-3 z-[60]">
         <div className="max-w-lg mx-auto flex gap-2">
           <button type="button" onClick={handleAdd}
             className={'flex-1 font-bold py-3 rounded-xl active:scale-[0.98] transition flex items-center justify-center gap-2 ' + (justAdded ? 'bg-green-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white')}>
