@@ -18,7 +18,6 @@ export default function Home() {
       <main className="max-w-lg mx-auto px-4 pb-32 pt-1 fade-up">
         <BannerSlider />
 
-        {/* دسته‌بندی‌ها */}
         <div className="flex items-center justify-between mb-3 mt-1">
           <h3 className="font-extrabold text-sm text-ink">دسته‌بندی‌ها</h3>
           <Link to="/category" className="text-[11px] text-brand font-bold">مشاهده همه</Link>
@@ -27,14 +26,12 @@ export default function Home() {
           {CATEGORIES.map(c => <CategoryChip key={c.id} category={c} />)}
         </div>
 
-        {/* خط زرد منحنی */}
         <div className="flex justify-center mb-5">
           <svg viewBox="0 0 200 8" width="180" height="8">
             <path d="M 5 5 Q 50 1 100 4 Q 150 7 195 3" stroke="#F8C02D" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
           </svg>
         </div>
 
-        {/* پرفروش‌ترین‌ها */}
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-extrabold text-sm text-ink flex items-center gap-1">
             پرفروش‌ترین‌ها <span className="text-base">🔥</span>
@@ -45,21 +42,58 @@ export default function Home() {
           {bestSellers.slice(0, 4).map(p => <ProductCard key={p.id} product={p} />)}
         </div>
 
-        {/* تخفیف ویژه */}
-        <div className="rounded-3xl p-4 mb-6 flex items-center justify-between overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, #FFF3E0 0%, #FFF8E8 100%)' }}>
-          <div>
-            <p className="text-[10px] text-accent font-bold mb-0.5">پیشنهاد ویژه</p>
-            <h3 className="font-extrabold text-base text-ink mb-2">تا ۲۰٪ تخفیف</h3>
-            <Link to="/category"
-              className="text-[10px] bg-brand text-white font-bold px-3 py-1.5 rounded-full inline-block shadow-sm">
-              مشاهده محصولات
-            </Link>
+        {/* پیشنهاد ویژه — بازطراحی شده */}
+        <div className="relative rounded-[28px] p-5 mb-6 overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, #FFF8E8 0%, #E8F5E9 60%, #C8E6C9 100%)',
+            boxShadow: '0 6px 22px rgba(46,125,50,0.10)',
+            border: '1px solid rgba(46,125,50,0.10)',
+          }}>
+          {/* دایره‌های تزئینی */}
+          <div className="absolute -top-10 -left-10 w-32 h-32 rounded-full bg-accent/25"></div>
+          <div className="absolute -bottom-12 right-1/3 w-24 h-24 rounded-full bg-brand/10"></div>
+          <div className="absolute top-2 right-2 w-12 h-12 rounded-full bg-white/40 backdrop-blur-sm"></div>
+
+          <div className="relative flex items-center justify-between gap-3">
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-1 bg-white/70 backdrop-blur-sm rounded-full px-2.5 py-1 mb-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                <span className="text-[10px] font-extrabold text-ink">پیشنهاد ویژه هفته</span>
+              </div>
+
+              <h3 className="font-extrabold text-lg text-brand-dark leading-tight mb-1">
+                تا <span className="text-2xl text-accent">۲۰٪</span> تخفیف
+              </h3>
+              <p className="text-[10px] text-muted mb-3">روی ترشی‌ها و خیارشورهای منتخب</p>
+
+              <Link to="/category"
+                className="inline-flex items-center gap-1.5 bg-brand text-white text-[11px] font-extrabold px-4 py-2.5 rounded-full shadow-md active:scale-95 transition"
+                style={{ boxShadow: '0 4px 14px rgba(46,125,50,0.35)' }}>
+                <span>مشاهده محصولات</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'scaleX(-1)' }}>
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </Link>
+            </div>
+
+            {/* آیکون شیشه */}
+            <div className="flex-shrink-0 relative">
+              <div className="w-24 h-24 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-lg"
+                style={{ border: '2px solid rgba(255,255,255,0.7)' }}>
+                <img
+                  src={`${import.meta.env.BASE_URL}assets/categories/mixed.png`}
+                  alt="تخفیف"
+                  className="w-20 h-20 object-contain"
+                />
+              </div>
+              {/* بج تخفیف روی دایره */}
+              <div className="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-extrabold rounded-full px-2 py-1 shadow-md border-2 border-white">
+                ۲۰٪
+              </div>
+            </div>
           </div>
-          <div className="text-5xl">🫙</div>
         </div>
 
-        {/* تازه‌رسیده‌ها */}
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-extrabold text-sm text-ink">تازه‌رسیده‌ها</h3>
         </div>
@@ -67,7 +101,6 @@ export default function Home() {
           {newArrivals.map(p => <ProductCard key={p.id} product={p} />)}
         </div>
 
-        {/* مزیت‌ها */}
         <div className="grid grid-cols-3 gap-2 mb-4">
           {[
             { icon: Leaf, t: 'مواد تازه', s: 'کیفیت تضمینی' },
