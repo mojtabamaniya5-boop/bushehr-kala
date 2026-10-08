@@ -36,7 +36,7 @@ export const WEIGHTS = [
   { id: '2kg',  label: '۲ کیلو',  multiplier: 3.4 },
 ]
 
-const img = (text, color = '2E7D32') =>
+const img = () => ''; const _oldImg = (text, color = '2E7D32') =>
   `https://placehold.co/600x600/${color}/ffffff?text=${encodeURIComponent(text)}`
 
 export const PRODUCTS = [
