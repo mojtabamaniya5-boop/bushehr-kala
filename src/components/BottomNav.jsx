@@ -42,15 +42,25 @@ export default function BottomNav() {
                       style={{
                         width: '60px',
                         height: '60px',
-                        bottom: '-6px',
+                        bottom: '-4px',
                         boxShadow: '0 6px 18px rgba(46,125,50,0.40)',
                         zIndex: 5,
                       }}>
                       <ShoppingCart size={26} className="text-white" strokeWidth={2.5} />
                       {badge && count > 0 && (
-                        <span className="absolute -top-0.5 -right-0.5 bg-danger text-white text-[9px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 border-2 border-white">
+                        <div
+                          className="absolute bg-danger text-white font-bold rounded-full flex items-center justify-center border-2 border-white"
+                          style={{
+                            top: '-4px',
+                            right: '-4px',
+                            minWidth: '20px',
+                            height: '20px',
+                            fontSize: '10px',
+                            lineHeight: '1',
+                            padding: '0 4px',
+                          }}>
                           {count}
-                        </span>
+                        </div>
                       )}
                     </div>
                   </NavLink>

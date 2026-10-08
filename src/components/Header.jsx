@@ -14,6 +14,8 @@ export default function Header({ title, back }) {
     return () => window.removeEventListener('cart-updated', update)
   }, [])
 
+  const openDrawer = () => window.dispatchEvent(new Event('open-drawer'))
+
   if (title) {
     return (
       <header className="sticky top-0 z-30 bg-cream border-b border-border">
@@ -41,12 +43,11 @@ export default function Header({ title, back }) {
     <header className="sticky top-0 z-30 bg-cream">
       <div className="max-w-lg mx-auto px-4 pt-2 pb-3">
         <div className="flex items-start justify-between mb-2">
-          <button className="p-1.5 mt-1 active:scale-95 text-ink">
+          <button onClick={openDrawer} className="p-1.5 mt-1 active:scale-95 text-ink">
             <Menu size={22} />
           </button>
 
           <Link to="/" className="flex flex-col items-center">
-            {/* آیکون ترشی مخلوط بالای کافه ترشی */}
             <img
               src={`${base}assets/categories/mixed.png`}
               alt="کافه ترشی"
