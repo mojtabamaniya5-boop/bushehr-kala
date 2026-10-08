@@ -27,42 +27,37 @@ export default function BottomNav() {
   return (
     <nav className="fixed bottom-3 left-3 right-3 z-40">
       <div className="relative max-w-lg mx-auto">
-        {/* نوار سفید گرد */}
         <div className="bg-white rounded-3xl shadow-[0_8px_28px_rgba(0,0,0,0.10)] px-2"
-          style={{ height: '70px' }}>
+          style={{ height: '66px' }}>
           <div className="flex justify-around items-center h-full">
             {items.map(({ path, label, icon: Icon, badge, big, end }) => {
               const active = isActive(path, end)
 
               if (big) {
-                // دایره سبز بزرگ — نصف داخل، نصف بیرون
                 return (
                   <NavLink key={path} to={path}
-                    className="relative flex-1 flex flex-col items-center">
+                    className="relative flex-1 flex flex-col items-center justify-center h-full">
+                    {/* دایره سبز — کمی بیرون از نوار */}
                     <div
                       className="absolute rounded-full bg-brand flex items-center justify-center"
                       style={{
-                        width: '64px',
-                        height: '64px',
-                        bottom: '10px',
-                        boxShadow: '0 8px 22px rgba(46,125,50,0.45)',
+                        width: '58px',
+                        height: '58px',
+                        bottom: '8px',
+                        boxShadow: '0 6px 18px rgba(46,125,50,0.40)',
                         zIndex: 5,
                       }}>
-                      <ShoppingCart size={28} className="text-white" strokeWidth={2.5} />
+                      <ShoppingCart size={26} className="text-white" strokeWidth={2.5} />
                       {badge && count > 0 && (
                         <span className="absolute -top-0.5 -right-0.5 bg-danger text-white text-[10px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 border-2 border-white">
                           {count}
                         </span>
                       )}
                     </div>
-                    <span className={`text-[10px] font-bold mt-auto mb-2 relative z-10 ${active ? 'text-brand' : 'text-muted'}`}>
-                      {label}
-                    </span>
                   </NavLink>
                 )
               }
 
-              // تب عادی
               return (
                 <NavLink key={path} to={path} end={end}
                   className="flex-1 flex flex-col items-center justify-center gap-1">
