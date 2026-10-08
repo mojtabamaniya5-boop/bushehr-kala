@@ -4,13 +4,10 @@ import { HashRouter } from 'react-router-dom'
 import App from './App.jsx'
 import './index.css'
 
-// تم پیش‌فرض تاریک
-if (!localStorage.getItem('bk-theme')) {
-  localStorage.setItem('bk-theme', 'dark')
-  document.documentElement.classList.add('dark')
-} else if (localStorage.getItem('bk-theme') === 'dark') {
-  document.documentElement.classList.add('dark')
-}
+// کافه ترشی — فقط تم روشن
+localStorage.removeItem('bk-theme')
+document.documentElement.classList.remove('dark')
+document.documentElement.setAttribute('data-theme', 'light')
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -2,35 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --brand: #DC2626;
-}
+:root { --brand: #2E7D32; }
 
-* {
-  -webkit-tap-highlight-color: transparent;
-}
+* { -webkit-tap-highlight-color: transparent; }
 
 html, body, #root {
   height: 100%;
+  background: #FFF8E8 !important;
+  color: #243024 !important;
 }
 
 body {
   font-family: 'Vazirmatn', sans-serif;
-  background: #F8FAFC;
-  color: #0F172A;
   overscroll-behavior-y: none;
 }
 
-.dark body {
-  background: #0F172A;
-  color: #F1F5F9;
-}
-
-/* اسکرول‌بار مخفی */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* انیمیشن ورود صفحه */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
