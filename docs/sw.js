@@ -4388,7 +4388,7 @@ precacheAndRoute([{
   "revision": "402b66900e731ca748771b6fc5e7a068"
 }, {
   "url": "index.html",
-  "revision": "81184d5b91baddc769b872011fccdf23"
+  "revision": "9df096fb845679414e446d0aa470e956"
 }, {
   "url": "icons.svg",
   "revision": "3b4fcfcf393eca4d264dca4a4663bc37"
@@ -4399,10 +4399,46 @@ precacheAndRoute([{
   "url": "favicon.svg",
   "revision": "7e840862161341271697daa99a40d76b"
 }, {
-  "url": "assets/index-m9dEjKN9.js",
+  "url": "assets/index-DcpBY0qs.css",
   "revision": null
 }, {
-  "url": "assets/index-C4HgUfOO.css",
+  "url": "assets/index-C-89nhdf.js",
+  "revision": null
+}, {
+  "url": "assets/categories/vegetables.png",
+  "revision": null
+}, {
+  "url": "assets/categories/special.png",
+  "revision": null
+}, {
+  "url": "assets/categories/shoor.png",
+  "revision": null
+}, {
+  "url": "assets/categories/salads.png",
+  "revision": null
+}, {
+  "url": "assets/categories/pepper.png",
+  "revision": null
+}, {
+  "url": "assets/categories/other.png",
+  "revision": null
+}, {
+  "url": "assets/categories/olive.png",
+  "revision": null
+}, {
+  "url": "assets/categories/mixed.png",
+  "revision": null
+}, {
+  "url": "assets/categories/mixed-shoor.png",
+  "revision": null
+}, {
+  "url": "assets/categories/garlic.png",
+  "revision": null
+}, {
+  "url": "assets/categories/eggplant.png",
+  "revision": null
+}, {
+  "url": "assets/categories/cucumber.png",
   "revision": null
 }, {
   "url": "favicon.svg",

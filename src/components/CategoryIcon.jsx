@@ -1,6 +1,10 @@
+import { useState } from 'react'
 import JarIllustration from './JarIllustration'
 
 export default function CategoryIcon({ category, size = 64, active = false }) {
+  const [err, setErr] = useState(false)
+  const src = `/assets/categories/${category.id}.png`
+
   return (
     <div className="rounded-full flex items-center justify-center transition active:scale-95"
       style={{
@@ -10,9 +14,19 @@ export default function CategoryIcon({ category, size = 64, active = false }) {
         boxShadow: active ? '0 4px 12px rgba(46,125,50,0.25)' : '0 2px 6px rgba(0,0,0,0.05)',
         overflow: 'hidden',
       }}>
-      <div style={{ transform: 'scale(0.9)' }}>
-        <JarIllustration category={category.id} size={size * 0.85} />
-      </div>
+      {!err ? (
+        <img
+          src={src}
+          alt={category.name}
+          onError={() => setErr(true)}
+          className="w-full h-full object-contain p-1"
+          loading="lazy"
+        />
+      ) : (
+        <div style={{ transform: 'scale(0.85)' }}>
+          <JarIllustration category={category.id} size={size * 0.85} />
+        </div>
+      )}
     </div>
   )
 }
