@@ -25,10 +25,10 @@ export default function BottomNav() {
     end ? location.pathname === path : location.pathname.startsWith(path)
 
   return (
-    <nav className="fixed bottom-3 left-3 right-3 z-40">
-      <div className="relative max-w-lg mx-auto">
-        <div className="bg-white rounded-3xl shadow-[0_8px_28px_rgba(0,0,0,0.10)] px-2"
-          style={{ height: '64px' }}>
+    <nav className="fixed bottom-3 left-0 right-0 z-40 flex justify-center px-6">
+      <div className="relative w-full max-w-[420px]">
+        <div className="bg-white rounded-3xl shadow-[0_8px_28px_rgba(0,0,0,0.10)] px-2 relative"
+          style={{ height: '52px' }}>
           <div className="flex justify-around items-center h-full">
             {items.map(({ path, label, icon: Icon, badge, big, end }) => {
               const active = isActive(path, end)
@@ -40,13 +40,13 @@ export default function BottomNav() {
                     <div
                       className="absolute rounded-full bg-brand flex items-center justify-center"
                       style={{
-                        width: '56px',
-                        height: '56px',
-                        bottom: '6px',
+                        width: '60px',
+                        height: '60px',
+                        bottom: '-6px',
                         boxShadow: '0 6px 18px rgba(46,125,50,0.40)',
                         zIndex: 5,
                       }}>
-                      <ShoppingCart size={24} className="text-white" strokeWidth={2.5} />
+                      <ShoppingCart size={26} className="text-white" strokeWidth={2.5} />
                       {badge && count > 0 && (
                         <span className="absolute -top-0.5 -right-0.5 bg-danger text-white text-[9px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 border-2 border-white">
                           {count}
@@ -61,7 +61,7 @@ export default function BottomNav() {
                 <NavLink key={path} to={path} end={end}
                   className="flex-1 flex flex-col items-center justify-center gap-0.5">
                   <Icon
-                    size={20}
+                    size={19}
                     className={active ? 'text-brand' : 'text-muted'}
                     strokeWidth={active ? 2.6 : 2.2}
                   />
