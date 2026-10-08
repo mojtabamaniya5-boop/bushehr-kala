@@ -22,7 +22,6 @@ export default function BannerSlider() {
     <div className="relative rounded-3xl overflow-hidden mb-5 h-52"
       style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
 
-      {/* همه بنرها همزمان رندر میشن، با opacity سوییچ میکنن — بدون فریم خالی */}
       {BANNERS.map((b, i) => {
         const active = i === idx
         const imgSrc = `${base}assets/banners/${b.image}`
@@ -39,12 +38,21 @@ export default function BannerSlider() {
               <div className="w-full h-full bg-gradient-to-br from-brand-light to-cream" />
             )}
 
+            {/* گرادیان تیره فقط سمت راست */}
             <div className="absolute inset-0"
-              style={{ background: 'linear-gradient(to left, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 45%, transparent 75%)' }} />
+              style={{ background: 'linear-gradient(to left, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 50%, transparent 80%)' }} />
 
-            <div className="absolute inset-0 p-5 flex flex-col justify-center items-start text-right text-white">
-              <p className="text-[11px] font-bold opacity-90 mb-1 drop-shadow">{b.subtitle}</p>
-              <h2 className="text-2xl font-extrabold mb-3 leading-tight drop-shadow-md">{b.title}</h2>
+            {/* متن — توی یه div محدود به راست، با textAlign صریح */}
+            <div className="absolute top-0 bottom-0 p-5 flex flex-col justify-center"
+              style={{
+                right: 0,
+                left: '35%',
+                direction: 'rtl',
+                textAlign: 'right',
+                alignItems: 'flex-end',
+              }}>
+              <p className="text-[11px] font-bold text-white/90 mb-1 drop-shadow">{b.subtitle}</p>
+              <h2 className="text-2xl font-extrabold text-white mb-3 leading-tight drop-shadow-md">{b.title}</h2>
               <Link to={b.link}
                 className="inline-block bg-accent text-ink text-xs font-extrabold px-4 py-2.5 rounded-full shadow-lg active:scale-95 transition">
                 {b.cta}
