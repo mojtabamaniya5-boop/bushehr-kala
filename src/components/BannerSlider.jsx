@@ -49,7 +49,7 @@ export default function BannerSlider() {
                 left: '35%',
                 direction: 'rtl',
                 textAlign: 'right',
-                alignItems: 'flex-end',
+                alignItems: 'flex-start',
               }}>
               <p className="text-[11px] font-bold text-white/90 mb-1 drop-shadow">{b.subtitle}</p>
               <h2 className="text-2xl font-extrabold text-white mb-3 leading-tight drop-shadow-md">{b.title}</h2>
