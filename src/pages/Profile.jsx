@@ -4,7 +4,9 @@ import Header from '../components/Header'
 import { storage, formatPrice } from '../utils/storage'
 import { getFavorites } from '../utils/cart'
 import { PRODUCTS, SHOP_INFO } from '../data/products'
-import { Heart, Phone, Send, MapPin, Trash2, ShoppingBag } from 'lucide-react'
+import ProductImage from '../components/ProductImage'
+import { Heart, Phone, Send, MapPin, Trash2, ShoppingBag, User } from 'lucide-react'
+import { toast } from '../components/Toast'
 
 export default function Profile() {
   const [user, setUser] = useState(storage.get('user', { name: '', phone: '' }))
@@ -26,62 +28,92 @@ export default function Profile() {
   const clearAll = () => {
     if (confirm('همه اطلاعات پاک شود؟')) {
       storage.clear()
-      location.reload()
+      toast.success('همه اطلاعات پاک شد')
+      setTimeout(() => location.reload(), 500)
     }
   }
 
   const favProducts = PRODUCTS.filter(p => getFavorites().includes(p.id))
+  const initial = user.name ? user.name.charAt(0).toUpperCase() : '؟'
 
   return (
     <>
       <Header title="پروفایل" />
-      <main className="max-w-lg mx-auto px-4 pb-24 pt-3 fade-up">
-        <div className="bg-gradient-to-l from-brand to-brand-dark text-white rounded-2xl p-5 mb-4">
-          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold mb-3">
-            {user.name ? user.name[0] : '👤'}
+      <main className="max-w-lg mx-auto px-4 pb-32 pt-3 fade-up">
+
+        {/* کارت پروفایل */}
+        <div className="rounded-3xl p-5 mb-4 text-white relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
+          <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-white/10"></div>
+          <div className="absolute bottom-0 right-0 w-20 h-20 rounded-full bg-accent/20"></div>
+
+          <div className="relative flex items-center gap-3 mb-4">
+            <div className="w-14 h-14 rounded-full bg-white/25 backdrop-blur flex items-center justify-center text-2xl font-extrabold border-2 border-white/40">
+              {initial}
+            </div>
+            <div className="flex-1 min-w-0">
+              <input
+                value={user.name}
+                onChange={e => saveUser('name', e.target.value)}
+                placeholder="نام شما"
+                className="bg-transparent text-lg font-extrabold placeholder-white/60 outline-none w-full"
+              />
+              <input
+                value={user.phone}
+                onChange={e => saveUser('phone', e.target.value)}
+                placeholder="شماره موبایل"
+                inputMode="tel"
+                className="bg-transparent text-xs placeholder-white/60 outline-none w-full mt-0.5"
+                style={{ direction: 'ltr', textAlign: 'right' }}
+              />
+            </div>
           </div>
-          <input
-            value={user.name}
-            onChange={e => saveUser('name', e.target.value)}
-            placeholder="نام شما"
-            className="bg-transparent text-lg font-bold placeholder-white/60 outline-none w-full mb-1"
-          />
-          <input
-            value={user.phone}
-            onChange={e => saveUser('phone', e.target.value)}
-            placeholder="شماره موبایل"
-            inputMode="tel"
-            className="bg-transparent text-xs placeholder-white/60 outline-none w-full"
-          />
+          <p className="relative text-[10px] text-white/80">🫙 خوش آمدی به کافه ترشی</p>
         </div>
 
+        {/* آمار */}
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <Link to="/orders" className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 flex items-center gap-3">
-            <ShoppingBag className="text-brand" size={22} />
+          <Link to="/orders"
+            className="bg-white rounded-2xl p-4 border border-border flex items-center gap-3 active:scale-[0.98] transition">
+            <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
+              <ShoppingBag className="text-brand" size={20} />
+            </div>
             <div>
-              <div className="text-lg font-bold">{ordersCount}</div>
-              <div className="text-[10px] text-slate-500">سفارش</div>
+              <div className="text-xl font-extrabold text-ink">{ordersCount}</div>
+              <div className="text-[10px] text-muted">سفارش</div>
             </div>
           </Link>
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 flex items-center gap-3">
-            <Heart className="text-brand" size={22} />
-            <div>
-              <div className="text-lg font-bold">{favCount}</div>
-              <div className="text-[10px] text-slate-500">علاقه‌مندی</div>
+          <Link to="/favorites"
+            className="bg-white rounded-2xl p-4 border border-border flex items-center gap-3 active:scale-[0.98] transition">
+            <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
+              <Heart className="text-brand" size={20} />
             </div>
-          </div>
+            <div>
+              <div className="text-xl font-extrabold text-ink">{favCount}</div>
+              <div className="text-[10px] text-muted">علاقه‌مندی</div>
+            </div>
+          </Link>
         </div>
 
+        {/* علاقه‌مندی‌ها */}
         {favProducts.length > 0 && (
           <>
-            <h3 className="font-bold text-sm mb-3">❤️ علاقه‌مندی‌ها</h3>
-            <div className="space-y-2 mb-4">
+            <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
+              ❤️ علاقه‌مندی‌های من
+            </h3>
+            <div className="space-y-2 mb-5">
               {favProducts.slice(0, 3).map(p => (
-                <Link key={p.id} to={`/product/${p.id}`} className="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl p-2 border border-slate-200 dark:border-slate-700">
-                  <img src={p.image} alt={p.title} className="w-12 h-12 rounded-lg object-cover" />
+                <Link key={p.id} to={`/product/${p.id}`}
+                  className="flex items-center gap-3 bg-white rounded-2xl p-2.5 border border-border active:scale-[0.98] transition">
+                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-cream flex-shrink-0">
+                    <ProductImage product={p} />
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs truncate mb-0.5">{p.title}</div>
-                    <div className="text-xs font-bold text-brand">{formatPrice(p.price)}</div>
+                    <div className="text-xs font-bold text-ink truncate mb-1">{p.title}</div>
+                    <div className="text-[11px] font-extrabold text-brand">{formatPrice(p.price)}</div>
+                  </div>
+                  <div className="w-7 h-7 rounded-full bg-brand-light flex items-center justify-center">
+                    <Heart size={12} className="text-brand fill-brand" />
                   </div>
                 </Link>
               ))}
@@ -89,42 +121,71 @@ export default function Profile() {
           </>
         )}
 
-        <h3 className="font-bold text-sm mb-3">📞 ارتباط با ما</h3>
-        <div className="space-y-2 mb-4">
-          <a href={`tel:${SHOP_INFO.phone}`} className="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-            <Phone size={18} className="text-brand" />
-            <span className="text-xs flex-1">تماس تلفنی</span>
-            <span className="text-xs text-slate-500">{SHOP_INFO.phone}</span>
+        {/* ارتباط با ما */}
+        <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
+          📞 ارتباط با ما
+        </h3>
+        <div className="space-y-2 mb-5">
+          <a href={`tel:${SHOP_INFO.phone}`}
+            className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
+            <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
+              <Phone size={16} className="text-brand" />
+            </div>
+            <span className="text-xs font-bold flex-1 text-ink">تماس تلفنی</span>
+            <span className="text-[10px] text-muted" style={{ direction: 'ltr' }}>{SHOP_INFO.phone}</span>
           </a>
-          <a href={`https://t.me/${SHOP_INFO.telegram}`} target="_blank" rel="noreferrer" className="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-            <Send size={18} className="text-brand" />
-            <span className="text-xs flex-1">تلگرام</span>
-            <span className="text-xs text-slate-500">@{SHOP_INFO.telegram}</span>
+          <a href={`https://t.me/${SHOP_INFO.telegram}`} target="_blank" rel="noreferrer"
+            className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
+            <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
+              <Send size={16} className="text-brand" />
+            </div>
+            <span className="text-xs font-bold flex-1 text-ink">تلگرام</span>
+            <span className="text-[10px] text-muted">@{SHOP_INFO.telegram}</span>
           </a>
-          <div className="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-            <MapPin size={18} className="text-brand" />
-            <span className="text-xs flex-1">{SHOP_INFO.address}</span>
+          <div className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border">
+            <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
+              <MapPin size={16} className="text-brand" />
+            </div>
+            <span className="text-xs font-bold text-ink">{SHOP_INFO.address}</span>
           </div>
         </div>
 
-        <h3 className="font-bold text-sm mb-3">💳 اطلاعات پرداخت</h3>
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 mb-4">
-          <div className="text-xs text-slate-500 mb-1">شماره کارت</div>
-          <div className="font-mono text-sm font-bold tracking-wider mb-2" style={{ direction: 'ltr', textAlign: 'right' }}>
-            {SHOP_INFO.card.number.replace(/(\d{4})/g, '$1 ').trim()}
+        {/* اطلاعات پرداخت */}
+        <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
+          💳 اطلاعات پرداخت
+        </h3>
+        <div className="rounded-3xl p-5 mb-5 text-white relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #185C28 0%, #2E7D32 60%, #4CAF50 100%)' }}>
+          <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-white/10"></div>
+          <div className="absolute bottom-0 right-0 w-24 h-24 rounded-full bg-accent/20"></div>
+
+          <div className="relative">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] opacity-80">شماره کارت</span>
+              <div className="w-10 h-7 rounded-md bg-accent/80"></div>
+            </div>
+            <div className="font-mono text-base font-extrabold tracking-widest mb-3"
+              style={{ direction: 'ltr', textAlign: 'right' }}>
+              {SHOP_INFO.card.number.replace(/(\d{4})/g, '$1 ').trim()}
+            </div>
+            <div className="flex items-end justify-between">
+              <div>
+                <div className="text-[9px] opacity-70 mb-0.5">صاحب حساب</div>
+                <div className="text-xs font-bold">{SHOP_INFO.card.holder}</div>
+              </div>
+              <div className="text-[10px] opacity-80">{SHOP_INFO.card.bank}</div>
+            </div>
           </div>
-          <div className="text-xs text-slate-500">به نام {SHOP_INFO.card.holder}</div>
         </div>
 
-        <button
-          onClick={clearAll}
-          className="w-full bg-danger/10 text-danger font-medium text-sm py-3 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98]"
-        >
+        {/* پاک کردن اطلاعات */}
+        <button onClick={clearAll}
+          className="w-full bg-white border border-border text-danger font-bold text-sm py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition">
           <Trash2 size={16} />
           پاک کردن همه اطلاعات
         </button>
 
-        <p className="text-center text-[10px] text-slate-400 mt-6">
+        <p className="text-center text-[10px] text-muted mt-6 pb-2">
           کافه ترشی — نسخه ۱.۰
         </p>
       </main>
