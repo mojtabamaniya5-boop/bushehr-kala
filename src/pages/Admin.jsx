@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../utils/supabase'
 import { formatPrice } from '../utils/storage'
 import { toast } from '../components/Toast'
-import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2 } from 'lucide-react'
+import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon } from 'lucide-react'
 
 const ADMIN_PASSWORD = 'bushehr1405'
 
@@ -20,9 +20,7 @@ function Login({ onLogin }) {
     if (pass === ADMIN_PASSWORD) {
       localStorage.setItem('bk-admin', '1')
       onLogin()
-    } else {
-      setErr('رمز اشتباه است')
-    }
+    } else setErr('رمز اشتباه است')
   }
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-900 px-6">
@@ -33,19 +31,13 @@ function Login({ onLogin }) {
         <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
           <h1 className="font-bold text-white text-lg mb-1">پنل مدیریت</h1>
           <p className="text-xs text-slate-400 mb-5">رمز عبور را وارد کن</p>
-          <input
-            type="password"
-            value={pass}
+          <input type="password" value={pass}
             onChange={e => { setPass(e.target.value); setErr('') }}
             onKeyDown={e => e.key === 'Enter' && submit()}
-            placeholder="رمز عبور"
-            autoFocus
-            className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-3 text-white text-sm outline-none focus:border-brand mb-2"
-          />
+            placeholder="رمز عبور" autoFocus
+            className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-3 text-white text-sm outline-none focus:border-brand mb-2" />
           {err && <p className="text-[10px] text-red-400 mb-3">{err}</p>}
-          <button onClick={submit} className="w-full bg-brand text-white font-bold py-3 rounded-xl active:scale-[0.98] transition">
-            ورود
-          </button>
+          <button onClick={submit} className="w-full bg-brand text-white font-bold py-3 rounded-xl active:scale-[0.98]">ورود</button>
         </div>
       </div>
     </div>
@@ -113,9 +105,7 @@ function Dashboard({ onLogout }) {
               <div className="text-[10px] text-slate-400">بوشهر کالا</div>
             </div>
           </div>
-          <button onClick={onLogout} className="p-2 rounded-lg bg-slate-700 text-slate-300 active:scale-95">
-            <LogOut size={16} />
-          </button>
+          <button onClick={onLogout} className="p-2 rounded-lg bg-slate-700 text-slate-300 active:scale-95"><LogOut size={16} /></button>
         </div>
       </div>
 
@@ -143,7 +133,7 @@ function Dashboard({ onLogout }) {
             <div className="space-y-2">
               {products.map(p => (
                 <div key={p.id} className="bg-slate-800 rounded-xl p-3 flex items-center gap-3 border border-slate-700">
-                  <img src={p.image} alt="" className="w-12 h-12 rounded-lg object-cover" />
+                  <img src={p.image} alt="" className="w-12 h-12 rounded-lg object-cover bg-slate-700" />
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-medium truncate">{p.title}</div>
                     <div className="text-[10px] text-slate-400 mt-0.5">{formatPrice(p.price)} • موجودی: {p.stock}</div>
@@ -232,6 +222,7 @@ function TabBtn({ active, onClick, icon: Icon, label }) {
 
 function ProductForm({ product, onClose }) {
   const isNew = !product.id
+  const fileRef = useRef(null)
   const [form, setForm] = useState({
     id: product.id || '',
     title: product.title || '',
@@ -247,6 +238,31 @@ function ProductForm({ product, onClose }) {
     active: product.active !== false,
   })
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
+
+  const handleUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('حجم عکس باید کمتر از ۵ مگابایت باشد')
+      return
+    }
+    setUploading(true)
+    const ext = file.name.split('.').pop() || 'jpg'
+    const fileName = `product-${Date.now()}.${ext}`
+    const { error } = await supabase.storage
+      .from('product-images')
+      .upload(fileName, file, { contentType: file.type, upsert: false })
+    if (error) {
+      setUploading(false)
+      toast.error('خطا در آپلود: ' + error.message)
+      return
+    }
+    const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(fileName)
+    setForm(f => ({ ...f, image: urlData.publicUrl }))
+    setUploading(false)
+    toast.success('عکس آپلود شد')
+  }
 
   const save = async () => {
     if (!form.title || !form.price) { toast.error('نام و قیمت الزامی است'); return }
@@ -277,11 +293,37 @@ function ProductForm({ product, onClose }) {
   return (
     <div className="fixed inset-0 bg-black/70 z-[100] flex items-end sm:items-center justify-center p-3">
       <div className="bg-slate-800 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-slate-800 border-b border-slate-700 p-3 flex items-center justify-between">
+        <div className="sticky top-0 bg-slate-800 border-b border-slate-700 p-3 flex items-center justify-between z-10">
           <h3 className="font-bold text-sm">{isNew ? 'محصول جدید' : 'ویرایش محصول'}</h3>
           <button onClick={onClose} className="p-1 rounded-lg bg-slate-700"><X size={16} /></button>
         </div>
         <div className="p-4 space-y-3">
+
+          {/* عکس */}
+          <div>
+            <label className="text-[10px] text-slate-400 block mb-2">تصویر محصول</label>
+            <div className="flex items-center gap-3">
+              <div className="w-20 h-20 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center overflow-hidden flex-shrink-0">
+                {form.image ? (
+                  <img src={form.image} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <ImageIcon size={24} className="text-slate-600" />
+                )}
+              </div>
+              <div className="flex-1 space-y-2">
+                <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
+                <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
+                  className="w-full bg-slate-700 text-white text-xs font-medium py-2 rounded-lg flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-60">
+                  {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                  {uploading ? 'در حال آپلود...' : 'آپلود عکس از گوشی'}
+                </button>
+                <input type="text" value={form.image} onChange={e => setForm({ ...form, image: e.target.value })}
+                  placeholder="یا لینک عکس را بچسبان"
+                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-[10px] text-white outline-none focus:border-brand" />
+              </div>
+            </div>
+          </div>
+
           <Field label="نام محصول" value={form.title} onChange={v => setForm({ ...form, title: v })} />
           <Field label="برند" value={form.brand} onChange={v => setForm({ ...form, brand: v })} />
           <Field label="دسته" value={form.category} onChange={v => setForm({ ...form, category: v })} hint="headphone / charger / powerbank / cable / mouse / hub / case / holder" />
@@ -300,7 +342,6 @@ function ProductForm({ product, onClose }) {
               </label>
             </div>
           </div>
-          <Field label="لینک تصویر" value={form.image} onChange={v => setForm({ ...form, image: v })} />
           <Field label="توضیحات" value={form.description} onChange={v => setForm({ ...form, description: v })} textarea />
           <Field label="ویژگی‌ها" value={form.features} onChange={v => setForm({ ...form, features: v })} hint="با کاما جدا کن" />
           <button onClick={save} disabled={saving} className="w-full bg-brand text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-60">
