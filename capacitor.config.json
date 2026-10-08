@@ -1,6 +1,6 @@
 {
-  "appId": "ir.bushehrkala.shop",
-  "appName": "بوشهر کالا",
+  "appId": "ir.cafetorshi.shop",
+  "appName": "کافه ترشی",
   "webDir": "docs",
   "bundledWebRuntime": false,
   "android": {

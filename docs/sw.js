@@ -4394,7 +4394,10 @@ precacheAndRoute([{
   "revision": "3b4fcfcf393eca4d264dca4a4663bc37"
 }, {
   "url": "icon.svg",
-  "revision": "73496e186f808b302a1cfda79ef271da"
+  "revision": "f8f434cae6689024656817b4da6b595e"
+}, {
+  "url": "icon.png",
+  "revision": "9e82aa4807de00249efe4abaf7c8d0de"
 }, {
   "url": "favicon.svg",
   "revision": "7e840862161341271697daa99a40d76b"
@@ -4444,11 +4447,11 @@ precacheAndRoute([{
   "url": "favicon.svg",
   "revision": "7e840862161341271697daa99a40d76b"
 }, {
-  "url": "icon.svg",
-  "revision": "73496e186f808b302a1cfda79ef271da"
+  "url": "icon.png",
+  "revision": "9e82aa4807de00249efe4abaf7c8d0de"
 }, {
   "url": "manifest.webmanifest",
-  "revision": "539befa0a6214c8aabf00700053e8739"
+  "revision": "036e629e3525ce86bd2da08b325fdfeb"
 }], {});
 cleanupOutdatedCaches();
 registerRoute(new NavigationRoute(createHandlerBoundToURL("index.html")));
