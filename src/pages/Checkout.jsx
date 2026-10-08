@@ -5,14 +5,17 @@ import { getCart, cartTotal, clearCart } from '../utils/cart'
 import { storage, formatPrice, uid } from '../utils/storage'
 import { SHOP_INFO } from '../data/products'
 import { saveOrderToDB } from '../utils/supabase'
-import { User, Phone, MapPin, CreditCard, Wallet, AlertCircle, Check } from 'lucide-react'
+import { User, Phone, MapPin, CreditCard, Wallet, AlertCircle, Check, Truck, Zap } from 'lucide-react'
 import { toast } from '../components/Toast'
 
 export default function Checkout() {
   const navigate = useNavigate()
   const items = getCart()
   const subtotal = cartTotal()
-  const shipping = subtotal >= SHOP_INFO.freeShippingFrom ? 0 : SHOP_INFO.shippingCost
+  const [shippingType, setShippingType] = useState('fast')
+  const shipping = items.length === 0 ? 0
+    : subtotal >= SHOP_INFO.freeShippingFrom ? 0
+    : (shippingType === 'fast' ? SHOP_INFO.shippingFast : SHOP_INFO.shippingNormal)
   const total = subtotal + shipping
 
   const savedUser = storage.get('user', {})
@@ -22,7 +25,7 @@ export default function Checkout() {
     address: storage.get('last-address', ''),
     note: '',
   })
-  const [payment, setPayment] = useState('card')
+  const [payment] = useState('card')
   const [submitting, setSubmitting] = useState(false)
   const [errors, setErrors] = useState({})
   const [copied, setCopied] = useState(false)
@@ -66,37 +69,29 @@ export default function Checkout() {
     const order = {
       id: uid().toUpperCase(),
       date: new Date().toISOString(),
-      customer: { ...form },
+      customer: { ...form, shippingType },
       items: items.map(i => ({ id: i.id, title: i.title, price: i.price, qty: i.qty })),
       subtotal, shipping, total,
       payment,
       status: 'pending',
     }
 
-    // ذخیره در localStorage (نسخه محلی)
     const orders = storage.get('orders', [])
     orders.push(order)
     storage.set('orders', orders)
     storage.set('user', { name: form.name, phone: form.phone })
     storage.set('last-address', form.address)
 
-    // ذخیره در Supabase (تیگر DB، خودش به بله پیام می‌ده)
     try {
       const result = await saveOrderToDB(order)
-      if (result.ok) {
-        toast.success('سفارش ثبت شد ✅')
-      } else {
-        console.warn('DB error:', result.error)
-        toast.info('سفارش ذخیره شد، در حال ارسال...')
-      }
+      if (result.ok) toast.success('سفارش ثبت شد ✅')
+      else toast.info('سفارش ذخیره شد')
     } catch (e) {
-      console.error('saveOrderToDB:', e)
+      console.error(e)
     }
 
     clearCart()
-    setTimeout(() => {
-      navigate(`/success/${order.id}`, { replace: true })
-    }, 500)
+    setTimeout(() => navigate(`/success/${order.id}`, { replace: true }), 500)
   }
 
   return (
@@ -104,148 +99,190 @@ export default function Checkout() {
       <Header title="تسویه حساب" back />
       <main className="max-w-lg mx-auto px-4 pb-44 pt-3 fade-up space-y-3">
 
-        <section className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
-          <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
-            <User size={16} className="text-brand" /> اطلاعات گیرنده
+        {/* اطلاعات گیرنده */}
+        <section className="bg-white rounded-2xl p-4 border border-border">
+          <h3 className="font-extrabold text-sm mb-4 flex items-center gap-2 text-ink">
+            <div className="w-7 h-7 rounded-full bg-brand-light flex items-center justify-center">
+              <User size={14} className="text-brand" />
+            </div>
+            اطلاعات گیرنده
           </h3>
 
           <div className="space-y-3">
             <div>
-              <label className="text-xs text-slate-500 block mb-1">نام و نام خانوادگی</label>
-              <input
-                value={form.name}
-                onChange={e => set('name', e.target.value)}
+              <label className="text-[10px] font-bold text-muted block mb-1.5">نام و نام خانوادگی</label>
+              <input value={form.name} onChange={e => set('name', e.target.value)}
                 placeholder="مثلاً: علی رضایی"
-                className={`w-full bg-slate-50 dark:bg-slate-900 border rounded-xl px-3 py-2.5 text-sm outline-none transition ${
-                  errors.name ? 'border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-brand'
-                }`}
-              />
-              {errors.name && <p className="text-[10px] text-red-500 mt-1">{errors.name}</p>}
+                className={`w-full bg-cream border rounded-2xl px-3.5 py-3 text-sm outline-none transition ${
+                  errors.name ? 'border-danger' : 'border-border focus:border-brand'
+                }`} />
+              {errors.name && <p className="text-[10px] text-danger mt-1">{errors.name}</p>}
             </div>
 
             <div>
-              <label className="text-xs text-slate-500 block mb-1">شماره موبایل</label>
-              <input
-                value={form.phone}
-                onChange={e => set('phone', e.target.value)}
-                placeholder="09123456789"
-                inputMode="tel"
-                className={`w-full bg-slate-50 dark:bg-slate-900 border rounded-xl px-3 py-2.5 text-sm outline-none transition ${
-                  errors.phone ? 'border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-brand'
+              <label className="text-[10px] font-bold text-muted block mb-1.5">شماره موبایل</label>
+              <input value={form.phone} onChange={e => set('phone', e.target.value)}
+                placeholder="09123456789" inputMode="tel"
+                className={`w-full bg-cream border rounded-2xl px-3.5 py-3 text-sm outline-none transition ${
+                  errors.phone ? 'border-danger' : 'border-border focus:border-brand'
                 }`}
-                style={{ direction: 'ltr', textAlign: 'right' }}
-              />
-              {errors.phone && <p className="text-[10px] text-red-500 mt-1">{errors.phone}</p>}
+                style={{ direction: 'ltr', textAlign: 'right' }} />
+              {errors.phone && <p className="text-[10px] text-danger mt-1">{errors.phone}</p>}
             </div>
 
             <div>
-              <label className="text-xs text-slate-500 block mb-1">آدرس پستی کامل</label>
-              <textarea
-                value={form.address}
-                onChange={e => set('address', e.target.value)}
-                placeholder="استان، شهر، خیابان، کوچه، پلاک، واحد"
-                rows={3}
-                className={`w-full bg-slate-50 dark:bg-slate-900 border rounded-xl px-3 py-2.5 text-sm outline-none transition resize-none ${
-                  errors.address ? 'border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-brand'
-                }`}
-              />
-              {errors.address && <p className="text-[10px] text-red-500 mt-1">{errors.address}</p>}
+              <label className="text-[10px] font-bold text-muted block mb-1.5">آدرس پستی کامل</label>
+              <textarea value={form.address} onChange={e => set('address', e.target.value)}
+                placeholder="استان، شهر، خیابان، کوچه، پلاک، واحد" rows={3}
+                className={`w-full bg-cream border rounded-2xl px-3.5 py-3 text-sm outline-none transition resize-none ${
+                  errors.address ? 'border-danger' : 'border-border focus:border-brand'
+                }`} />
+              {errors.address && <p className="text-[10px] text-danger mt-1">{errors.address}</p>}
             </div>
 
             <div>
-              <label className="text-xs text-slate-500 block mb-1">یادداشت (اختیاری)</label>
-              <input
-                value={form.note}
-                onChange={e => set('note', e.target.value)}
+              <label className="text-[10px] font-bold text-muted block mb-1.5">یادداشت (اختیاری)</label>
+              <input value={form.note} onChange={e => set('note', e.target.value)}
                 placeholder="مثلاً: سریع بفرستید"
-                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-brand transition"
-              />
+                className="w-full bg-cream border border-border rounded-2xl px-3.5 py-3 text-sm outline-none focus:border-brand transition" />
             </div>
           </div>
         </section>
 
-        <section className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
-          <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
-            <Wallet size={16} className="text-brand" /> روش پرداخت
+        {/* روش ارسال */}
+        <section className="bg-white rounded-2xl p-4 border border-border">
+          <h3 className="font-extrabold text-sm mb-3 flex items-center gap-2 text-ink">
+            <div className="w-7 h-7 rounded-full bg-brand-light flex items-center justify-center">
+              <Truck size={14} className="text-brand" />
+            </div>
+            روش ارسال
           </h3>
 
-          <button
-            onClick={() => setPayment('card')}
-            className={`w-full flex items-center gap-3 p-3 rounded-xl border transition text-right ${
-              payment === 'card'
-                ? 'border-brand bg-brand/5'
-                : 'border-slate-200 dark:border-slate-700'
-            }`}
-          >
-            <CreditCard size={18} className={payment === 'card' ? 'text-brand' : ''} />
-            <div className="flex-1">
-              <div className="text-sm font-medium">کارت به کارت</div>
-              <div className="text-[10px] text-slate-500">پرداخت به شماره کارت فروشگاه</div>
-            </div>
-            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-              payment === 'card' ? 'border-brand' : 'border-slate-300 dark:border-slate-600'
-            }`}>
-              {payment === 'card' && <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>}
-            </div>
-          </button>
+          <div className="space-y-2">
+            <button type="button" onClick={() => setShippingType('fast')}
+              className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition text-right ${
+                shippingType === 'fast' ? 'border-brand bg-brand-light/40' : 'border-border'
+              }`}>
+              <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                shippingType === 'fast' ? 'bg-brand text-white' : 'bg-cream text-muted'
+              }`}>
+                <Zap size={16} />
+              </div>
+              <div className="flex-1">
+                <div className="text-xs font-extrabold text-ink">ارسال سریع (۲-۳ روز کاری)</div>
+                <div className="text-[10px] text-muted mt-0.5">
+                  {formatPrice(SHOP_INFO.shippingFast)}
+                </div>
+              </div>
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                shippingType === 'fast' ? 'border-brand' : 'border-border'
+              }`}>
+                {shippingType === 'fast' && <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>}
+              </div>
+            </button>
 
-          {payment === 'card' && (
-            <div className="mt-3 bg-gradient-to-l from-brand to-brand-dark text-white rounded-2xl p-4">
-              <div className="text-[10px] opacity-80 mb-2">شماره کارت</div>
+            <button type="button" onClick={() => setShippingType('normal')}
+              className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition text-right ${
+                shippingType === 'normal' ? 'border-brand bg-brand-light/40' : 'border-border'
+              }`}>
+              <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                shippingType === 'normal' ? 'bg-brand text-white' : 'bg-cream text-muted'
+              }`}>
+                <Truck size={16} />
+              </div>
+              <div className="flex-1">
+                <div className="text-xs font-extrabold text-ink">ارسال عادی (۳-۵ روز کاری)</div>
+                <div className="text-[10px] text-muted mt-0.5">
+                  {formatPrice(SHOP_INFO.shippingNormal)}
+                </div>
+              </div>
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                shippingType === 'normal' ? 'border-brand' : 'border-border'
+              }`}>
+                {shippingType === 'normal' && <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>}
+              </div>
+            </button>
+          </div>
+        </section>
+
+        {/* روش پرداخت */}
+        <section className="bg-white rounded-2xl p-4 border border-border">
+          <h3 className="font-extrabold text-sm mb-3 flex items-center gap-2 text-ink">
+            <div className="w-7 h-7 rounded-full bg-brand-light flex items-center justify-center">
+              <Wallet size={14} className="text-brand" />
+            </div>
+            روش پرداخت
+          </h3>
+
+          <div className="rounded-2xl p-4 text-white relative overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
+            <div className="absolute -top-6 -left-6 w-20 h-20 rounded-full bg-white/10"></div>
+            <div className="relative">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <CreditCard size={16} />
+                  <span className="text-[11px] font-bold">کارت به کارت</span>
+                </div>
+                <div className="w-8 h-5 rounded bg-accent"></div>
+              </div>
+
+              <div className="text-[10px] opacity-80 mb-1">شماره کارت</div>
               <div className="flex items-center justify-between gap-2 mb-3">
-                <span className="font-mono text-base font-bold tracking-wider" style={{ direction: 'ltr' }}>
+                <span className="font-mono text-sm font-extrabold tracking-wider" style={{ direction: 'ltr' }}>
                   {SHOP_INFO.card.number.replace(/(\d{4})/g, '$1 ').trim()}
                 </span>
-                <button
-                  onClick={copyCard}
-                  className="text-[10px] bg-white/20 px-2 py-1 rounded-full active:scale-95 flex items-center gap-1"
-                >
+                <button type="button" onClick={copyCard}
+                  className="text-[10px] bg-white/20 px-2.5 py-1 rounded-full active:scale-95 flex items-center gap-1">
                   {copied ? <><Check size={10} /> کپی شد</> : 'کپی'}
                 </button>
               </div>
-              <div className="text-[11px] opacity-90">به نام {SHOP_INFO.card.holder}</div>
-              <div className="text-[11px] opacity-90">{SHOP_INFO.card.bank}</div>
+              <div className="text-[10px] opacity-90">به نام {SHOP_INFO.card.holder}</div>
+              <div className="text-[10px] opacity-90">{SHOP_INFO.card.bank}</div>
+
               <div className="mt-3 pt-3 border-t border-white/20 flex items-start gap-2">
-                <AlertCircle size={14} className="flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] leading-5 opacity-90">
-                  پس از پرداخت، رسید را به پشتیبانی تلگرام <b>@{SHOP_INFO.telegram}</b> ارسال کنید.
+                <AlertCircle size={13} className="flex-shrink-0 mt-0.5" />
+                <p className="text-[10px] leading-5 opacity-95">
+                  پس از ثبت سفارش، مبلغ را واریز کرده و رسید را در تلگرام <b>@{SHOP_INFO.telegram}</b> بفرستید.
                 </p>
               </div>
             </div>
-          )}
+          </div>
         </section>
 
-        <section className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
-          <h3 className="font-bold text-sm mb-3">خلاصه سفارش</h3>
+        {/* خلاصه سفارش */}
+        <section className="bg-white rounded-2xl p-4 border border-border">
+          <h3 className="font-extrabold text-sm mb-3 text-ink">📦 خلاصه سفارش</h3>
           <div className="space-y-2 text-xs mb-3">
             {items.map(it => (
               <div key={it.id} className="flex justify-between">
-                <span className="truncate ml-2">{it.title} × {it.qty}</span>
-                <span className="flex-shrink-0">{formatPrice(it.price * it.qty)}</span>
+                <span className="truncate ml-2 text-ink">{it.title} × {it.qty}</span>
+                <span className="flex-shrink-0 text-muted">{formatPrice(it.price * it.qty)}</span>
               </div>
             ))}
           </div>
-          <div className="pt-3 border-t border-dashed border-slate-300 dark:border-slate-700 space-y-1.5 text-xs">
-            <div className="flex justify-between"><span className="text-slate-500">جمع کالاها</span><span>{formatPrice(subtotal)}</span></div>
+          <div className="pt-3 border-t border-dashed border-border space-y-2 text-xs">
             <div className="flex justify-between">
-              <span className="text-slate-500">ارسال</span>
-              <span className={shipping === 0 ? 'text-green-500' : ''}>{shipping === 0 ? 'رایگان' : formatPrice(shipping)}</span>
+              <span className="text-muted">جمع کالاها</span>
+              <span className="text-ink font-medium">{formatPrice(subtotal)}</span>
             </div>
-            <div className="flex justify-between font-bold text-sm pt-2 border-t border-slate-200 dark:border-slate-700 mt-2">
-              <span>قابل پرداخت</span>
+            <div className="flex justify-between">
+              <span className="text-muted">هزینه ارسال</span>
+              <span className={shipping === 0 ? 'text-brand font-bold' : 'text-ink font-medium'}>
+                {shipping === 0 ? '🎉 رایگان' : formatPrice(shipping)}
+              </span>
+            </div>
+            <div className="flex justify-between font-extrabold text-sm pt-3 border-t border-border">
+              <span className="text-ink">قابل پرداخت</span>
               <span className="text-brand">{formatPrice(total)}</span>
             </div>
           </div>
         </section>
       </main>
 
-      <div className="fixed bottom-16 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 p-3 z-40">
+      <div className="fixed bottom-20 left-0 right-0 z-50 px-4">
         <div className="max-w-lg mx-auto">
-          <button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="w-full bg-brand text-white font-bold py-3 rounded-xl active:scale-[0.98] transition disabled:opacity-60"
-          >
+          <button type="button" onClick={handleSubmit} disabled={submitting}
+            className="w-full bg-brand text-white font-extrabold py-4 rounded-2xl active:scale-[0.98] transition disabled:opacity-60 shadow-[0_8px_24px_rgba(46,125,50,0.35)]">
             {submitting ? 'در حال ثبت...' : `ثبت سفارش — ${formatPrice(total)}`}
           </button>
         </div>
