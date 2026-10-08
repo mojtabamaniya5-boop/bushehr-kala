@@ -6,13 +6,17 @@ export default {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#DC2626',
-          dark: '#991B1B',
-          light: '#F87171',
+          DEFAULT: '#2E7D32',
+          dark: '#185C28',
+          light: '#E8F5E9',
         },
-      },
-      fontFamily: {
-        sans: ['Vazirmatn', 'sans-serif'],
+        accent: '#F8C02D',
+        cream: '#FFF8E8',
+        brown: '#6B4E37',
+        ink: '#243024',
+        muted: '#777777',
+        border: '#E9E5D8',
+        danger: '#E53935',
       },
     },
   },
