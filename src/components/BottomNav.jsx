@@ -1,14 +1,14 @@
 import { NavLink, useLocation } from 'react-router-dom'
-import { Home, Search, ShoppingCart, Heart, User } from 'lucide-react'
+import { Home, ShoppingCart, Heart, User, Package } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cartCount } from '../utils/cart'
 
 const items = [
-  { path: '/profile',   label: 'پروفایل',    icon: User },
-  { path: '/favorites', label: 'علاقه‌مندی‌ها', icon: Heart },
-  { path: '/cart',      label: 'سبد خرید',   icon: ShoppingCart, badge: true, big: true },
-  { path: '/search',    label: 'جستجو',      icon: Search },
-  { path: '/',          label: 'خانه',        icon: Home, end: true },
+  { path: '/',          label: 'خانه',           icon: Home, end: true },
+  { path: '/favorites', label: 'علاقه‌مندی‌ها',    icon: Heart },
+  { path: '/cart',      label: 'سبد خرید',        icon: ShoppingCart, badge: true, big: true },
+  { path: '/orders',    label: 'پیگیری سفارشات', icon: Package },
+  { path: '/profile',   label: 'پروفایل',         icon: User },
 ]
 
 export default function BottomNav() {
@@ -37,7 +37,6 @@ export default function BottomNav() {
                 return (
                   <NavLink key={path} to={path}
                     className="relative flex-1 flex flex-col items-center justify-center h-full">
-                    {/* دایره سبز — کمی بیرون از نوار */}
                     <div
                       className="absolute rounded-full bg-brand flex items-center justify-center"
                       style={{
@@ -66,7 +65,7 @@ export default function BottomNav() {
                     className={active ? 'text-brand' : 'text-muted'}
                     strokeWidth={active ? 2.6 : 2.2}
                   />
-                  <span className={`text-[10px] font-bold ${active ? 'text-brand' : 'text-muted'}`}>
+                  <span className={`text-[9px] font-bold ${active ? 'text-brand' : 'text-muted'}`}>
                     {label}
                   </span>
                 </NavLink>
