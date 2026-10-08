@@ -42,7 +42,7 @@ export default function BannerSlider() {
             <div className="absolute inset-0"
               style={{ background: 'linear-gradient(to left, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 45%, transparent 75%)' }} />
 
-            <div className="absolute inset-0 p-5 flex flex-col justify-center items-end text-right text-white">
+            <div className="absolute inset-0 p-5 flex flex-col justify-center items-start text-right text-white">
               <p className="text-[11px] font-bold opacity-90 mb-1 drop-shadow">{b.subtitle}</p>
               <h2 className="text-2xl font-extrabold mb-3 leading-tight drop-shadow-md">{b.title}</h2>
               <Link to={b.link}
