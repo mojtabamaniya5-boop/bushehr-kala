@@ -27,8 +27,8 @@ export const storage = {
 }
 
 // فرمت قیمت
-export const formatPrice = (n) =>
-  new Intl.NumberFormat('fa-IR').format(n) + ' تومان'
+export const formatPrice = (n) => { if (n === null || n === undefined || isNaN(n)) return '۰ تومان';
+  return new Intl.NumberFormat('fa-IR').format(n) + ' تومان'; }
 
 // تاریخ شمسی ساده
 export const formatDate = (iso) => {

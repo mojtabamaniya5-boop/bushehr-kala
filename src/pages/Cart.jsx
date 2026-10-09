@@ -17,7 +17,7 @@ export default function Cart() {
   }, [])
 
   const total = cartTotal()
-  const shipping = total >= SHOP_INFO.freeShippingFrom ? 0 : (items.length ? SHOP_INFO.shippingCost : 0)
+  const shipping = total >= SHOP_INFO.freeShippingFrom ? 0 : (items.length ? SHOP_INFO.shippingFast : 0)
 
   if (items.length === 0) {
     return (
