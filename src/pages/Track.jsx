@@ -4,8 +4,9 @@ import Header from '../components/Header'
 import TrackStepper from '../components/TrackStepper'
 import { supabase } from '../utils/supabase'
 import { formatPrice, formatDate } from '../utils/storage'
-import { Package, Search, Loader2, Copy, Check } from 'lucide-react'
+import { Package, Search, Loader2, Copy, Check, CreditCard, ShoppingBag, Phone, RotateCcw } from 'lucide-react'
 import { toast } from '../components/Toast'
+import { SHOP_INFO } from '../data/products'
 
 const STATUS_LABEL = {
   pending: 'در انتظار پرداخت',
@@ -37,14 +38,11 @@ export default function Track() {
     setLoading(true)
     setSearched(true)
 
-    // ۱) Supabase
     try {
       const { data, error } = await supabase
-        .from('orders')
-        .select('*')
+        .from('orders').select('*')
         .or(`code.eq.${q},id.eq.${q}`)
-        .limit(1)
-        .maybeSingle()
+        .limit(1).maybeSingle()
 
       if (!error && data) {
         setOrder({
@@ -62,11 +60,8 @@ export default function Track() {
         setLoading(false)
         return
       }
-    } catch (e) {
-      console.warn('DB track error:', e)
-    }
+    } catch (e) { console.warn(e) }
 
-    // ۲) localStorage
     const lsOrders = JSON.parse(localStorage.getItem('bk-orders') || '[]')
     const found = lsOrders.find(o =>
       o.id === q || o.id?.toUpperCase() === q ||
@@ -102,12 +97,13 @@ export default function Track() {
     } catch {}
   }
 
+  const isPending = order?.status === 'pending'
+
   return (
     <>
       <Header title="رهگیری سفارش" back />
       <main className="max-w-lg mx-auto px-4 pb-32 pt-5 fade-up">
 
-        {/* فرم جستجو */}
         <div className="bg-white rounded-2xl p-4 border border-border mb-5">
           <h2 className="font-extrabold text-sm text-brand mb-3 flex items-center gap-2">
             <Search size={16} />
@@ -134,14 +130,12 @@ export default function Track() {
           </p>
         </div>
 
-        {/* لودینگ */}
         {loading && (
           <div className="flex justify-center py-10">
             <Loader2 className="animate-spin text-brand" size={28} />
           </div>
         )}
 
-        {/* نتیجه */}
         {!loading && searched && !order && (
           <div className="text-center py-10">
             <div className="w-20 h-20 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-4">
@@ -158,7 +152,6 @@ export default function Track() {
         {!loading && order && (
           <div className="space-y-4">
 
-            {/* کد سفارش */}
             <div className="bg-white rounded-2xl p-4 border border-border text-center">
               <p className="text-[10px] text-muted mb-1">کد پیگیری</p>
               <div className="flex items-center justify-center gap-2">
@@ -172,7 +165,6 @@ export default function Track() {
               <p className="text-[10px] text-muted mt-2">{formatDate(order.date)}</p>
             </div>
 
-            {/* استپر */}
             <div className="bg-white rounded-2xl p-5 border border-border">
               <h3 className="font-extrabold text-sm text-ink mb-4 text-center">وضعیت سفارش</h3>
               <TrackStepper status={order.status} />
@@ -181,7 +173,29 @@ export default function Track() {
               </p>
             </div>
 
-            {/* اقلام */}
+            {/* ═══ CTA اصلی ═══ */}
+            {isPending && (
+              <div className="rounded-3xl p-5 text-white relative overflow-hidden"
+                style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
+                <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-white/10"></div>
+                <div className="relative">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
+                      <CreditCard size={22} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-bold mb-0.5">پرداخت این سفارش</p>
+                      <p className="text-[10px] opacity-80">هنوز تکمیل نشده</p>
+                    </div>
+                  </div>
+                  <button onClick={() => navigate(`/pay/${order.id}`)}
+                    className="w-full bg-white text-brand font-extrabold py-3 rounded-2xl active:scale-[0.98] transition text-sm">
+                    ادامه پرداخت
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="bg-white rounded-2xl p-4 border border-border">
               <h3 className="font-extrabold text-sm text-ink mb-3">📦 اقلام سفارش</h3>
               <div className="space-y-2">
@@ -210,17 +224,30 @@ export default function Track() {
               </div>
             </div>
 
-            {/* آدرس */}
             <div className="bg-white rounded-2xl p-4 border border-border">
               <h3 className="font-extrabold text-sm text-ink mb-2">📍 آدرس تحویل</h3>
               <p className="text-xs text-muted leading-6">{order.address}</p>
             </div>
 
-            {/* تماس */}
-            <Link to="/contact"
-              className="block w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl text-center active:scale-[0.98] transition">
-              سؤال داری؟ با ما تماس بگیر
-            </Link>
+            {/* ═══ CTA ثانویه ═══ */}
+            <div className="grid grid-cols-2 gap-2">
+              <Link to="/"
+                className="flex items-center justify-center gap-1.5 bg-white border border-border text-ink font-bold py-3 rounded-2xl active:scale-[0.98] text-xs">
+                <ShoppingBag size={14} />
+                خرید بیشتر
+              </Link>
+              <Link to="/contact"
+                className="flex items-center justify-center gap-1.5 bg-brand text-white font-bold py-3 rounded-2xl active:scale-[0.98] text-xs">
+                <Phone size={14} />
+                تماس با ما
+              </Link>
+            </div>
+
+            <button onClick={() => { setOrder(null); setCode(''); setSearched(false) }}
+              className="w-full flex items-center justify-center gap-1.5 text-[11px] font-bold text-muted py-3">
+              <RotateCcw size={12} />
+              جستجوی سفارش دیگر
+            </button>
           </div>
         )}
       </main>

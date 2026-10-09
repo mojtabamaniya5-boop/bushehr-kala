@@ -55,11 +55,11 @@ export default function MyOrders() {
 
     // ۱) حذف از localStorage
     const ls = JSON.parse(localStorage.getItem('bk-orders') || '[]')
-    const newLs = ls.filter(o => o.id !== order.id)
+    const newLs = ls.filter(o => String(o.id).toUpperCase() !== String(order.id).toUpperCase())
     localStorage.setItem('bk-orders', JSON.stringify(newLs))
 
     // ۲) حذف از Supabase (اگه pending باشه — سفارش‌های paid رو حذف نکن)
-    if (order.status === 'pending' && order.source === 'db') {
+    if (order.status === 'pending') {
       try {
         await supabase.from('orders').delete().eq('code', order.id)
         await supabase.from('orders').delete().eq('id', order.id)
