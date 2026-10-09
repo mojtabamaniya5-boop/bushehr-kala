@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import TrackStepper from '../components/TrackStepper'
-import { formatPrice, formatDate } from '../utils/storage'
+import ConfirmModal from '../components/ConfirmModal'
+import { formatPrice, formatDate, storage } from '../utils/storage'
 import { getCurrentUser } from '../utils/auth'
 import { fetchUserOrders } from '../utils/orders'
-import { Package, Loader2, ChevronLeft, CreditCard, Copy, Check } from 'lucide-react'
+import { supabase } from '../utils/supabase'
+import { Package, Loader2, ChevronLeft, CreditCard, Copy, Check, Trash2 } from 'lucide-react'
 import { toast } from '../components/Toast'
 import { SHOP_INFO } from '../data/products'
 
@@ -24,6 +26,7 @@ export default function MyOrders() {
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState(null)
   const [copiedCard, setCopiedCard] = useState(null)
+  const [deleteTarget, setDeleteTarget] = useState(null)
 
   useEffect(() => {
     if (!user) { navigate('/login', { replace: true }); return }
@@ -44,6 +47,28 @@ export default function MyOrders() {
       toast.success('شماره کارت کپی شد')
       setTimeout(() => setCopiedCard(null), 1500)
     } catch {}
+  }
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return
+    const order = deleteTarget
+
+    // ۱) حذف از localStorage
+    const ls = JSON.parse(localStorage.getItem('bk-orders') || '[]')
+    const newLs = ls.filter(o => o.id !== order.id)
+    localStorage.setItem('bk-orders', JSON.stringify(newLs))
+
+    // ۲) حذف از Supabase (اگه pending باشه — سفارش‌های paid رو حذف نکن)
+    if (order.status === 'pending' && order.source === 'db') {
+      try {
+        await supabase.from('orders').delete().eq('code', order.id)
+        await supabase.from('orders').delete().eq('id', order.id)
+      } catch (e) { console.warn('DB delete:', e) }
+    }
+
+    toast.success('سفارش حذف شد')
+    setDeleteTarget(null)
+    load()
   }
 
   if (!user) return null
@@ -86,17 +111,29 @@ export default function MyOrders() {
           const st = STATUS_LABEL[o.status] || STATUS_LABEL.pending
           const isOpen = expanded === o.id
           const isPending = o.status === 'pending'
+          const canDelete = o.status === 'pending' || o.status === 'canceled'
 
           return (
             <div key={o.id} className="bg-white rounded-2xl border border-border overflow-hidden">
-              <button onClick={() => setExpanded(isOpen ? null : o.id)}
-                className="w-full p-4 text-right active:bg-cream/50 transition">
-                <div className="flex items-center justify-between mb-3">
+
+              {/* هدر سفارش با دکمه حذف */}
+              <div className="flex items-center justify-between px-4 pt-4 pb-2">
+                <div className="flex items-center gap-2">
                   <span className="font-mono text-xs font-extrabold text-brand">#{String(o.id).slice(-6)}</span>
                   <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${st.color}`}>
                     {st.label}
                   </span>
                 </div>
+                {canDelete && (
+                  <button onClick={() => setDeleteTarget(o)}
+                    className="w-8 h-8 rounded-full bg-danger/10 text-danger flex items-center justify-center active:scale-90 transition">
+                    <Trash2 size={14} />
+                  </button>
+                )}
+              </div>
+
+              <button onClick={() => setExpanded(isOpen ? null : o.id)}
+                className="w-full px-4 pb-4 text-right active:bg-cream/50 transition">
 
                 <TrackStepper status={o.status} compact />
 
@@ -108,8 +145,6 @@ export default function MyOrders() {
 
               {isOpen && (
                 <div className="border-t border-border p-4 bg-cream/30 space-y-3">
-
-                  {/* اقلام */}
                   <div>
                     <h4 className="text-[11px] font-extrabold text-ink mb-2">📦 اقلام سفارش</h4>
                     <div className="space-y-1.5">
@@ -122,7 +157,6 @@ export default function MyOrders() {
                     </div>
                   </div>
 
-                  {/* پرداخت برای pending */}
                   {isPending && (
                     <div className="rounded-2xl p-4 text-white relative overflow-hidden"
                       style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
@@ -161,6 +195,18 @@ export default function MyOrders() {
           )
         })}
       </main>
+
+      {/* مودال حذف */}
+      <ConfirmModal
+        open={!!deleteTarget}
+        title="حذف سفارش"
+        message={deleteTarget ? `سفارش #${String(deleteTarget.id).slice(-6)} حذف بشه؟ این کار قابل بازگشت نیست.` : ''}
+        confirmText="بله، حذف کن"
+        cancelText="انصراف"
+        danger
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </>
   )
 }

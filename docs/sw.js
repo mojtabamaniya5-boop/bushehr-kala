@@ -4388,7 +4388,7 @@ precacheAndRoute([{
   "revision": "402b66900e731ca748771b6fc5e7a068"
 }, {
   "url": "index.html",
-  "revision": "876737db4df4a4c6efa7916a68bf631b"
+  "revision": "063bc19096b77ff7b896d526baf3b9e5"
 }, {
   "url": "icons.svg",
   "revision": "3b4fcfcf393eca4d264dca4a4663bc37"
@@ -4405,10 +4405,10 @@ precacheAndRoute([{
   "url": "enamad-logo.png",
   "revision": "e6eacdb9fbff7e4fccc0ba8a47ae655b"
 }, {
-  "url": "assets/index-Dud_dNlI.css",
+  "url": "assets/index-Cu4WaaTq.css",
   "revision": null
 }, {
-  "url": "assets/index-5Z7b0Anu.js",
+  "url": "assets/index-B6M7Uphk.js",
   "revision": null
 }, {
   "url": "assets/categories/vegetables.png",

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
+import ConfirmModal from '../components/ConfirmModal'
 import { getCart, updateQty, removeFromCart, cartTotal, clearCart } from '../utils/cart'
 import { formatPrice, storage } from '../utils/storage'
 import { SHOP_INFO, calculateShipping } from '../data/products'
@@ -10,6 +11,8 @@ import { toast } from '../components/Toast'
 export default function Cart() {
   const [items, setItems] = useState(getCart())
   const navigate = useNavigate()
+  const [clearOpen, setClearOpen] = useState(false)
+  const [removeTarget, setRemoveTarget] = useState(null)
 
   useEffect(() => {
     const update = () => setItems(getCart())
@@ -24,17 +27,17 @@ export default function Cart() {
   const shipping = items.length ? shipInfo.cost : 0
   const isBushehr = shipInfo.sameDay
 
-  const handleClearAll = () => {
-    if (confirm('مطمئنی میخوای کل سبد خرید رو خالی کنی؟')) {
-      clearCart()
-      toast.success('سبد خرید خالی شد')
-    }
+  const confirmClear = () => {
+    clearCart()
+    toast.success('سبد خرید خالی شد')
+    setClearOpen(false)
   }
 
-  const handleRemoveOne = (item) => {
-    if (confirm(`«${item.title}» از سبد حذف بشه؟`)) {
-      removeFromCart(item.id)
+  const confirmRemove = () => {
+    if (removeTarget) {
+      removeFromCart(removeTarget.id)
       toast.success('حذف شد')
+      setRemoveTarget(null)
     }
   }
 
@@ -61,7 +64,6 @@ export default function Cart() {
       <Header title="سبد خرید" />
       <main className="max-w-lg mx-auto px-4 pb-44 pt-3 fade-up">
 
-        {/* بنر بوشهر */}
         {isBushehr && (
           <div className="bg-accent/15 border border-accent/40 rounded-2xl p-3 mb-3 flex items-center gap-2 fade-up">
             <Zap size={18} className="text-ink flex-shrink-0" />
@@ -71,12 +73,11 @@ export default function Cart() {
           </div>
         )}
 
-        {/* هدر سبد با دکمه حذف همه */}
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs text-muted">
             <span className="font-extrabold text-brand text-sm">{items.length}</span> محصول در سبد
           </span>
-          <button onClick={handleClearAll}
+          <button onClick={() => setClearOpen(true)}
             className="flex items-center gap-1.5 text-[11px] font-bold text-danger bg-danger/10 px-3 py-1.5 rounded-full active:scale-95 transition">
             <Trash2 size={13} />
             خالی کردن سبد
@@ -91,7 +92,7 @@ export default function Cart() {
                 <h3 className="text-xs font-medium line-clamp-2 mb-1.5">{item.title}</h3>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-bold text-brand">{formatPrice(item.price)}</span>
-                  <button onClick={() => handleRemoveOne(item)}
+                  <button onClick={() => setRemoveTarget(item)}
                     className="p-1.5 rounded-lg text-danger bg-danger/10 active:scale-90 transition">
                     <Trash2 size={14} />
                   </button>
@@ -135,6 +136,29 @@ export default function Cart() {
           </button>
         </div>
       </div>
+
+      {/* مودال‌ها */}
+      <ConfirmModal
+        open={clearOpen}
+        title="خالی کردن سبد"
+        message="مطمئنی میخوای کل سبد خرید رو خالی کنی؟ این کار قابل بازگشت نیست."
+        confirmText="بله، خالی کن"
+        cancelText="انصراف"
+        danger
+        onConfirm={confirmClear}
+        onCancel={() => setClearOpen(false)}
+      />
+
+      <ConfirmModal
+        open={!!removeTarget}
+        title="حذف از سبد"
+        message={removeTarget ? `«${removeTarget.title}» از سبد حذف بشه؟` : ''}
+        confirmText="بله، حذف کن"
+        cancelText="انصراف"
+        danger
+        onConfirm={confirmRemove}
+        onCancel={() => setRemoveTarget(null)}
+      />
     </>
   )
 }
