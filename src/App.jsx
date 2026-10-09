@@ -22,6 +22,7 @@ import Terms from './pages/Terms'
 import Contact from './pages/Contact'
 import Login from './pages/Login'
 import MyOrders from './pages/MyOrders'
+import Track from './pages/Track'
 
 export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false)
@@ -63,6 +64,8 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/my-orders" element={<MyOrders />} />
+        <Route path="/track" element={<Track />} />
+        <Route path="/track/:orderId" element={<Track />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Home />} />
       </Routes>

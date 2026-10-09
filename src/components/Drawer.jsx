@@ -13,6 +13,7 @@ const mainMenu = [
 ]
 
 const pagesMenu = [
+  { path: '/track',   label: 'رهگیری سفارش',   icon: Package,  emoji: '🔍' },
   { path: '/about',   label: 'درباره ما',        icon: Info,     emoji: '🫙' },
   { path: '/terms',   label: 'قوانین و مقررات',  icon: FileText, emoji: '📜' },
   { path: '/contact', label: 'تماس با ما',       icon: Phone,    emoji: '📞' },

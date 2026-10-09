@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
+import TrackStepper from '../components/TrackStepper'
 import { formatPrice, formatDate } from '../utils/storage'
 import { getCurrentUser } from '../utils/auth'
 import { supabase } from '../utils/supabase'
-import { Package, ShoppingBag, Loader2 } from 'lucide-react'
+import { Package, Loader2, ChevronLeft } from 'lucide-react'
 
-const STATUS = {
-  pending:  { label: 'در انتظار پرداخت', color: 'bg-accent/20 text-ink' },
-  paid:     { label: 'پرداخت شده',       color: 'bg-brand/15 text-brand' },
-  sent:     { label: 'ارسال شده',         color: 'bg-blue-500/15 text-blue-600' },
-  done:     { label: 'تحویل داده شده',   color: 'bg-muted/20 text-muted' },
-  canceled: { label: 'لغو شده',          color: 'bg-danger/15 text-danger' },
+const STATUS_LABEL = {
+  pending: { label: 'در انتظار پرداخت', color: 'bg-accent/20 text-ink' },
+  paid: { label: 'پرداخت شده', color: 'bg-brand/15 text-brand' },
+  sent: { label: 'ارسال شده', color: 'bg-blue-500/15 text-blue-600' },
+  done: { label: 'تحویل داده شده', color: 'bg-muted/20 text-muted' },
+  canceled: { label: 'لغو شده', color: 'bg-danger/15 text-danger' },
 }
 
 export default function MyOrders() {
@@ -19,71 +20,50 @@ export default function MyOrders() {
   const navigate = useNavigate()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
-  const [localOrders, setLocalOrders] = useState([])
+  const [expanded, setExpanded] = useState(null)
 
   useEffect(() => {
-    if (!user) {
-      navigate('/login', { replace: true })
-      return
-    }
+    if (!user) { navigate('/login', { replace: true }); return }
     load()
   }, [user, navigate])
 
   const load = async () => {
     setLoading(true)
-
-    // ۱) از Supabase
     let dbOrders = []
     try {
       const { data, error } = await supabase
-        .from('orders')
-        .select('*')
+        .from('orders').select('*')
         .eq('customer_phone', user.phone)
         .order('created_at', { ascending: false })
-
       if (!error && data) {
         dbOrders = data.map(o => ({
           id: o.code || o.id,
           date: o.created_at,
-          total: o.total,
-          status: o.status,
-          items: o.items || [],
+          total: o.total, subtotal: o.subtotal, shipping: o.shipping,
+          status: o.status, items: o.items || [],
           source: 'db',
         }))
       }
-    } catch (e) {
-      console.warn('DB orders error:', e)
-    }
+    } catch (e) { console.warn(e) }
 
-    // ۲) از localStorage
     const lsOrders = (JSON.parse(localStorage.getItem('bk-orders') || '[]'))
       .filter(o => o.customer?.phone === user.phone)
       .map(o => ({ ...o, source: 'local' }))
 
-    setLocalOrders(lsOrders)
-    setOrders(dbOrders)
+    const all = [...dbOrders, ...lsOrders.filter(lo => !dbOrders.find(o => o.id === lo.id))]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+
+    setOrders(all)
     setLoading(false)
   }
-
-  const allOrders = [
-    ...orders,
-    ...localOrders.filter(lo => !orders.find(o => o.id === lo.id)),
-  ].sort((a, b) => new Date(b.date) - new Date(a.date))
 
   if (!user) return null
 
   if (loading) {
-    return (
-      <>
-        <Header title="سفارش‌های من" back />
-        <div className="flex items-center justify-center pt-32">
-          <Loader2 className="animate-spin text-brand" size={32} />
-        </div>
-      </>
-    )
+    return (<><Header title="سفارش‌های من" back /><div className="flex justify-center pt-32"><Loader2 className="animate-spin text-brand" size={32} /></div></>)
   }
 
-  if (allOrders.length === 0) {
+  if (orders.length === 0) {
     return (
       <>
         <Header title="سفارش‌های من" back />
@@ -93,8 +73,7 @@ export default function MyOrders() {
           </div>
           <p className="font-extrabold text-base text-ink mb-1">هنوز سفارشی نداری</p>
           <p className="text-xs text-muted mb-6">اولین سفارشت رو ثبت کن</p>
-          <Link to="/"
-            className="inline-block bg-brand text-white text-sm font-extrabold px-6 py-3 rounded-full shadow-md active:scale-95 transition">
+          <Link to="/" className="inline-block bg-brand text-white text-sm font-extrabold px-6 py-3 rounded-full shadow-md active:scale-95 transition">
             شروع خرید
           </Link>
         </main>
@@ -109,41 +88,52 @@ export default function MyOrders() {
 
         <div className="bg-brand-light/40 rounded-2xl p-3 border border-brand/20 mb-2 flex items-center justify-between">
           <span className="text-[11px] text-ink">
-            <b className="text-brand text-base">{allOrders.length}</b> سفارش
+            <b className="text-brand text-base">{orders.length}</b> سفارش
           </span>
           <button onClick={load} className="text-[10px] text-brand font-bold">🔄 بروزرسانی</button>
         </div>
 
-        {allOrders.map(o => {
-          const st = STATUS[o.status] || STATUS.pending
+        {orders.map(o => {
+          const st = STATUS_LABEL[o.status] || STATUS_LABEL.pending
+          const isOpen = expanded === o.id
           return (
-            <div key={o.id} className="bg-white rounded-2xl p-4 border border-border">
-              <div className="flex items-center justify-between mb-3">
-                <span className="font-mono text-xs font-extrabold text-brand">#{String(o.id).slice(-6)}</span>
-                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${st.color}`}>
-                  {st.label}
-                </span>
-              </div>
+            <div key={o.id} className="bg-white rounded-2xl border border-border overflow-hidden">
+              <button onClick={() => setExpanded(isOpen ? null : o.id)}
+                className="w-full p-4 text-right active:bg-cream/50 transition">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-mono text-xs font-extrabold text-brand">#{String(o.id).slice(-6)}</span>
+                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${st.color}`}>
+                    {st.label}
+                  </span>
+                </div>
 
-              <div className="text-[10px] text-muted mb-3 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand"></span>
-                {formatDate(o.date)}
-                {o.source === 'local' && <span className="text-[9px] text-muted">(محلی)</span>}
-              </div>
+                <TrackStepper status={o.status} compact />
 
-              <div className="space-y-1.5 mb-3">
-                {(o.items || []).slice(0, 2).map((it, i) => (
-                  <div key={i} className="text-xs text-ink truncate">• {it.title} × {it.qty}</div>
-                ))}
-                {(o.items || []).length > 2 && (
-                  <div className="text-xs text-muted">و {o.items.length - 2} کالای دیگر...</div>
-                )}
-              </div>
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-dashed border-border">
+                  <span className="text-[10px] text-muted">{formatDate(o.date)}</span>
+                  <span className="text-sm font-extrabold text-brand">{formatPrice(o.total)}</span>
+                </div>
+              </button>
 
-              <div className="flex justify-between pt-3 border-t border-dashed border-border">
-                <span className="text-xs text-muted">مبلغ کل</span>
-                <span className="text-sm font-extrabold text-brand">{formatPrice(o.total)}</span>
-              </div>
+              {isOpen && (
+                <div className="border-t border-border p-4 bg-cream/30">
+                  <h4 className="text-[11px] font-extrabold text-ink mb-2">📦 اقلام سفارش</h4>
+                  <div className="space-y-1.5 mb-3">
+                    {o.items.map((it, i) => (
+                      <div key={i} className="flex justify-between text-[11px]">
+                        <span className="text-ink truncate ml-2">{it.title} × {it.qty}</span>
+                        <span className="text-muted flex-shrink-0">{formatPrice(it.price * it.qty)}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <Link to={`/track/${o.id}`}
+                    className="w-full flex items-center justify-center gap-1.5 text-[11px] font-bold text-brand py-2.5 rounded-xl bg-brand-light/50 active:scale-[0.98] transition">
+                    مشاهده جزئیات کامل
+                    <ChevronLeft size={14} />
+                  </Link>
+                </div>
+              )}
             </div>
           )
         })}
