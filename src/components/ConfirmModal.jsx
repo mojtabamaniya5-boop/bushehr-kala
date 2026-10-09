@@ -5,21 +5,23 @@ export default function ConfirmModal({ open, title, message, confirmText = 'تأ
   return (
     <AnimatePresence>
       {open && (
-        <>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center px-5">
+          {/* پس‌زمینه */}
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onCancel}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200]" />
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
 
+          {/* کارت */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[88%] max-w-sm bg-white rounded-3xl shadow-2xl z-[201] overflow-hidden">
+            className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden">
 
-            {/* هدر تزئینی */}
+            {/* هدر رنگی */}
             <div className="relative h-24 flex items-center justify-center"
               style={{ background: danger
                 ? 'linear-gradient(135deg, #DC2626 0%, #991B1B 100%)'
@@ -48,7 +50,7 @@ export default function ConfirmModal({ open, title, message, confirmText = 'تأ
                 {cancelText}
               </button>
               <button onClick={onConfirm}
-                className={`flex-1 text-white font-extrabold py-3 rounded-2xl active:scale-[0.98] transition text-xs shadow-md ${
+                className={`flex-1 text-white font-extrabold py-3 rounded-2xl active:scale-[0.98] transition text-xs ${
                   danger ? 'bg-danger' : 'bg-brand'
                 }`}
                 style={{ boxShadow: danger ? '0 4px 14px rgba(220,38,38,0.3)' : '0 4px 14px rgba(46,125,50,0.3)' }}>
@@ -56,7 +58,7 @@ export default function ConfirmModal({ open, title, message, confirmText = 'تأ
               </button>
             </div>
           </motion.div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   )
