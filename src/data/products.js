@@ -1,21 +1,20 @@
-// ═══════════════════════════════════
-// کافه ترشی — داده‌های فروشگاه
-// ═══════════════════════════════════
-
 export const SHOP_INFO = {
   name: 'کافه ترشی',
   tagline: 'طعم اصیل، با ارسال سریع',
   phone: '09016191338',
   telegram: 'cafetorshi',
   card: {
-    number: 'شماره-کارت-جدید',
+    number: '5859831086263828',
     holder: 'مجتبی خسروانی',
     bank: 'بانک مسکن',
   },
   address: 'بوشهر، خیابان ساحلی، پلاک ۱۲۳',
+  // ═══ هزینه ارسال ═══
   shippingFast: 25000,
   shippingNormal: 15000,
   freeShippingFrom: 500000,
+  freeShippingCities: ['بوشهر'],
+  sameDayCities: ['بوشهر'],
 }
 
 export const CATEGORIES = [
@@ -122,4 +121,21 @@ export const searchProducts = (q) => {
     p.title.toLowerCase().includes(s) ||
     p.description.toLowerCase().includes(s)
   )
+}
+
+// ═══ محاسبه هزینه ارسال هوشمند ═══
+export function calculateShipping(address, subtotal, shippingType = 'fast') {
+  const addr = (address || '').toLowerCase()
+
+  // بوشهر رایگان
+  if (addr.includes('بوشهر')) return { cost: 0, free: true, sameDay: true }
+
+  // سفارش بالای ۵۰۰ هزار
+  if (subtotal >= SHOP_INFO.freeShippingFrom) return { cost: 0, free: true, sameDay: false }
+
+  return {
+    cost: shippingType === 'fast' ? SHOP_INFO.shippingFast : SHOP_INFO.shippingNormal,
+    free: false,
+    sameDay: false,
+  }
 }

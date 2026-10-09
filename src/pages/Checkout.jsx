@@ -3,10 +3,10 @@ import { useNavigate, Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { getCart, cartTotal, clearCart } from '../utils/cart'
 import { storage, formatPrice, uid } from '../utils/storage'
-import { SHOP_INFO } from '../data/products'
+import { SHOP_INFO, calculateShipping } from '../data/products'
 import { saveOrderToDB } from '../utils/supabase'
 import { getCurrentUser } from '../utils/auth'
-import { User, Phone, MapPin, CreditCard, Wallet, AlertCircle, Truck, Zap, LogIn, ArrowLeft } from 'lucide-react'
+import { User, Phone, MapPin, Wallet, Truck, Zap, LogIn, Check } from 'lucide-react'
 import { toast } from '../components/Toast'
 
 export default function Checkout() {
@@ -17,11 +17,6 @@ export default function Checkout() {
   const savedUser = loggedUser ? storage.get('user', {}) : {}
 
   const [shippingType, setShippingType] = useState('fast')
-  const shipping = items.length === 0 ? 0
-    : subtotal >= SHOP_INFO.freeShippingFrom ? 0
-    : (shippingType === 'fast' ? SHOP_INFO.shippingFast : SHOP_INFO.shippingNormal)
-  const total = subtotal + shipping
-
   const [form, setForm] = useState({
     name: loggedUser?.name || savedUser.name || '',
     phone: loggedUser?.phone || savedUser.phone || '',
@@ -34,6 +29,12 @@ export default function Checkout() {
   useEffect(() => {
     if (items.length === 0) navigate('/cart', { replace: true })
   }, [items.length, navigate])
+
+  // محاسبه هزینه ارسال بر اساس آدرس
+  const shipInfo = calculateShipping(form.address, subtotal, shippingType)
+  const shipping = items.length ? shipInfo.cost : 0
+  const isBushehr = shipInfo.sameDay
+  const total = subtotal + shipping
 
   const set = (k, v) => {
     setForm(f => ({ ...f, [k]: v }))
@@ -59,10 +60,10 @@ export default function Checkout() {
     const order = {
       id: uid().toUpperCase(),
       date: new Date().toISOString(),
-      customer: { ...form, shippingType },
+      customer: { ...form, shippingType, sameDay: isBushehr },
       items: items.map(i => ({ id: i.id, title: i.title, price: i.price, qty: i.qty })),
       subtotal, shipping, total,
-      payment: 'pending',  // ← کاربر بعداً انتخاب میکنه
+      payment: 'pending',
       status: 'pending',
     }
 
@@ -86,7 +87,6 @@ export default function Checkout() {
       <Header title="تسویه حساب" back />
       <main className="max-w-lg mx-auto px-4 pb-44 pt-3 fade-up space-y-3">
 
-        {/* پیشنهاد ورود */}
         {!loggedUser && (
           <Link to="/login"
             className="flex items-center gap-3 bg-accent/10 border border-accent/30 rounded-2xl p-3.5 active:scale-[0.98] transition">
@@ -140,6 +140,14 @@ export default function Checkout() {
                   errors.address ? 'border-danger' : 'border-border focus:border-brand'
                 }`} />
               {errors.address && <p className="text-[10px] text-danger mt-1">{errors.address}</p>}
+              {isBushehr && form.address.length > 5 && (
+                <div className="mt-2 bg-accent/15 border border-accent/40 rounded-xl p-2.5 flex items-center gap-2 fade-up">
+                  <Zap size={14} className="text-ink flex-shrink-0" />
+                  <p className="text-[10px] text-ink leading-5">
+                    🎉 <b>ارسال رایگان</b> + تحویل <b>تا ۱ ساعت</b>
+                  </p>
+                </div>
+              )}
             </div>
 
             <div>
@@ -151,42 +159,44 @@ export default function Checkout() {
           </div>
         </section>
 
-        {/* روش ارسال */}
-        <section className="bg-white rounded-2xl p-4 border border-border">
-          <h3 className="font-extrabold text-sm mb-3 flex items-center gap-2 text-ink">
-            <div className="w-7 h-7 rounded-full bg-brand-light flex items-center justify-center">
-              <Truck size={14} className="text-brand" />
-            </div>
-            روش ارسال
-          </h3>
+        {/* روش ارسال — فقط اگه بوشهر نباشه */}
+        {!isBushehr && (
+          <section className="bg-white rounded-2xl p-4 border border-border">
+            <h3 className="font-extrabold text-sm mb-3 flex items-center gap-2 text-ink">
+              <div className="w-7 h-7 rounded-full bg-brand-light flex items-center justify-center">
+                <Truck size={14} className="text-brand" />
+              </div>
+              روش ارسال
+            </h3>
 
-          <div className="space-y-2">
-            {[
-              { id: 'fast',   label: 'ارسال سریع',  time: '۲-۳ روز کاری', price: SHOP_INFO.shippingFast,   icon: Zap },
-              { id: 'normal', label: 'ارسال عادی',  time: '۳-۵ روز کاری', price: SHOP_INFO.shippingNormal, icon: Truck },
-            ].map(({ id, label, time, price, icon: Icon }) => (
-              <button key={id} type="button" onClick={() => setShippingType(id)}
-                className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition text-right ${
-                  shippingType === id ? 'border-brand bg-brand-light/40' : 'border-border'
-                }`}>
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
-                  shippingType === id ? 'bg-brand text-white' : 'bg-cream text-muted'
-                }`}>
-                  <Icon size={16} />
-                </div>
-                <div className="flex-1">
-                  <div className="text-xs font-extrabold text-ink">{label} ({time})</div>
-                  <div className="text-[10px] text-muted mt-0.5">{formatPrice(price)}</div>
-                </div>
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                  shippingType === id ? 'border-brand' : 'border-border'
-                }`}>
-                  {shippingType === id && <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>}
-                </div>
-              </button>
-            ))}
-          </div>
-        </section>
+            <div className="space-y-2">
+              {[
+                { id: 'fast',   label: 'ارسال سریع',  time: '۲-۳ روز کاری', price: SHOP_INFO.shippingFast,   icon: Zap },
+                { id: 'normal', label: 'ارسال عادی',  time: '۳-۵ روز کاری', price: SHOP_INFO.shippingNormal, icon: Truck },
+              ].map(({ id, label, time, price, icon: Icon }) => (
+                <button key={id} type="button" onClick={() => setShippingType(id)}
+                  className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition text-right ${
+                    shippingType === id ? 'border-brand bg-brand-light/40' : 'border-border'
+                  }`}>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                    shippingType === id ? 'bg-brand text-white' : 'bg-cream text-muted'
+                  }`}>
+                    <Icon size={16} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-xs font-extrabold text-ink">{label} ({time})</div>
+                    <div className="text-[10px] text-muted mt-0.5">{formatPrice(price)}</div>
+                  </div>
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    shippingType === id ? 'border-brand' : 'border-border'
+                  }`}>
+                    {shippingType === id && <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* اطلاع پرداخت */}
         <section className="bg-accent/10 border border-accent/30 rounded-2xl p-4 flex items-start gap-3">
@@ -196,12 +206,12 @@ export default function Checkout() {
           <div className="flex-1">
             <div className="text-xs font-extrabold text-ink mb-1">پرداخت در مرحله بعد</div>
             <p className="text-[10px] text-muted leading-5">
-              بعد از ثبت سفارش، می‌تونی بین <b className="text-ink">پرداخت آنلاین</b> (زیبال) یا <b className="text-ink">کارت به کارت</b> انتخاب کنی.
+              بعد از ثبت سفارش، میتونی بین <b className="text-ink">پرداخت آنلاین</b> (زیبال) یا <b className="text-ink">کارت به کارت</b> انتخاب کنی.
             </p>
           </div>
         </section>
 
-        {/* خلاصه سفارش */}
+        {/* خلاصه */}
         <section className="bg-white rounded-2xl p-4 border border-border">
           <h3 className="font-extrabold text-sm mb-3 text-ink">📦 خلاصه سفارش</h3>
           <div className="space-y-2 text-xs mb-3">
@@ -223,6 +233,12 @@ export default function Checkout() {
                 {shipping === 0 ? '🎉 رایگان' : formatPrice(shipping)}
               </span>
             </div>
+            {isBushehr && (
+              <div className="flex justify-between text-accent">
+                <span className="font-bold">⏱ تحویل</span>
+                <span className="font-bold">حداکثر ۱ ساعت</span>
+              </div>
+            )}
             <div className="flex justify-between font-extrabold text-sm pt-3 border-t border-border">
               <span className="text-ink">قابل پرداخت</span>
               <span className="text-brand">{formatPrice(total)}</span>
