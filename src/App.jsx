@@ -20,6 +20,8 @@ import Favorites from './pages/Favorites'
 import About from './pages/About'
 import Terms from './pages/Terms'
 import Contact from './pages/Contact'
+import Login from './pages/Login'
+import MyOrders from './pages/MyOrders'
 
 export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false)
@@ -59,6 +61,8 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Home />} />
       </Routes>
