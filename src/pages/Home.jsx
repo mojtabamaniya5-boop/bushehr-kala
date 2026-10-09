@@ -5,6 +5,7 @@ import BannerSlider from '../components/BannerSlider'
 import ProductCard from '../components/ProductCard'
 import CategoryChip from '../components/CategoryChip'
 import { CATEGORIES, PRODUCTS } from '../data/products'
+import EnamadFooter from '../components/EnamadFooter'
 import { Leaf, ShieldCheck, Truck } from 'lucide-react'
 
 export default function Home() {
@@ -115,6 +116,7 @@ export default function Home() {
               <span className="text-[8px] text-muted text-center">{s}</span>
             </div>
           ))}
+        <EnamadFooter />
         </div>
       </main>
     </>
