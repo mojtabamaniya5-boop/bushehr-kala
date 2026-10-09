@@ -5,7 +5,7 @@
 export const SHOP_INFO = {
   name: 'کافه ترشی',
   tagline: 'طعم اصیل، با ارسال سریع',
-  phone: '07700000000',
+  phone: '09016191338',
   telegram: 'cafetorshi',
   card: {
     number: '5859831086263828',
