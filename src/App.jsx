@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import BottomNav from './components/BottomNav'
 import ToastHost from './components/Toast'
 import Onboarding from './components/Onboarding'
@@ -30,6 +30,7 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [ready, setReady] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const location = useLocation()
 
   useEffect(() => {
     setShowOnboarding(!storage.get('onboarded'))
@@ -42,6 +43,13 @@ export default function App() {
   if (!ready) return null
 
   const isAdmin = window.location.hash.startsWith('#/admin')
+  // مخفی کردن BottomNav توی صفحات پرتمرکز
+  const hideBottomNav = isAdmin
+    || location.pathname.startsWith('/pay/')
+    || location.pathname.startsWith('/verify')
+    || location.pathname.startsWith('/checkout')
+    || location.pathname === '/login'
+    || location.pathname === '/success'
 
   return (
     <div className="min-h-screen bg-cream text-ink">
@@ -59,22 +67,22 @@ export default function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/success/:id" element={<Success />} />
         <Route path="/orders" element={<MyOrders />} />
-        <Route path="/pay/:orderId" element={<Pay />} />
-        <Route path="/verify" element={<Verify />} />
+        <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/about" element={<About />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/my-orders" element={<MyOrders />} />
+        <Route path="/pay/:orderId" element={<Pay />} />
+        <Route path="/verify" element={<Verify />} />
         <Route path="/track" element={<Track />} />
         <Route path="/track/:orderId" element={<Track />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Home />} />
       </Routes>
 
-      {!isAdmin && <BottomNav />}
+      {!hideBottomNav && <BottomNav />}
     </div>
   )
 }

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
-import { storage, formatPrice } from '../utils/storage'
+import { formatPrice } from '../utils/storage'
 import { getFavorites } from '../utils/cart'
 import { getCurrentUser, logoutUser } from '../utils/auth'
 import { fetchUserOrders } from '../utils/orders'
 import { PRODUCTS, SHOP_INFO } from '../data/products'
 import ProductImage from '../components/ProductImage'
-import { Heart, Phone, Send, MapPin, ShoppingBag, User, LogOut, LogIn, Package } from 'lucide-react'
+import { Heart, Phone, Send, MapPin, LogOut, LogIn, Package } from 'lucide-react'
 import { toast } from '../components/Toast'
 
 export default function Profile() {
@@ -15,6 +15,7 @@ export default function Profile() {
   const [user, setUser] = useState(getCurrentUser())
   const [favCount, setFavCount] = useState(getFavorites().length)
   const [ordersCount, setOrdersCount] = useState(0)
+  const [loadingOrders, setLoadingOrders] = useState(false)
 
   useEffect(() => {
     const update = () => {
@@ -30,11 +31,15 @@ export default function Profile() {
   }, [])
 
   useEffect(() => {
-    if (user) {
-      fetchUserOrders(user.phone).then(arr => setOrdersCount(arr.length))
-    } else {
+    if (!user?.phone) {
       setOrdersCount(0)
+      return
     }
+    setLoadingOrders(true)
+    fetchUserOrders(user.phone).then(arr => {
+      setOrdersCount(arr.length)
+      setLoadingOrders(false)
+    })
   }, [user?.phone])
 
   const handleLogout = () => {
@@ -52,14 +57,11 @@ export default function Profile() {
     <>
       <Header title="پروفایل" />
       <main className="max-w-lg mx-auto px-4 pb-32 pt-3 fade-up">
-
-        {/* کارت پروفایل */}
         {user ? (
           <div className="rounded-3xl p-5 mb-4 text-white relative overflow-hidden"
             style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
             <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-white/10"></div>
             <div className="absolute bottom-0 right-0 w-20 h-20 rounded-full bg-accent/20"></div>
-
             <div className="relative flex items-center gap-3 mb-4">
               <div className="w-14 h-14 rounded-full bg-white/25 backdrop-blur flex items-center justify-center text-2xl font-extrabold border-2 border-white/40">
                 {initial}
@@ -91,15 +93,20 @@ export default function Profile() {
           </Link>
         )}
 
-        {/* آمار */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           <Link to={user ? '/my-orders' : '/login'}
             className="bg-white rounded-2xl p-4 border border-border flex items-center gap-3 active:scale-[0.98] transition">
             <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
-              <Package className="text-brand" size={20} />
+              {loadingOrders ? (
+                <div className="w-5 h-5 rounded-full border-2 border-brand border-t-transparent animate-spin"></div>
+              ) : (
+                <Package className="text-brand" size={20} />
+              )}
             </div>
             <div>
-              <div className="text-xl font-extrabold text-ink">{ordersCount}</div>
+              <div className="text-xl font-extrabold text-ink">
+                {loadingOrders ? '...' : ordersCount}
+              </div>
               <div className="text-[10px] text-muted">سفارش</div>
             </div>
           </Link>
@@ -115,7 +122,6 @@ export default function Profile() {
           </Link>
         </div>
 
-        {/* علاقه‌مندی‌ها */}
         {favProducts.length > 0 && (
           <>
             <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
@@ -141,7 +147,6 @@ export default function Profile() {
           </>
         )}
 
-        {/* ارتباط با ما */}
         <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
           📞 ارتباط با ما
         </h3>
@@ -171,7 +176,6 @@ export default function Profile() {
           </Link>
         </div>
 
-        {/* اطلاعات پرداخت */}
         <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
           💳 اطلاعات پرداخت
         </h3>
@@ -179,7 +183,6 @@ export default function Profile() {
           style={{ background: 'linear-gradient(135deg, #185C28 0%, #2E7D32 60%, #4CAF50 100%)' }}>
           <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-white/10"></div>
           <div className="absolute bottom-0 right-0 w-24 h-24 rounded-full bg-accent/20"></div>
-
           <div className="relative">
             <div className="flex items-center justify-between mb-4">
               <span className="text-[10px] opacity-80">شماره کارت</span>
@@ -199,7 +202,6 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* خروج */}
         {user && (
           <button onClick={handleLogout}
             className="w-full bg-white border border-border text-danger font-bold text-sm py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition mb-3">
