@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Header from '../components/Header'
-import { getCart, cartTotal, clearCart } from '../utils/cart'
+import { getCart, cartTotal } from '../utils/cart'
 import { storage, formatPrice, uid } from '../utils/storage'
 import { SHOP_INFO, calculateShipping } from '../data/products'
 import { saveOrderToDB } from '../utils/supabase'
 import { getCurrentUser } from '../utils/auth'
-import { User, Phone, MapPin, Wallet, Truck, Zap, LogIn, Check } from 'lucide-react'
+import { User, Phone, MapPin, Wallet, Truck, Zap, LogIn, Hash } from 'lucide-react'
 import { toast } from '../components/Toast'
 
 export default function Checkout() {
@@ -21,6 +21,7 @@ export default function Checkout() {
     name: loggedUser?.name || savedUser.name || '',
     phone: loggedUser?.phone || savedUser.phone || '',
     address: loggedUser ? storage.get('last-address', '') : '',
+    postalCode: loggedUser ? storage.get('last-postal', '') : '',
     note: '',
   })
   const [submitting, setSubmitting] = useState(false)
@@ -30,8 +31,7 @@ export default function Checkout() {
     if (items.length === 0) navigate('/cart', { replace: true })
   }, [items.length, navigate])
 
-  // محاسبه هزینه ارسال بر اساس آدرس
-  const shipInfo = calculateShipping(form.address, subtotal, shippingType)
+  const shipInfo = calculateShipping(form.postalCode, form.address, subtotal, shippingType)
   const shipping = items.length ? shipInfo.cost : 0
   const isBushehr = shipInfo.sameDay
   const total = subtotal + shipping
@@ -46,6 +46,7 @@ export default function Checkout() {
     if (!form.name.trim() || form.name.trim().length < 3) e.name = 'نام را کامل وارد کن'
     if (!/^09\d{9}$/.test(form.phone.trim())) e.phone = 'شماره موبایل معتبر وارد کن (۰۹...)'
     if (!form.address.trim() || form.address.trim().length < 10) e.address = 'آدرس را کامل وارد کن'
+    if (!form.postalCode.trim() || !/^\d{10}$/.test(form.postalCode.trim())) e.postalCode = 'کد پستی ۱۰ رقمی وارد کن'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -72,13 +73,16 @@ export default function Checkout() {
     storage.set('orders', orders)
     storage.set('user', { name: form.name, phone: form.phone })
     storage.set('last-address', form.address)
+    storage.set('last-postal', form.postalCode)
+
+    // ⚠️ نکته: سبد اینجا پاک نمیشه!
+    // فقط بعد از پرداخت موفق توی Verify پاک میشه
 
     try {
       const result = await saveOrderToDB(order)
       if (result.ok) toast.success('سفارش ثبت شد')
     } catch (e) { console.warn(e) }
 
-    clearCart()
     setTimeout(() => navigate(`/pay/${order.id}`, { replace: true }), 400)
   }
 
@@ -101,7 +105,6 @@ export default function Checkout() {
           </Link>
         )}
 
-        {/* اطلاعات گیرنده */}
         <section className="bg-white rounded-2xl p-4 border border-border">
           <h3 className="font-extrabold text-sm mb-4 flex items-center gap-2 text-ink">
             <div className="w-7 h-7 rounded-full bg-brand-light flex items-center justify-center">
@@ -132,6 +135,28 @@ export default function Checkout() {
               {errors.phone && <p className="text-[10px] text-danger mt-1">{errors.phone}</p>}
             </div>
 
+            {/* کد پستی */}
+            <div>
+              <label className="text-[10px] font-bold text-muted block mb-1.5 flex items-center gap-1">
+                <Hash size={12} className="text-brand" />
+                کد پستی ۱۰ رقمی
+              </label>
+              <input
+                value={form.postalCode}
+                onChange={e => set('postalCode', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                placeholder="7516888334"
+                inputMode="numeric"
+                className={`w-full bg-cream border rounded-2xl px-3.5 py-3 text-sm outline-none transition ${
+                  errors.postalCode ? 'border-danger' : 'border-border focus:border-brand'
+                }`}
+                style={{ direction: 'ltr', textAlign: 'center', letterSpacing: '2px' }} />
+              {errors.postalCode && <p className="text-[10px] text-danger mt-1">{errors.postalCode}</p>}
+              <p className="text-[9px] text-muted mt-1">
+                برای ارسال سریع و رایگان بوشهر، کد پستی صحیح وارد کن
+              </p>
+            </div>
+
+            {/* آدرس */}
             <div>
               <label className="text-[10px] font-bold text-muted block mb-1.5">آدرس پستی کامل</label>
               <textarea value={form.address} onChange={e => set('address', e.target.value)}
@@ -140,11 +165,11 @@ export default function Checkout() {
                   errors.address ? 'border-danger' : 'border-border focus:border-brand'
                 }`} />
               {errors.address && <p className="text-[10px] text-danger mt-1">{errors.address}</p>}
-              {isBushehr && form.address.length > 5 && (
+              {isBushehr && (
                 <div className="mt-2 bg-accent/15 border border-accent/40 rounded-xl p-2.5 flex items-center gap-2 fade-up">
                   <Zap size={14} className="text-ink flex-shrink-0" />
                   <p className="text-[10px] text-ink leading-5">
-                    🎉 <b>ارسال رایگان</b> + تحویل <b>تا ۱ ساعت</b>
+                    🎉 <b>ارسال رایگان</b> + تحویل <b>تا ۱ ساعت</b> (بوشهر)
                   </p>
                 </div>
               )}
@@ -198,7 +223,6 @@ export default function Checkout() {
           </section>
         )}
 
-        {/* اطلاع پرداخت */}
         <section className="bg-accent/10 border border-accent/30 rounded-2xl p-4 flex items-start gap-3">
           <div className="w-9 h-9 rounded-full bg-accent/30 flex items-center justify-center flex-shrink-0">
             <Wallet size={16} className="text-ink" />
@@ -211,7 +235,6 @@ export default function Checkout() {
           </div>
         </section>
 
-        {/* خلاصه */}
         <section className="bg-white rounded-2xl p-4 border border-border">
           <h3 className="font-extrabold text-sm mb-3 text-ink">📦 خلاصه سفارش</h3>
           <div className="space-y-2 text-xs mb-3">

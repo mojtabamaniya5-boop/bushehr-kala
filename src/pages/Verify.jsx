@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { verifyZibalPayment } from '../utils/payment'
+import { clearCart } from '../utils/cart'
 import { formatPrice } from '../utils/storage'
 import { CheckCircle2, XCircle, Loader2, Home, ShoppingBag, Receipt } from 'lucide-react'
 
@@ -30,6 +31,7 @@ export default function Verify() {
     verifyZibalPayment({ orderId, trackId })
       .then(res => {
         if (res.ok) {
+          clearCart()
           setState('success')
           setResult(res)
         } else {

@@ -124,11 +124,13 @@ export const searchProducts = (q) => {
 }
 
 // ═══ محاسبه هزینه ارسال هوشمند ═══
-export function calculateShipping(address, subtotal, shippingType = 'fast') {
+export function calculateShipping(postalCode, address, subtotal, shippingType = 'fast') {
+  const code = (postalCode || '').trim()
   const addr = (address || '').toLowerCase()
 
   // بوشهر رایگان
-  if (addr.includes('بوشهر')) return { cost: 0, free: true, sameDay: true }
+  const isBushehr = /^75\d{8}$/.test(code) || addr.includes('بوشهر')
+  if (isBushehr) return { cost: 0, free: true, sameDay: true }
 
   // سفارش بالای ۵۰۰ هزار
   if (subtotal >= SHOP_INFO.freeShippingFrom) return { cost: 0, free: true, sameDay: false }

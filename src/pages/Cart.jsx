@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
-import { getCart, updateQty, removeFromCart, cartTotal } from '../utils/cart'
+import { getCart, updateQty, removeFromCart, cartTotal, clearCart } from '../utils/cart'
 import { formatPrice, storage } from '../utils/storage'
 import { SHOP_INFO, calculateShipping } from '../data/products'
 import { Trash2, Minus, Plus, ShoppingBag, Zap } from 'lucide-react'
+import { toast } from '../components/Toast'
 
 export default function Cart() {
   const [items, setItems] = useState(getCart())
@@ -18,9 +19,24 @@ export default function Cart() {
 
   const total = cartTotal()
   const lastAddr = storage.get('last-address', '')
-  const shipInfo = calculateShipping(lastAddr, total, 'fast')
+  const lastPostal = storage.get('last-postal', '')
+  const shipInfo = calculateShipping(lastPostal, lastAddr, total, 'fast')
   const shipping = items.length ? shipInfo.cost : 0
   const isBushehr = shipInfo.sameDay
+
+  const handleClearAll = () => {
+    if (confirm('مطمئنی میخوای کل سبد خرید رو خالی کنی؟')) {
+      clearCart()
+      toast.success('سبد خرید خالی شد')
+    }
+  }
+
+  const handleRemoveOne = (item) => {
+    if (confirm(`«${item.title}» از سبد حذف بشه؟`)) {
+      removeFromCart(item.id)
+      toast.success('حذف شد')
+    }
+  }
 
   if (items.length === 0) {
     return (
@@ -32,7 +48,7 @@ export default function Cart() {
           </div>
           <p className="font-extrabold text-base text-ink mb-1">سبد خرید خالیه</p>
           <p className="text-xs text-muted mb-6">یه سر به محصولات بزن</p>
-          <Link to="/" className="inline-block bg-brand text-white text-sm font-extrabold px-6 py-3 rounded-full shadow-md">
+          <Link to="/" className="inline-block bg-brand text-white text-sm font-extrabold px-6 py-3 rounded-full shadow-md active:scale-95 transition">
             مشاهده محصولات
           </Link>
         </main>
@@ -55,6 +71,18 @@ export default function Cart() {
           </div>
         )}
 
+        {/* هدر سبد با دکمه حذف همه */}
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs text-muted">
+            <span className="font-extrabold text-brand text-sm">{items.length}</span> محصول در سبد
+          </span>
+          <button onClick={handleClearAll}
+            className="flex items-center gap-1.5 text-[11px] font-bold text-danger bg-danger/10 px-3 py-1.5 rounded-full active:scale-95 transition">
+            <Trash2 size={13} />
+            خالی کردن سبد
+          </button>
+        </div>
+
         <div className="space-y-3">
           {items.map(item => (
             <div key={item.id} className="bg-white rounded-2xl p-3 flex gap-3 border border-border">
@@ -63,8 +91,9 @@ export default function Cart() {
                 <h3 className="text-xs font-medium line-clamp-2 mb-1.5">{item.title}</h3>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-bold text-brand">{formatPrice(item.price)}</span>
-                  <button onClick={() => removeFromCart(item.id)} className="p-1 text-muted active:scale-90">
-                    <Trash2 size={16} />
+                  <button onClick={() => handleRemoveOne(item)}
+                    className="p-1.5 rounded-lg text-danger bg-danger/10 active:scale-90 transition">
+                    <Trash2 size={14} />
                   </button>
                 </div>
                 <div className="flex items-center gap-2 mt-2">
