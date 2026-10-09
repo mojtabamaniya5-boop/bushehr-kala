@@ -8,8 +8,8 @@ export const SHOP_INFO = {
   phone: '09016191338',
   telegram: 'cafetorshi',
   card: {
-    number: '5859831086263828',
-    holder: 'مهدی محمدی',
+    number: 'شماره-کارت-جدید',
+    holder: 'مجتبی خسروانی',
     bank: 'بانک مسکن',
   },
   address: 'بوشهر، خیابان ساحلی، پلاک ۱۲۳',
