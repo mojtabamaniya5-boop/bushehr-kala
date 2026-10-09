@@ -15,8 +15,11 @@ import ProductDetail from './pages/ProductDetail'
 import Search from './pages/Search'
 import Checkout from './pages/Checkout'
 import Success from './pages/Success'
-import Favorites from './pages/Favorites'
 import Admin from './pages/Admin'
+import Favorites from './pages/Favorites'
+import About from './pages/About'
+import Terms from './pages/Terms'
+import Contact from './pages/Contact'
 
 export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false)
@@ -26,7 +29,6 @@ export default function App() {
   useEffect(() => {
     setShowOnboarding(!storage.get('onboarded'))
     setReady(true)
-    // باز کردن Drawer با event سراسری
     const openHandler = () => setDrawerOpen(true)
     window.addEventListener('open-drawer', openHandler)
     return () => window.removeEventListener('open-drawer', openHandler)
@@ -52,8 +54,11 @@ export default function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/success/:id" element={<Success />} />
         <Route path="/orders" element={<Orders />} />
-        <Route path="/favorites" element={<Favorites />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Home />} />
       </Routes>

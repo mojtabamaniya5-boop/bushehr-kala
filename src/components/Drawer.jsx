@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { X, Home, Grid3x3, Heart, ShoppingCart, Package, User, Phone, Leaf, Sparkles } from 'lucide-react'
+import { X, Home, Grid3x3, Heart, ShoppingCart, Package, User, Phone, Leaf, Sparkles, Info, FileText } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SHOP_INFO } from '../data/products'
 
@@ -20,6 +20,12 @@ const roadmap = [
   { emoji: '🏷️', label: 'کد تخفیف و کمپین' },
   { emoji: '⭐', label: 'نظرات و امتیاز مشتریان' },
   { emoji: '🎁', label: 'باشگاه مشتریان وفادار' },
+]
+
+const pagesMenu = [
+  { path: '/about',   label: 'درباره ما',         icon: Info,     emoji: '🫙' },
+  { path: '/terms',   label: 'قوانین و مقررات',   icon: FileText, emoji: '📜' },
+  { path: '/contact', label: 'تماس با ما',        icon: Phone,    emoji: '📞' },
 ]
 
 export default function Drawer({ open, onClose }) {
@@ -76,6 +82,16 @@ export default function Drawer({ open, onClose }) {
 
               {/* ارتباط */}
               <p className="text-[9px] font-extrabold text-muted px-2 mb-1.5 tracking-wide">ارتباط با ما</p>
+              {pagesMenu.map(({ path, label, icon: Icon, emoji }) => (
+                <Link key={path} to={path} onClick={onClose}
+                  className="flex items-center gap-2.5 px-2.5 py-2.5 rounded-xl text-ink active:scale-[0.98] transition mb-0.5 hover:bg-white">
+                  <div className="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center flex-shrink-0">
+                    <Icon size={15} className="text-brand" />
+                  </div>
+                  <span className="text-[12px] font-bold flex-1">{label}</span>
+                  <span className="text-sm">{emoji}</span>
+                </Link>
+              ))}
               <a href={`tel:${SHOP_INFO.phone}`}
                 className="flex items-center gap-2.5 px-2.5 py-2.5 rounded-xl text-ink active:scale-[0.98] transition mb-0.5">
                 <div className="w-8 h-8 rounded-full bg-accent/30 flex items-center justify-center flex-shrink-0">
