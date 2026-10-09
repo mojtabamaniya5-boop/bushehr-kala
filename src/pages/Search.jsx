@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Header from '../components/Header'
 import ProductCard from '../components/ProductCard'
-import { searchProducts, PRODUCTS, CATEGORIES } from '../data/products'
-import { Search as SearchIcon, X } from 'lucide-react'
+import { CATEGORIES } from '../data/products'
+import { getProducts } from '../api/products'
+import { Search as SearchIcon, X, Loader2 } from 'lucide-react'
 
 const SORTS = [
   { id: 'default',    label: 'پیش‌فرض' },
@@ -15,8 +16,25 @@ export default function Search() {
   const [q, setQ] = useState('')
   const [cat, setCat] = useState('all')
   const [sort, setSort] = useState('default')
+  const [allProducts, setAllProducts] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const base = q.trim() ? searchProducts(q) : PRODUCTS
+  useEffect(() => {
+    getProducts().then(items => {
+      setAllProducts(items)
+      setLoading(false)
+    })
+  }, [])
+
+  const base = useMemo(() => {
+    if (!q.trim()) return allProducts
+    const s = q.trim().toLowerCase()
+    return allProducts.filter(p =>
+      p.title.toLowerCase().includes(s) ||
+      (p.brand || '').toLowerCase().includes(s) ||
+      (p.description || '').toLowerCase().includes(s)
+    )
+  }, [q, allProducts])
 
   const results = useMemo(() => {
     let list = cat === 'all' ? base : base.filter(p => p.category === cat)
@@ -31,7 +49,6 @@ export default function Search() {
     <>
       <Header title="جستجو" back />
       <main className="max-w-lg mx-auto px-4 pb-32 pt-3 fade-up">
-        {/* نوار جستجو */}
         <div className="relative mb-3">
           <SearchIcon size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted" />
           <input
@@ -49,7 +66,6 @@ export default function Search() {
           )}
         </div>
 
-        {/* فیلتر دسته */}
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-3 -mx-4 px-4">
           <button onClick={() => setCat('all')}
             className={'flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold border transition ' +
@@ -65,22 +81,26 @@ export default function Search() {
           ))}
         </div>
 
-        {/* مرتب‌سازی */}
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs text-muted">{results.length} نتیجه</span>
-          <div className="flex gap-1">
-            {SORTS.map(s => (
-              <button key={s.id} onClick={() => setSort(s.id)}
-                className={'text-[10px] px-2.5 py-1 rounded-full font-bold transition ' +
-                  (sort === s.id ? 'bg-brand text-white' : 'bg-white border border-border text-muted')}>
-                {s.label}
-              </button>
-            ))}
+        {!loading && (
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs text-muted">{results.length} نتیجه</span>
+            <div className="flex gap-1">
+              {SORTS.map(s => (
+                <button key={s.id} onClick={() => setSort(s.id)}
+                  className={'text-[10px] px-2.5 py-1 rounded-full font-bold transition ' +
+                    (sort === s.id ? 'bg-brand text-white' : 'bg-white border border-border text-muted')}>
+                  {s.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* نتایج */}
-        {results.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="animate-spin text-brand" size={32} />
+          </div>
+        ) : results.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-20 h-20 rounded-full bg-brand-light flex items-center justify-center mx-auto mb-4">
               <SearchIcon size={32} className="text-brand" />

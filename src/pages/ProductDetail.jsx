@@ -1,20 +1,53 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from '../components/Header'
-import { findProduct } from '../data/products'
 import { formatPrice } from '../utils/storage'
 import { addToCart, isFavorite, toggleFavorite, cartCount } from '../utils/cart'
-import { Heart, ShoppingCart, Star, Check, Minus, Plus } from 'lucide-react'
+import { getProductById } from '../api/products'
+import { Heart, ShoppingCart, Star, Check, Minus, Plus, Loader2 } from 'lucide-react'
 import { toast } from '../components/Toast'
 import ProductImage from '../components/ProductImage'
 
 export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const product = findProduct(id)
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [qty, setQty] = useState(1)
-  const [fav, setFav] = useState(product ? isFavorite(product.id) : false)
+  const [fav, setFav] = useState(false)
+  const [cartBadge, setCartBadge] = useState(cartCount())
   const [justAdded, setJustAdded] = useState(false)
+
+  useEffect(() => {
+    let mounted = true
+    getProductById(id).then(p => {
+      if (mounted) {
+        setProduct(p)
+        setLoading(false)
+        if (p) setFav(isFavorite(p.id))
+      }
+    })
+    return () => { mounted = false }
+  }, [id])
+
+  const handleAdd = () => {
+    if (!product) return
+    addToCart(product, qty)
+    setCartBadge(cartCount())
+    setJustAdded(true)
+    toast.success(qty + ' عدد به سبد اضافه شد')
+    setTimeout(() => setJustAdded(false), 1500)
+  }
+
+  const handleBuyNow = () => {
+    if (!product) return
+    addToCart(product, qty)
+    navigate('/cart')
+  }
+
+  if (loading) {
+    return (<><Header title="محصول" back /><div className="flex items-center justify-center pt-32"><Loader2 className="animate-spin text-brand" size={32} /></div></>)
+  }
 
   if (!product) {
     return (
@@ -23,9 +56,7 @@ export default function ProductDetail() {
         <div className="text-center pt-24 text-muted">
           <p className="text-4xl mb-3">🫙</p>
           <p className="font-bold mb-2">محصول یافت نشد</p>
-          <button onClick={() => navigate('/')} className="text-brand font-bold text-xs">
-            بازگشت به خانه
-          </button>
+          <button onClick={() => navigate('/')} className="text-brand font-bold text-xs">بازگشت به خانه</button>
         </div>
       </>
     )
@@ -35,24 +66,10 @@ export default function ProductDetail() {
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0
 
-  const handleAdd = () => {
-    addToCart(product, qty)
-    setJustAdded(true)
-    toast.success(qty + ' عدد به سبد اضافه شد')
-    setTimeout(() => setJustAdded(false), 1500)
-  }
-
-  const handleBuyNow = () => {
-    addToCart(product, qty)
-    navigate('/cart')
-  }
-
   return (
     <>
       <Header title={product.brand || 'محصول'} back search />
       <main className="max-w-lg mx-auto pb-48 fade-up">
-
-        {/* تصویر */}
         <div className="relative aspect-square bg-gradient-to-br from-cream to-brand-light">
           <ProductImage product={product} />
           {discount > 0 && (
@@ -67,10 +84,8 @@ export default function ProductDetail() {
         </div>
 
         <div className="px-4 pt-4">
-          {/* عنوان */}
           <h1 className="font-extrabold text-base leading-6 mb-2 text-ink">{product.title}</h1>
 
-          {/* امتیاز */}
           <div className="flex items-center gap-2 mb-3">
             <div className="flex items-center gap-0.5">
               {[1,2,3,4,5].map(i => (
@@ -83,7 +98,6 @@ export default function ProductDetail() {
             <span className="text-[10px] text-muted mr-auto">{product.weight}</span>
           </div>
 
-          {/* قیمت */}
           <div className="flex items-center gap-3 mb-4 bg-brand-light/50 rounded-2xl p-3">
             <span className="text-xl font-extrabold text-brand">{formatPrice(product.price)}</span>
             {product.oldPrice && (
@@ -91,7 +105,6 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {/* موجودی */}
           <div className="flex items-center gap-2 text-xs mb-4">
             <span className={'w-2 h-2 rounded-full ' + (product.stock > 0 ? 'bg-brand' : 'bg-danger')}></span>
             <span className="text-ink font-medium">
@@ -99,13 +112,13 @@ export default function ProductDetail() {
             </span>
           </div>
 
-          {/* توضیحات */}
-          <div className="bg-white rounded-2xl p-4 mb-3 border border-border">
-            <h3 className="font-extrabold text-sm mb-2 text-ink">توضیحات</h3>
-            <p className="text-xs leading-6 text-muted">{product.description}</p>
-          </div>
+          {product.description && (
+            <div className="bg-white rounded-2xl p-4 mb-3 border border-border">
+              <h3 className="font-extrabold text-sm mb-2 text-ink">توضیحات</h3>
+              <p className="text-xs leading-6 text-muted">{product.description}</p>
+            </div>
+          )}
 
-          {/* ویژگی‌ها */}
           {product.features && product.features.length > 0 && (
             <div className="bg-white rounded-2xl p-4 mb-3 border border-border">
               <h3 className="font-extrabold text-sm mb-3 text-ink">ویژگی‌ها</h3>
@@ -122,22 +135,6 @@ export default function ProductDetail() {
             </div>
           )}
 
-          {/* مشخصات */}
-          {product.specs && (
-            <div className="bg-white rounded-2xl p-4 mb-3 border border-border">
-              <h3 className="font-extrabold text-sm mb-3 text-ink">مشخصات</h3>
-              <div className="space-y-2 text-xs">
-                {Object.entries(product.specs).map(([k, v]) => (
-                  <div key={k} className="flex justify-between">
-                    <span className="text-muted">{k === 'weight' ? 'وزن' : k === 'package' ? 'بسته‌بندی' : k === 'produced' ? 'تاریخ تولید' : k === 'shelf' ? 'ماندگاری' : k}</span>
-                    <span className="text-ink font-medium">{v}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* تعداد */}
           <div className="flex items-center justify-between bg-white rounded-2xl p-4 border border-border">
             <span className="text-sm font-bold text-ink">تعداد</span>
             <div className="flex items-center gap-3">
@@ -152,10 +149,13 @@ export default function ProductDetail() {
               </button>
             </div>
           </div>
+
+          <div className="text-center text-xs text-muted mt-4">
+            در سبد شما: <b className="text-brand">{cartBadge}</b> کالا
+          </div>
         </div>
       </main>
 
-      {/* دکمه‌ها */}
       <div className="fixed bottom-20 left-0 right-0 z-50 px-4">
         <div className="max-w-lg mx-auto flex gap-2 bg-white rounded-3xl p-2 shadow-[0_8px_28px_rgba(0,0,0,0.15)]">
           <button type="button" onClick={handleAdd}

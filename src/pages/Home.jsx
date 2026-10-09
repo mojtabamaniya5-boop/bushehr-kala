@@ -1,15 +1,29 @@
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import BannerSlider from '../components/BannerSlider'
 import ProductCard from '../components/ProductCard'
 import CategoryChip from '../components/CategoryChip'
-import { CATEGORIES, PRODUCTS } from '../data/products'
 import EnamadFooter from '../components/EnamadFooter'
-import { Leaf, ShieldCheck, Truck } from 'lucide-react'
+import { CATEGORIES } from '../data/products'
+import { getProducts } from '../api/products'
+import { Leaf, ShieldCheck, Truck, Loader2 } from 'lucide-react'
 
 export default function Home() {
-  const [products] = useState(PRODUCTS)
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let mounted = true
+    getProducts().then(items => {
+      if (mounted) {
+        setProducts(items)
+        setLoading(false)
+      }
+    })
+    return () => { mounted = false }
+  }, [])
+
   const bestSellers = products.filter(p => p.bestSeller)
   const newArrivals = products.slice(0, 4)
 
@@ -33,74 +47,71 @@ export default function Home() {
           </svg>
         </div>
 
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-extrabold text-sm text-ink flex items-center gap-1">
-            پرفروش‌ترین‌ها <span className="text-base">🔥</span>
-          </h3>
-          <Link to="/category" className="text-[11px] text-brand font-bold">همه</Link>
-        </div>
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          {bestSellers.slice(0, 4).map(p => <ProductCard key={p.id} product={p} />)}
-        </div>
-
-        {/* پیشنهاد ویژه — بازطراحی شده */}
-        <div className="relative rounded-[28px] p-5 mb-6 overflow-hidden"
-          style={{
-            background: 'linear-gradient(135deg, #FFF8E8 0%, #E8F5E9 60%, #C8E6C9 100%)',
-            boxShadow: '0 6px 22px rgba(46,125,50,0.10)',
-            border: '1px solid rgba(46,125,50,0.10)',
-          }}>
-          {/* دایره‌های تزئینی */}
-          <div className="absolute -top-10 -left-10 w-32 h-32 rounded-full bg-accent/25"></div>
-          <div className="absolute -bottom-12 right-1/3 w-24 h-24 rounded-full bg-brand/10"></div>
-          <div className="absolute top-2 right-2 w-12 h-12 rounded-full bg-white/40 backdrop-blur-sm"></div>
-
-          <div className="relative flex items-center justify-between gap-3">
-            <div className="flex-1">
-              <div className="inline-flex items-center gap-1 bg-white/70 backdrop-blur-sm rounded-full px-2.5 py-1 mb-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
-                <span className="text-[10px] font-extrabold text-ink">پیشنهاد ویژه هفته</span>
-              </div>
-
-              <h3 className="font-extrabold text-lg text-brand-dark leading-tight mb-1">
-                تا <span className="text-2xl text-accent">۲۰٪</span> تخفیف
-              </h3>
-              <p className="text-[10px] text-muted mb-3">روی ترشی‌ها و خیارشورهای منتخب</p>
-
-              <Link to="/category"
-                className="inline-flex items-center gap-1.5 bg-brand text-white text-[11px] font-extrabold px-4 py-2.5 rounded-full shadow-md active:scale-95 transition"
-                style={{ boxShadow: '0 4px 14px rgba(46,125,50,0.35)' }}>
-                <span>مشاهده محصولات</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'scaleX(-1)' }}>
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </Link>
-            </div>
-
-            {/* آیکون شیشه */}
-            <div className="flex-shrink-0 relative">
-              <div className="w-24 h-24 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-lg"
-                style={{ border: '2px solid rgba(255,255,255,0.7)' }}>
-                <img
-                  src={`${import.meta.env.BASE_URL}assets/categories/mixed.png`}
-                  alt="تخفیف"
-                  className="w-20 h-20 object-contain"
-                />
-              </div>
-              {/* بج تخفیف روی دایره */}
-              <div className="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-extrabold rounded-full px-2 py-1 shadow-md border-2 border-white">
-                ۲۰٪
-              </div>
-            </div>
+        {loading && (
+          <div className="flex justify-center py-12">
+            <Loader2 className="animate-spin text-brand" size={32} />
           </div>
-        </div>
+        )}
 
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-extrabold text-sm text-ink">تازه‌رسیده‌ها</h3>
-        </div>
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          {newArrivals.map(p => <ProductCard key={p.id} product={p} />)}
-        </div>
+        {!loading && (
+          <>
+            {bestSellers.length > 0 && (
+              <>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-extrabold text-sm text-ink flex items-center gap-1">
+                    پرفروش‌ترین‌ها <span className="text-base">🔥</span>
+                  </h3>
+                  <Link to="/category" className="text-[11px] text-brand font-bold">همه</Link>
+                </div>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {bestSellers.slice(0, 4).map(p => <ProductCard key={p.id} product={p} />)}
+                </div>
+              </>
+            )}
+
+            <div className="rounded-3xl p-5 mb-6 overflow-hidden relative"
+              style={{ background: 'linear-gradient(135deg, #FFF8E8 0%, #E8F5E9 60%, #C8E6C9 100%)',
+                boxShadow: '0 6px 22px rgba(46,125,50,0.10)', border: '1px solid rgba(46,125,50,0.10)' }}>
+              <div className="absolute -top-10 -left-10 w-32 h-32 rounded-full bg-accent/25"></div>
+              <div className="absolute -bottom-12 right-1/3 w-24 h-24 rounded-full bg-brand/10"></div>
+
+              <div className="relative flex items-center justify-between gap-3">
+                <div className="flex-1">
+                  <div className="inline-flex items-center gap-1 bg-white/70 backdrop-blur-sm rounded-full px-2.5 py-1 mb-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                    <span className="text-[10px] font-extrabold text-ink">پیشنهاد ویژه هفته</span>
+                  </div>
+                  <h3 className="font-extrabold text-lg text-brand-dark leading-tight mb-1">
+                    تا <span className="text-2xl text-accent">۲۰٪</span> تخفیف
+                  </h3>
+                  <p className="text-[10px] text-muted mb-3">روی ترشی‌ها و خیارشورهای منتخب</p>
+                  <Link to="/category"
+                    className="inline-flex items-center gap-1.5 bg-brand text-white text-[11px] font-extrabold px-4 py-2.5 rounded-full shadow-md active:scale-95 transition">
+                    <span>مشاهده محصولات</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'scaleX(-1)' }}>
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </Link>
+                </div>
+                <div className="flex-shrink-0 relative">
+                  <div className="w-24 h-24 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-lg border-2 border-white/70">
+                    <img src={`${import.meta.env.BASE_URL}assets/categories/mixed.png`} alt="تخفیف" className="w-20 h-20 object-contain" />
+                  </div>
+                  <div className="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-extrabold rounded-full px-2 py-1 shadow-md border-2 border-white">
+                    ۲۰٪
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-sm text-ink">تازه‌رسیده‌ها</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {newArrivals.map(p => <ProductCard key={p.id} product={p} />)}
+            </div>
+          </>
+        )}
 
         <div className="grid grid-cols-3 gap-2 mb-4">
           {[
@@ -116,8 +127,9 @@ export default function Home() {
               <span className="text-[8px] text-muted text-center">{s}</span>
             </div>
           ))}
-        <EnamadFooter />
         </div>
+
+        <EnamadFooter />
       </main>
     </>
   )
