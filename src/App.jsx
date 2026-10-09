@@ -23,6 +23,7 @@ import Contact from './pages/Contact'
 import Login from './pages/Login'
 import MyOrders from './pages/MyOrders'
 import Pay from './pages/Pay'
+import Verify from './pages/Verify'
 import Track from './pages/Track'
 
 export default function App() {
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="/success/:id" element={<Success />} />
         <Route path="/orders" element={<MyOrders />} />
         <Route path="/pay/:orderId" element={<Pay />} />
+        <Route path="/verify" element={<Verify />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/about" element={<About />} />
