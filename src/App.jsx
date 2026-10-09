@@ -22,6 +22,7 @@ import Terms from './pages/Terms'
 import Contact from './pages/Contact'
 import Login from './pages/Login'
 import MyOrders from './pages/MyOrders'
+import Pay from './pages/Pay'
 import Track from './pages/Track'
 
 export default function App() {
@@ -56,7 +57,8 @@ export default function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/success/:id" element={<Success />} />
-        <Route path="/orders" element={<Orders />} />
+        <Route path="/orders" element={<MyOrders />} />
+        <Route path="/pay/:orderId" element={<Pay />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/about" element={<About />} />

@@ -1,34 +1,35 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { getCart, cartTotal, clearCart } from '../utils/cart'
 import { storage, formatPrice, uid } from '../utils/storage'
 import { SHOP_INFO } from '../data/products'
 import { saveOrderToDB } from '../utils/supabase'
-import { User, Phone, MapPin, CreditCard, Wallet, AlertCircle, Check, Truck, Zap } from 'lucide-react'
+import { getCurrentUser } from '../utils/auth'
+import { User, Phone, MapPin, CreditCard, Wallet, AlertCircle, Check, Truck, Zap, LogIn } from 'lucide-react'
 import { toast } from '../components/Toast'
 
 export default function Checkout() {
   const navigate = useNavigate()
   const items = getCart()
   const subtotal = cartTotal()
+  const loggedUser = getCurrentUser()
+  const savedUser = storage.get('user', {})
+
   const [shippingType, setShippingType] = useState('fast')
   const shipping = items.length === 0 ? 0
     : subtotal >= SHOP_INFO.freeShippingFrom ? 0
     : (shippingType === 'fast' ? SHOP_INFO.shippingFast : SHOP_INFO.shippingNormal)
   const total = subtotal + shipping
 
-  const savedUser = storage.get('user', {})
   const [form, setForm] = useState({
-    name: savedUser.name || '',
-    phone: savedUser.phone || '',
+    name: loggedUser?.name || savedUser.name || '',
+    phone: loggedUser?.phone || savedUser.phone || '',
     address: storage.get('last-address', ''),
     note: '',
   })
-  const [payment] = useState('card')
   const [submitting, setSubmitting] = useState(false)
   const [errors, setErrors] = useState({})
-  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     if (items.length === 0) navigate('/cart', { replace: true })
@@ -42,21 +43,10 @@ export default function Checkout() {
   const validate = () => {
     const e = {}
     if (!form.name.trim() || form.name.trim().length < 3) e.name = 'نام را کامل وارد کن'
-    if (!/^09\d{9}$/.test(form.phone.trim())) e.phone = 'شماره موبایل معتبر وارد کن (09...)'
+    if (!/^09\d{9}$/.test(form.phone.trim())) e.phone = 'شماره موبایل معتبر وارد کن (۰۹...)'
     if (!form.address.trim() || form.address.trim().length < 10) e.address = 'آدرس را کامل وارد کن'
     setErrors(e)
     return Object.keys(e).length === 0
-  }
-
-  const copyCard = async () => {
-    try {
-      await navigator.clipboard.writeText(SHOP_INFO.card.number)
-      setCopied(true)
-      toast.success('شماره کارت کپی شد')
-      setTimeout(() => setCopied(false), 1500)
-    } catch {
-      toast.error('کپی نشد، دستی یادداشت کن')
-    }
   }
 
   const handleSubmit = async () => {
@@ -72,32 +62,45 @@ export default function Checkout() {
       customer: { ...form, shippingType },
       items: items.map(i => ({ id: i.id, title: i.title, price: i.price, qty: i.qty })),
       subtotal, shipping, total,
-      payment,
+      payment: 'card',
       status: 'pending',
     }
 
     const orders = storage.get('orders', [])
     orders.push(order)
     storage.set('orders', orders)
+    // ذخیره اطلاعات برای autofill بعدی
     storage.set('user', { name: form.name, phone: form.phone })
     storage.set('last-address', form.address)
 
     try {
       const result = await saveOrderToDB(order)
-      if (result.ok) toast.success('سفارش ثبت شد ✅')
-      else toast.info('سفارش ذخیره شد')
-    } catch (e) {
-      console.error(e)
-    }
+      if (result.ok) toast.success('سفارش ثبت شد')
+    } catch (e) { console.warn(e) }
 
     clearCart()
-    setTimeout(() => navigate(`/success/${order.id}`, { replace: true }), 500)
+    setTimeout(() => navigate(`/pay/${order.id}`, { replace: true }), 400)
   }
 
   return (
     <>
       <Header title="تسویه حساب" back />
       <main className="max-w-lg mx-auto px-4 pb-44 pt-3 fade-up space-y-3">
+
+        {/* پیشنهاد ورود */}
+        {!loggedUser && (
+          <Link to="/login"
+            className="flex items-center gap-3 bg-accent/10 border border-accent/30 rounded-2xl p-3.5 active:scale-[0.98] transition">
+            <div className="w-10 h-10 rounded-full bg-accent/30 flex items-center justify-center flex-shrink-0">
+              <LogIn size={18} className="text-ink" />
+            </div>
+            <div className="flex-1">
+              <div className="text-xs font-extrabold text-ink mb-0.5">حساب داری؟</div>
+              <div className="text-[10px] text-muted">با ورود، اطلاعاتت خودکار پر میشه</div>
+            </div>
+            <span className="text-muted">←</span>
+          </Link>
+        )}
 
         {/* اطلاعات گیرنده */}
         <section className="bg-white rounded-2xl p-4 border border-border">
@@ -159,49 +162,30 @@ export default function Checkout() {
           </h3>
 
           <div className="space-y-2">
-            <button type="button" onClick={() => setShippingType('fast')}
-              className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition text-right ${
-                shippingType === 'fast' ? 'border-brand bg-brand-light/40' : 'border-border'
-              }`}>
-              <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
-                shippingType === 'fast' ? 'bg-brand text-white' : 'bg-cream text-muted'
-              }`}>
-                <Zap size={16} />
-              </div>
-              <div className="flex-1">
-                <div className="text-xs font-extrabold text-ink">ارسال سریع (۲-۳ روز کاری)</div>
-                <div className="text-[10px] text-muted mt-0.5">
-                  {formatPrice(SHOP_INFO.shippingFast)}
+            {[
+              { id: 'fast',   label: 'ارسال سریع',  time: '۲-۳ روز کاری', price: SHOP_INFO.shippingFast,   icon: Zap },
+              { id: 'normal', label: 'ارسال عادی',  time: '۳-۵ روز کاری', price: SHOP_INFO.shippingNormal, icon: Truck },
+            ].map(({ id, label, time, price, icon: Icon }) => (
+              <button key={id} type="button" onClick={() => setShippingType(id)}
+                className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition text-right ${
+                  shippingType === id ? 'border-brand bg-brand-light/40' : 'border-border'
+                }`}>
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                  shippingType === id ? 'bg-brand text-white' : 'bg-cream text-muted'
+                }`}>
+                  <Icon size={16} />
                 </div>
-              </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                shippingType === 'fast' ? 'border-brand' : 'border-border'
-              }`}>
-                {shippingType === 'fast' && <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>}
-              </div>
-            </button>
-
-            <button type="button" onClick={() => setShippingType('normal')}
-              className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition text-right ${
-                shippingType === 'normal' ? 'border-brand bg-brand-light/40' : 'border-border'
-              }`}>
-              <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
-                shippingType === 'normal' ? 'bg-brand text-white' : 'bg-cream text-muted'
-              }`}>
-                <Truck size={16} />
-              </div>
-              <div className="flex-1">
-                <div className="text-xs font-extrabold text-ink">ارسال عادی (۳-۵ روز کاری)</div>
-                <div className="text-[10px] text-muted mt-0.5">
-                  {formatPrice(SHOP_INFO.shippingNormal)}
+                <div className="flex-1">
+                  <div className="text-xs font-extrabold text-ink">{label} ({time})</div>
+                  <div className="text-[10px] text-muted mt-0.5">{formatPrice(price)}</div>
                 </div>
-              </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                shippingType === 'normal' ? 'border-brand' : 'border-border'
-              }`}>
-                {shippingType === 'normal' && <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>}
-              </div>
-            </button>
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  shippingType === id ? 'border-brand' : 'border-border'
+                }`}>
+                  {shippingType === id && <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>}
+                </div>
+              </button>
+            ))}
           </div>
         </section>
 
@@ -214,38 +198,20 @@ export default function Checkout() {
             روش پرداخت
           </h3>
 
-          <div className="rounded-2xl p-4 text-white relative overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
-            <div className="absolute -top-6 -left-6 w-20 h-20 rounded-full bg-white/10"></div>
-            <div className="relative">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <CreditCard size={16} />
-                  <span className="text-[11px] font-bold">کارت به کارت</span>
-                </div>
-                <div className="w-8 h-5 rounded bg-accent"></div>
-              </div>
-
-              <div className="text-[10px] opacity-80 mb-1">شماره کارت</div>
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <span className="font-mono text-sm font-extrabold tracking-wider" style={{ direction: 'ltr' }}>
-                  {SHOP_INFO.card.number.replace(/(\d{4})/g, '$1 ').trim()}
-                </span>
-                <button type="button" onClick={copyCard}
-                  className="text-[10px] bg-white/20 px-2.5 py-1 rounded-full active:scale-95 flex items-center gap-1">
-                  {copied ? <><Check size={10} /> کپی شد</> : 'کپی'}
-                </button>
-              </div>
-              <div className="text-[10px] opacity-90">به نام {SHOP_INFO.card.holder}</div>
-              <div className="text-[10px] opacity-90">{SHOP_INFO.card.bank}</div>
-
-              <div className="mt-3 pt-3 border-t border-white/20 flex items-start gap-2">
-                <AlertCircle size={13} className="flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] leading-5 opacity-95">
-                  پس از ثبت سفارش، مبلغ را واریز کرده و رسید را در تلگرام <b>@{SHOP_INFO.telegram}</b> بفرستید.
-                </p>
-              </div>
+          <div className="rounded-2xl p-3 border border-brand bg-brand-light/30 flex items-center gap-3">
+            <CreditCard size={18} className="text-brand" />
+            <div className="flex-1">
+              <div className="text-xs font-extrabold text-ink">کارت به کارت</div>
+              <div className="text-[10px] text-muted mt-0.5">شماره کارت بعد از ثبت سفارش نمایش داده میشه</div>
             </div>
+            <div className="w-5 h-5 rounded-full border-2 border-brand flex items-center justify-center">
+              <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>
+            </div>
+          </div>
+
+          <div className="mt-3 flex items-start gap-2 text-[10px] text-muted">
+            <AlertCircle size={14} className="flex-shrink-0 mt-0.5" />
+            <p className="leading-5">پس از ثبت سفارش، به صفحه پرداخت هدایت میشی و شماره کارت رو می‌بینی.</p>
           </div>
         </section>
 

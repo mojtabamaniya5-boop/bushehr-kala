@@ -7,7 +7,7 @@ const items = [
   { path: '/',          label: 'خانه',           icon: Home, end: true },
   { path: '/favorites', label: 'علاقه‌مندی‌ها',    icon: Heart },
   { path: '/cart',      label: 'سبد خرید',        icon: ShoppingCart, badge: true, big: true },
-  { path: '/orders',    label: 'پیگیری سفارشات', icon: Package },
+  { path: '/my-orders', label: 'پیگیری سفارشات', icon: Package, requiresAuth: true },
   { path: '/profile',   label: 'پروفایل',         icon: User },
 ]
 

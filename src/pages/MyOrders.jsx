@@ -4,8 +4,10 @@ import Header from '../components/Header'
 import TrackStepper from '../components/TrackStepper'
 import { formatPrice, formatDate } from '../utils/storage'
 import { getCurrentUser } from '../utils/auth'
-import { supabase } from '../utils/supabase'
-import { Package, Loader2, ChevronLeft } from 'lucide-react'
+import { fetchUserOrders } from '../utils/orders'
+import { Package, Loader2, ChevronLeft, CreditCard, Copy, Check } from 'lucide-react'
+import { toast } from '../components/Toast'
+import { SHOP_INFO } from '../data/products'
 
 const STATUS_LABEL = {
   pending: { label: 'در انتظار پرداخت', color: 'bg-accent/20 text-ink' },
@@ -21,6 +23,7 @@ export default function MyOrders() {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState(null)
+  const [copiedCard, setCopiedCard] = useState(null)
 
   useEffect(() => {
     if (!user) { navigate('/login', { replace: true }); return }
@@ -29,32 +32,18 @@ export default function MyOrders() {
 
   const load = async () => {
     setLoading(true)
-    let dbOrders = []
-    try {
-      const { data, error } = await supabase
-        .from('orders').select('*')
-        .eq('customer_phone', user.phone)
-        .order('created_at', { ascending: false })
-      if (!error && data) {
-        dbOrders = data.map(o => ({
-          id: o.code || o.id,
-          date: o.created_at,
-          total: o.total, subtotal: o.subtotal, shipping: o.shipping,
-          status: o.status, items: o.items || [],
-          source: 'db',
-        }))
-      }
-    } catch (e) { console.warn(e) }
-
-    const lsOrders = (JSON.parse(localStorage.getItem('bk-orders') || '[]'))
-      .filter(o => o.customer?.phone === user.phone)
-      .map(o => ({ ...o, source: 'local' }))
-
-    const all = [...dbOrders, ...lsOrders.filter(lo => !dbOrders.find(o => o.id === lo.id))]
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-
-    setOrders(all)
+    const arr = await fetchUserOrders(user.phone)
+    setOrders(arr)
     setLoading(false)
+  }
+
+  const copyCard = async (orderId) => {
+    try {
+      await navigator.clipboard.writeText(SHOP_INFO.card.number)
+      setCopiedCard(orderId)
+      toast.success('شماره کارت کپی شد')
+      setTimeout(() => setCopiedCard(null), 1500)
+    } catch {}
   }
 
   if (!user) return null
@@ -96,6 +85,8 @@ export default function MyOrders() {
         {orders.map(o => {
           const st = STATUS_LABEL[o.status] || STATUS_LABEL.pending
           const isOpen = expanded === o.id
+          const isPending = o.status === 'pending'
+
           return (
             <div key={o.id} className="bg-white rounded-2xl border border-border overflow-hidden">
               <button onClick={() => setExpanded(isOpen ? null : o.id)}
@@ -116,18 +107,50 @@ export default function MyOrders() {
               </button>
 
               {isOpen && (
-                <div className="border-t border-border p-4 bg-cream/30">
-                  <h4 className="text-[11px] font-extrabold text-ink mb-2">📦 اقلام سفارش</h4>
-                  <div className="space-y-1.5 mb-3">
-                    {o.items.map((it, i) => (
-                      <div key={i} className="flex justify-between text-[11px]">
-                        <span className="text-ink truncate ml-2">{it.title} × {it.qty}</span>
-                        <span className="text-muted flex-shrink-0">{formatPrice(it.price * it.qty)}</span>
-                      </div>
-                    ))}
+                <div className="border-t border-border p-4 bg-cream/30 space-y-3">
+
+                  {/* اقلام */}
+                  <div>
+                    <h4 className="text-[11px] font-extrabold text-ink mb-2">📦 اقلام سفارش</h4>
+                    <div className="space-y-1.5">
+                      {o.items.map((it, i) => (
+                        <div key={i} className="flex justify-between text-[11px]">
+                          <span className="text-ink truncate ml-2">{it.title} × {it.qty}</span>
+                          <span className="text-muted flex-shrink-0">{formatPrice(it.price * it.qty)}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  <Link to={`/track/${o.id}`}
+                  {/* پرداخت برای pending */}
+                  {isPending && (
+                    <div className="rounded-2xl p-4 text-white relative overflow-hidden"
+                      style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
+                      <div className="absolute -top-6 -left-6 w-20 h-20 rounded-full bg-white/10"></div>
+                      <div className="relative">
+                        <div className="text-[10px] opacity-80 mb-1">شماره کارت برای واریز</div>
+                        <div className="font-mono text-sm font-extrabold tracking-wider mb-2 text-center"
+                          style={{ direction: 'ltr' }}>
+                          {SHOP_INFO.card.number.replace(/(\d{4})/g, '$1 ').trim()}
+                        </div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-[10px] opacity-90">به نام {SHOP_INFO.card.holder}</span>
+                          <button onClick={(e) => { e.stopPropagation(); copyCard(o.id) }}
+                            className="text-[10px] bg-white/20 px-2.5 py-1 rounded-full active:scale-95 flex items-center gap-1">
+                            {copiedCard === o.id ? <><Check size={10} /> کپی شد</> : <><Copy size={10} /> کپی</>}
+                          </button>
+                        </div>
+
+                        <Link to={`/pay/${o.id}`} onClick={e => e.stopPropagation()}
+                          className="w-full bg-white text-brand font-extrabold py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs active:scale-[0.98] transition">
+                          <CreditCard size={14} />
+                          ادامه پرداخت
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+
+                  <Link to={`/track/${o.id}`} onClick={e => e.stopPropagation()}
                     className="w-full flex items-center justify-center gap-1.5 text-[11px] font-bold text-brand py-2.5 rounded-xl bg-brand-light/50 active:scale-[0.98] transition">
                     مشاهده جزئیات کامل
                     <ChevronLeft size={14} />

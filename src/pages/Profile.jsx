@@ -4,9 +4,10 @@ import Header from '../components/Header'
 import { storage, formatPrice } from '../utils/storage'
 import { getFavorites } from '../utils/cart'
 import { getCurrentUser, logoutUser } from '../utils/auth'
+import { fetchUserOrders } from '../utils/orders'
 import { PRODUCTS, SHOP_INFO } from '../data/products'
 import ProductImage from '../components/ProductImage'
-import { Heart, Phone, Send, MapPin, Trash2, ShoppingBag, User, LogOut, LogIn, Package } from 'lucide-react'
+import { Heart, Phone, Send, MapPin, ShoppingBag, User, LogOut, LogIn, Package } from 'lucide-react'
 import { toast } from '../components/Toast'
 
 export default function Profile() {
@@ -22,17 +23,17 @@ export default function Profile() {
     }
     window.addEventListener('fav-updated', update)
     window.addEventListener('auth-changed', update)
-
-    // شمارش سفارش‌های کاربر
-    if (user) {
-      const localOrders = JSON.parse(localStorage.getItem('bk-orders') || '[]')
-        .filter(o => o.customer?.phone === user.phone)
-      setOrdersCount(localOrders.length)
-    }
-
     return () => {
       window.removeEventListener('fav-updated', update)
       window.removeEventListener('auth-changed', update)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (user) {
+      fetchUserOrders(user.phone).then(arr => setOrdersCount(arr.length))
+    } else {
+      setOrdersCount(0)
     }
   }, [user])
 
