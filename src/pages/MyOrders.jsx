@@ -28,7 +28,7 @@ export default function MyOrders() {
   useEffect(() => {
     if (!user) { navigate('/login', { replace: true }); return }
     load()
-  }, [user, navigate])
+  }, [user?.phone, navigate])
 
   const load = async () => {
     setLoading(true)

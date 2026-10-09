@@ -35,7 +35,7 @@ export default function Profile() {
     } else {
       setOrdersCount(0)
     }
-  }, [user])
+  }, [user?.phone])
 
   const handleLogout = () => {
     if (confirm('از حساب خارج می‌شوی؟')) {

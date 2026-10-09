@@ -14,7 +14,7 @@ export default function Checkout() {
   const items = getCart()
   const subtotal = cartTotal()
   const loggedUser = getCurrentUser()
-  const savedUser = storage.get('user', {})
+  const savedUser = loggedUser ? storage.get('user', {}) : {}
 
   const [shippingType, setShippingType] = useState('fast')
   const shipping = items.length === 0 ? 0
@@ -25,7 +25,7 @@ export default function Checkout() {
   const [form, setForm] = useState({
     name: loggedUser?.name || savedUser.name || '',
     phone: loggedUser?.phone || savedUser.phone || '',
-    address: storage.get('last-address', ''),
+    address: loggedUser ? storage.get('last-address', '') : '',
     note: '',
   })
   const [submitting, setSubmitting] = useState(false)
