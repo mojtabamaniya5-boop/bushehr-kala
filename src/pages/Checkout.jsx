@@ -6,7 +6,7 @@ import { storage, formatPrice, uid } from '../utils/storage'
 import { SHOP_INFO } from '../data/products'
 import { saveOrderToDB } from '../utils/supabase'
 import { getCurrentUser } from '../utils/auth'
-import { User, Phone, MapPin, CreditCard, Wallet, AlertCircle, Check, Truck, Zap, LogIn } from 'lucide-react'
+import { User, Phone, MapPin, CreditCard, Wallet, AlertCircle, Truck, Zap, LogIn, ArrowLeft } from 'lucide-react'
 import { toast } from '../components/Toast'
 
 export default function Checkout() {
@@ -62,14 +62,13 @@ export default function Checkout() {
       customer: { ...form, shippingType },
       items: items.map(i => ({ id: i.id, title: i.title, price: i.price, qty: i.qty })),
       subtotal, shipping, total,
-      payment: 'card',
+      payment: 'pending',  // ← کاربر بعداً انتخاب میکنه
       status: 'pending',
     }
 
     const orders = storage.get('orders', [])
     orders.push(order)
     storage.set('orders', orders)
-    // ذخیره اطلاعات برای autofill بعدی
     storage.set('user', { name: form.name, phone: form.phone })
     storage.set('last-address', form.address)
 
@@ -189,29 +188,16 @@ export default function Checkout() {
           </div>
         </section>
 
-        {/* روش پرداخت */}
-        <section className="bg-white rounded-2xl p-4 border border-border">
-          <h3 className="font-extrabold text-sm mb-3 flex items-center gap-2 text-ink">
-            <div className="w-7 h-7 rounded-full bg-brand-light flex items-center justify-center">
-              <Wallet size={14} className="text-brand" />
-            </div>
-            روش پرداخت
-          </h3>
-
-          <div className="rounded-2xl p-3 border border-brand bg-brand-light/30 flex items-center gap-3">
-            <CreditCard size={18} className="text-brand" />
-            <div className="flex-1">
-              <div className="text-xs font-extrabold text-ink">کارت به کارت</div>
-              <div className="text-[10px] text-muted mt-0.5">شماره کارت بعد از ثبت سفارش نمایش داده میشه</div>
-            </div>
-            <div className="w-5 h-5 rounded-full border-2 border-brand flex items-center justify-center">
-              <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>
-            </div>
+        {/* اطلاع پرداخت */}
+        <section className="bg-accent/10 border border-accent/30 rounded-2xl p-4 flex items-start gap-3">
+          <div className="w-9 h-9 rounded-full bg-accent/30 flex items-center justify-center flex-shrink-0">
+            <Wallet size={16} className="text-ink" />
           </div>
-
-          <div className="mt-3 flex items-start gap-2 text-[10px] text-muted">
-            <AlertCircle size={14} className="flex-shrink-0 mt-0.5" />
-            <p className="leading-5">پس از ثبت سفارش، به صفحه پرداخت هدایت میشی و شماره کارت رو می‌بینی.</p>
+          <div className="flex-1">
+            <div className="text-xs font-extrabold text-ink mb-1">پرداخت در مرحله بعد</div>
+            <p className="text-[10px] text-muted leading-5">
+              بعد از ثبت سفارش، می‌تونی بین <b className="text-ink">پرداخت آنلاین</b> (زیبال) یا <b className="text-ink">کارت به کارت</b> انتخاب کنی.
+            </p>
           </div>
         </section>
 

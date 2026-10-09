@@ -1,19 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import Header from '../components/Header'
-import { fetchOrderById, markOrderPaidClaimed } from '../utils/orders'
 import { requestZibalPayment } from '../utils/payment'
+import { fetchOrderById, markOrderPaidClaimed } from '../utils/orders'
 import { SHOP_INFO } from '../data/products'
 import { formatPrice, formatDate } from '../utils/storage'
 import { toast } from '../components/Toast'
-import { Copy, Check, CreditCard, AlertCircle, Send, Loader2, CheckCircle2, Zap, ArrowLeft } from 'lucide-react'
+import { Copy, Check, CreditCard, AlertCircle, Send, Loader2, CheckCircle2, Zap, ArrowRight, ArrowLeft } from 'lucide-react'
 
 export default function Pay() {
   const { orderId } = useParams()
   const navigate = useNavigate()
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [method, setMethod] = useState(null) // 'card' | 'online'
+  const [method, setMethod] = useState(null)
   const [copied, setCopied] = useState(false)
   const [claimed, setClaimed] = useState(false)
   const [paying, setPaying] = useState(false)
@@ -60,15 +59,13 @@ export default function Pay() {
 
       const res = await requestZibalPayment({
         orderId: order.id,
-        amount: order.total * 10, // به ریال
+        amount: order.total * 10,
         callbackUrl,
         phone: order.customer?.phone || '',
       })
 
       if (res.ok && res.paymentUrl) {
-        // ذخیره trackId برای verify
         sessionStorage.setItem('zibal_track_' + order.id, String(res.trackId))
-        // هدایت به زیبال
         window.location.href = res.paymentUrl
       } else {
         setPaying(false)
@@ -80,14 +77,42 @@ export default function Pay() {
     }
   }
 
+  // ═══ Header سفارشی با دکمه back مشخص ═══
+  const CustomHeader = ({ showBackToMethods = false }) => (
+    <header className="sticky top-0 z-30 bg-cream border-b border-border">
+      <div className="flex items-center gap-3 px-4 h-14 max-w-lg mx-auto">
+        {showBackToMethods ? (
+          <button onClick={() => setMethod(null)}
+            className="p-1 -mr-1 active:scale-95 text-ink">
+            <ArrowRight size={22} />
+          </button>
+        ) : (
+          <button onClick={() => navigate('/my-orders')}
+            className="p-1 -mr-1 active:scale-95 text-ink">
+            <ArrowRight size={22} />
+          </button>
+        )}
+        <h1 className="flex-1 font-bold text-base text-ink text-center">
+          {showBackToMethods ? 'انتخاب روش پرداخت' : 'پرداخت سفارش'}
+        </h1>
+        <div className="w-7"></div>
+      </div>
+    </header>
+  )
+
   if (loading) {
-    return (<><Header title="پرداخت" back /><div className="flex justify-center pt-32"><Loader2 className="animate-spin text-brand" size={32} /></div></>)
+    return (
+      <>
+        <CustomHeader />
+        <div className="flex justify-center pt-32"><Loader2 className="animate-spin text-brand" size={32} /></div>
+      </>
+    )
   }
 
   if (!order) {
     return (
       <>
-        <Header title="پرداخت" back />
+        <CustomHeader />
         <div className="text-center pt-24">
           <p className="text-4xl mb-3">🔍</p>
           <p className="font-bold mb-4">سفارش پیدا نشد</p>
@@ -100,14 +125,17 @@ export default function Pay() {
   if (order.status !== 'pending') {
     return (
       <>
-        <Header title="پرداخت" back />
+        <CustomHeader />
         <div className="max-w-lg mx-auto px-4 pt-10 text-center fade-up">
           <div className="w-20 h-20 rounded-full bg-brand-light flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 size={40} className="text-brand" />
           </div>
           <p className="font-extrabold text-ink mb-1">این سفارش پرداخت شده</p>
-          <p className="text-xs text-muted mb-6">وضعیت: {order.status === 'paid' ? 'پرداخت شده' : order.status === 'sent' ? 'ارسال شده' : 'تحویل شده'}</p>
-          <Link to={`/track/${order.id}`} className="inline-block bg-brand text-white font-bold text-xs px-6 py-3 rounded-full">
+          <p className="text-xs text-muted mb-6">
+            وضعیت: {order.status === 'paid' ? 'پرداخت شده' : order.status === 'sent' ? 'ارسال شده' : 'تحویل شده'}
+          </p>
+          <Link to={`/track/${order.id}`}
+            className="inline-block bg-brand text-white font-bold text-xs px-6 py-3 rounded-full">
             مشاهده وضعیت
           </Link>
         </div>
@@ -115,10 +143,9 @@ export default function Pay() {
     )
   }
 
-  // ═══ صفحه اصلی انتخاب روش پرداخت ═══
   return (
     <>
-      <Header title="پرداخت سفارش" back />
+      <CustomHeader showBackToMethods={!!method} />
       <main className="max-w-lg mx-auto px-4 pb-40 pt-4 fade-up space-y-4">
 
         {/* خلاصه سفارش */}
@@ -141,10 +168,10 @@ export default function Pay() {
           </div>
         </div>
 
-        {/* انتخاب روش پرداخت */}
+        {/* ═══ انتخاب روش ═══ */}
         {!method && (
           <>
-            <h3 className="font-extrabold text-sm text-ink text-center">روش پرداخت را انتخاب کن</h3>
+            <h3 className="font-extrabold text-sm text-ink text-center mb-1">روش پرداخت را انتخاب کن</h3>
 
             <button onClick={() => setMethod('online')}
               className="w-full bg-white rounded-3xl p-5 border-2 border-brand active:scale-[0.98] transition relative overflow-hidden"
@@ -178,17 +205,17 @@ export default function Pay() {
                 <ArrowLeft size={20} className="text-muted" />
               </div>
             </button>
+
+            <Link to="/my-orders"
+              className="w-full block text-center bg-white border border-border text-muted font-bold py-3 rounded-2xl text-xs active:scale-[0.98] mt-2">
+              بازگشت به سفارش‌ها
+            </Link>
           </>
         )}
 
         {/* ═══ پرداخت آنلاین ═══ */}
         {method === 'online' && (
           <div className="space-y-4">
-            <button onClick={() => setMethod(null)}
-              className="text-xs text-muted font-bold flex items-center gap-1.5">
-              <ArrowLeft size={14} /> تغییر روش پرداخت
-            </button>
-
             <div className="rounded-3xl p-6 text-white text-center relative overflow-hidden"
               style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
               <div className="absolute -top-10 -left-10 w-32 h-32 rounded-full bg-white/10"></div>
@@ -199,9 +226,7 @@ export default function Pay() {
                   <Zap size={40} />
                 </div>
                 <h3 className="font-extrabold text-lg mb-2">پرداخت آنلاین</h3>
-                <p className="text-[11px] opacity-90 mb-1 leading-6">
-                  به درگاه امن زیبال منتقل می‌شی
-                </p>
+                <p className="text-[11px] opacity-90 mb-1 leading-6">به درگاه امن زیبال منتقل می‌شی</p>
                 <p className="text-2xl font-extrabold mb-1">{formatPrice(order.total)}</p>
                 <p className="text-[10px] opacity-75">درگاه پرداخت زیبال</p>
               </div>
@@ -238,11 +263,6 @@ export default function Pay() {
         {/* ═══ کارت به کارت ═══ */}
         {method === 'card' && (
           <div className="space-y-4">
-            <button onClick={() => setMethod(null)}
-              className="text-xs text-muted font-bold flex items-center gap-1.5">
-              <ArrowLeft size={14} /> تغییر روش پرداخت
-            </button>
-
             <div className="rounded-3xl p-5 text-white relative overflow-hidden"
               style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
               <div className="absolute -top-8 -left-8 w-32 h-32 rounded-full bg-white/10"></div>
@@ -324,10 +344,6 @@ export default function Pay() {
           </div>
         )}
 
-        <button onClick={() => navigate('/my-orders')}
-          className="w-full bg-white border border-border text-muted font-bold py-3 rounded-2xl text-xs active:scale-[0.98]">
-          بازگشت به سفارش‌ها
-        </button>
       </main>
     </>
   )
