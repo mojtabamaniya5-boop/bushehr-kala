@@ -4,7 +4,7 @@ import Header from '../components/Header'
 import TrackStepper from '../components/TrackStepper'
 import { supabase } from '../utils/supabase'
 import { formatPrice, formatDate } from '../utils/storage'
-import { Package, Search, Loader2, Copy, Check, CreditCard, ShoppingBag, Phone, RotateCcw } from 'lucide-react'
+import { Package, Search, Loader2, Copy, Check, CreditCard, ShoppingBag, Phone, RotateCcw, Truck } from 'lucide-react'
 import { toast } from '../components/Toast'
 import { SHOP_INFO } from '../data/products'
 
@@ -24,6 +24,7 @@ export default function Track() {
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [copiedTracking, setCopiedTracking] = useState(false)
 
   useEffect(() => {
     if (orderId) search(orderId)
@@ -56,6 +57,8 @@ export default function Track() {
           name: data.customer_name,
           address: data.customer_address,
           phone: data.customer_phone,
+          trackingCode: data.tracking_code,
+          shippingMethod: data.shipping_method,
         })
         setLoading(false)
         return
@@ -80,6 +83,8 @@ export default function Track() {
         name: found.customer?.name,
         address: found.customer?.address,
         phone: found.customer?.phone,
+        trackingCode: found.trackingCode,
+        shippingMethod: found.shippingMethod,
       })
     } else {
       setOrder(null)
@@ -97,7 +102,18 @@ export default function Track() {
     } catch {}
   }
 
+  const copyTracking = async () => {
+    if (!order?.trackingCode) return
+    try {
+      await navigator.clipboard.writeText(order.trackingCode)
+      setCopiedTracking(true)
+      toast.success('کد رهگیری کپی شد')
+      setTimeout(() => setCopiedTracking(false), 1500)
+    } catch {}
+  }
+
   const isPending = order?.status === 'pending'
+  const isSent = order?.status === 'sent' || order?.status === 'done'
 
   return (
     <>
@@ -124,10 +140,6 @@ export default function Track() {
               پیدا کن
             </button>
           </div>
-
-          <p className="text-[10px] text-muted mt-3 text-center">
-            کد سفارش در پیام تأیید و صفحه پروفایل شما موجوده
-          </p>
         </div>
 
         {loading && (
@@ -173,7 +185,41 @@ export default function Track() {
               </p>
             </div>
 
-            {/* ═══ CTA اصلی ═══ */}
+            {/* ═══ کد رهگیری ═══ */}
+            {isSent && order.trackingCode && (
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-3xl p-5 fade-up">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center">
+                    <Truck size={20} className="text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-extrabold text-blue-600">
+                      {order.shippingMethod === 'tipax' ? 'ارسال با تیپاکس' : 'ارسال با پست'}
+                    </p>
+                    <p className="text-[10px] text-muted">کد رهگیری مرسوله شما</p>
+                  </div>
+                </div>
+
+                <div className="text-[10px] text-muted mb-1.5">کد رهگیری پستی</div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex-1 bg-white rounded-xl px-3 py-3 font-mono text-sm font-extrabold text-ink tracking-wider"
+                    style={{ direction: 'ltr', textAlign: 'center' }}>
+                    {order.trackingCode}
+                  </div>
+                  <button onClick={copyTracking}
+                    className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center active:scale-90 transition">
+                    {copiedTracking ? <Check size={18} /> : <Copy size={18} />}
+                  </button>
+                </div>
+
+                <a href="https://tracking.post.ir/" target="_blank" rel="noreferrer"
+                  className="w-full flex items-center justify-center gap-2 bg-white border border-blue-500/30 text-blue-600 font-extrabold py-3 rounded-2xl active:scale-[0.98] text-xs">
+                  <Truck size={14} />
+                  پیگیری در سایت پست
+                </a>
+              </div>
+            )}
+
             {isPending && (
               <div className="rounded-3xl p-5 text-white relative overflow-hidden"
                 style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
@@ -229,7 +275,6 @@ export default function Track() {
               <p className="text-xs text-muted leading-6">{order.address}</p>
             </div>
 
-            {/* ═══ CTA ثانویه ═══ */}
             <div className="grid grid-cols-2 gap-2">
               <Link to="/"
                 className="flex items-center justify-center gap-1.5 bg-white border border-border text-ink font-bold py-3 rounded-2xl active:scale-[0.98] text-xs">

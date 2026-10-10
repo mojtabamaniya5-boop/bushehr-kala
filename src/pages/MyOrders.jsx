@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import TrackStepper from '../components/TrackStepper'
 import ConfirmModal from '../components/ConfirmModal'
-import { formatPrice, formatDate, storage } from '../utils/storage'
+import { formatPrice, formatDate } from '../utils/storage'
 import { getCurrentUser } from '../utils/auth'
 import { fetchUserOrders } from '../utils/orders'
 import { supabase } from '../utils/supabase'
-import { Package, Loader2, ChevronLeft, CreditCard, Copy, Check, Trash2 } from 'lucide-react'
+import { Package, Loader2, ChevronLeft, CreditCard, Copy, Check, Trash2, Truck } from 'lucide-react'
 import { toast } from '../components/Toast'
 import { SHOP_INFO } from '../data/products'
 
@@ -26,6 +26,7 @@ export default function MyOrders() {
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState(null)
   const [copiedCard, setCopiedCard] = useState(null)
+  const [copiedTracking, setCopiedTracking] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
 
   useEffect(() => {
@@ -49,16 +50,23 @@ export default function MyOrders() {
     } catch {}
   }
 
+  const copyTracking = async (code, orderId) => {
+    try {
+      await navigator.clipboard.writeText(code)
+      setCopiedTracking(orderId)
+      toast.success('کد رهگیری کپی شد')
+      setTimeout(() => setCopiedTracking(null), 1500)
+    } catch {}
+  }
+
   const confirmDelete = async () => {
     if (!deleteTarget) return
     const order = deleteTarget
 
-    // ۱) حذف از localStorage
     const ls = JSON.parse(localStorage.getItem('bk-orders') || '[]')
     const newLs = ls.filter(o => String(o.id).toUpperCase() !== String(order.id).toUpperCase())
     localStorage.setItem('bk-orders', JSON.stringify(newLs))
 
-    // ۲) حذف از Supabase (اگه pending باشه — سفارش‌های paid رو حذف نکن)
     if (order.status === 'pending') {
       try {
         await supabase.from('orders').delete().eq('code', order.id)
@@ -116,7 +124,6 @@ export default function MyOrders() {
           return (
             <div key={o.id} className="bg-white rounded-2xl border border-border overflow-hidden">
 
-              {/* هدر سفارش با دکمه حذف */}
               <div className="flex items-center justify-between px-4 pt-4 pb-2">
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-xs font-extrabold text-brand">#{String(o.id).slice(-6)}</span>
@@ -157,14 +164,42 @@ export default function MyOrders() {
                     </div>
                   </div>
 
+                  {/* ═══ کد رهگیری ═══ */}
+                  {o.trackingCode && (o.status === 'sent' || o.status === 'done') && (
+                    <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Truck size={16} className="text-blue-600" />
+                        <span className="text-[11px] font-extrabold text-blue-600">
+                          {o.shippingMethod === 'tipax' ? 'ارسال با تیپاکس' : 'ارسال با پست'}
+                        </span>
+                      </div>
+                      <div className="text-[10px] text-muted mb-1.5">کد رهگیری</div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 bg-white rounded-xl px-3 py-2.5 font-mono text-xs font-bold text-ink tracking-wider"
+                          style={{ direction: 'ltr', textAlign: 'center' }}>
+                          {o.trackingCode}
+                        </div>
+                        <button onClick={(e) => { e.stopPropagation(); copyTracking(o.trackingCode, o.id) }}
+                          className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center active:scale-90">
+                          {copiedTracking === o.id ? <Check size={16} /> : <Copy size={16} />}
+                        </button>
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-blue-500/20 flex gap-2">
+                        <a href="https://tracking.post.ir/" target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
+                          className="flex-1 text-center bg-white border border-blue-500/30 text-blue-600 font-bold py-2 rounded-xl text-[10px] active:scale-95">
+                          پیگیری در سایت پست
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
                   {isPending && (
                     <div className="rounded-2xl p-4 text-white relative overflow-hidden"
                       style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
                       <div className="absolute -top-6 -left-6 w-20 h-20 rounded-full bg-white/10"></div>
                       <div className="relative">
                         <div className="text-[10px] opacity-80 mb-1">شماره کارت برای واریز</div>
-                        <div className="font-mono text-sm font-extrabold tracking-wider mb-2 text-center"
-                          style={{ direction: 'ltr' }}>
+                        <div className="font-mono text-sm font-extrabold tracking-wider mb-2 text-center" style={{ direction: 'ltr' }}>
                           {SHOP_INFO.card.number.replace(/(\d{4})/g, '$1 ').trim()}
                         </div>
                         <div className="flex items-center justify-between mb-3">
@@ -196,7 +231,6 @@ export default function MyOrders() {
         })}
       </main>
 
-      {/* مودال حذف */}
       <ConfirmModal
         open={!!deleteTarget}
         title="حذف سفارش"
