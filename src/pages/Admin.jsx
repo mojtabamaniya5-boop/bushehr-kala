@@ -3,26 +3,67 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../utils/supabase'
 import { formatPrice } from '../utils/storage'
 import { toast } from '../components/Toast'
-import ConfirmModal from '../components/ConfirmModal'
-import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Hash } from 'lucide-react'
-
-const ADMIN_PASSWORD = 'bushehr1405'
+import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Hash, ShieldCheck } from 'lucide-react'
 
 export default function Admin() {
-  const [authed, setAuthed] = useState(localStorage.getItem('bk-admin') === '1')
-  if (!authed) return <Login onLogin={() => setAuthed(true)} />
-  return <Dashboard onLogout={() => { localStorage.removeItem('bk-admin'); setAuthed(false) }} />
+  const [session, setSession] = useState(null)
+  const [checking, setChecking] = useState(true)
+
+  useEffect(() => {
+    // چک session فعلی
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      setChecking(false)
+    })
+
+    // گوش دادن به تغییرات
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => listener.subscription.unsubscribe()
+  }, [])
+
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cream">
+        <Loader2 className="animate-spin text-brand" size={32} />
+      </div>
+    )
+  }
+
+  if (!session) return <Login onLogin={() => {}} />
+
+  return <Dashboard user={session.user} onLogout={() => supabase.auth.signOut()} />
 }
 
 function Login({ onLogin }) {
+  const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
+  const [loading, setLoading] = useState(false)
   const [err, setErr] = useState('')
-  const submit = () => {
-    if (pass === ADMIN_PASSWORD) {
-      localStorage.setItem('bk-admin', '1')
-      onLogin()
-    } else setErr('رمز اشتباه است')
+
+  const submit = async () => {
+    if (!email.trim() || !pass.trim()) {
+      setErr('ایمیل و رمز عبور را وارد کن')
+      return
+    }
+    setLoading(true)
+    setErr('')
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: pass,
+    })
+
+    setLoading(false)
+    if (error) {
+      setErr('ایمیل یا رمز عبور اشتباه است')
+      return
+    }
+    onLogin()
   }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-cream px-6">
       <div className="w-full max-w-sm">
@@ -31,18 +72,40 @@ function Login({ onLogin }) {
         </Link>
         <div className="bg-white rounded-3xl p-6 border border-border shadow-[0_8px_28px_rgba(0,0,0,0.06)]">
           <div className="w-14 h-14 rounded-2xl bg-brand-light flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">🫙</span>
+            <ShieldCheck size={24} className="text-brand" />
           </div>
-          <h1 className="font-extrabold text-ink text-lg mb-1 text-center">پنل مدیریت</h1>
-          <p className="text-xs text-muted mb-5 text-center">رمز عبور را وارد کن</p>
-          <input type="password" value={pass}
+          <h1 className="font-extrabold text-ink text-lg mb-1 text-center">ورود امن ادمین</h1>
+          <p className="text-xs text-muted mb-5 text-center">با حساب Supabase خودت وارد شو</p>
+
+          <input
+            type="email"
+            value={email}
+            onChange={e => { setEmail(e.target.value); setErr('') }}
+            placeholder="ایمیل"
+            autoComplete="email"
+            className="w-full bg-cream border border-border rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-brand transition text-center mb-2"
+            style={{ direction: 'ltr' }}
+          />
+
+          <input
+            type="password"
+            value={pass}
             onChange={e => { setPass(e.target.value); setErr('') }}
             onKeyDown={e => e.key === 'Enter' && submit()}
-            placeholder="رمز عبور" autoFocus
-            className="w-full bg-cream border border-border rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-brand transition text-center mb-2" />
+            placeholder="رمز عبور"
+            autoComplete="current-password"
+            className="w-full bg-cream border border-border rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-brand transition text-center mb-2"
+            style={{ direction: 'ltr' }}
+          />
+
           {err && <p className="text-[10px] text-danger mb-3 text-center">{err}</p>}
-          <button onClick={submit} className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl active:scale-[0.98] transition">
-            ورود
+
+          <button
+            onClick={submit}
+            disabled={loading}
+            className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl active:scale-[0.98] transition disabled:opacity-60 flex items-center justify-center gap-2"
+          >
+            {loading ? <><Loader2 className="animate-spin" size={16} /> در حال ورود...</> : 'ورود امن'}
           </button>
         </div>
       </div>
@@ -50,13 +113,14 @@ function Login({ onLogin }) {
   )
 }
 
-function Dashboard({ onLogout }) {
+function Dashboard({ user, onLogout }) {
   const [tab, setTab] = useState('products')
   const [products, setProducts] = useState([])
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
   const [statusModal, setStatusModal] = useState(null)
+  const [deleteTarget, setDeleteTarget] = useState(null)
 
   const load = async () => {
     setLoading(true)
@@ -71,18 +135,26 @@ function Dashboard({ onLogout }) {
 
   useEffect(() => { load() }, [])
 
-  const handleDelete = async (id) => {
-    if (!confirm('محصول حذف شود؟')) return
-    const { error } = await supabase.from('products').delete().eq('id', id)
+  const handleDelete = async () => {
+    if (!deleteTarget) return
+    const { error } = await supabase.from('products').delete().eq('id', deleteTarget)
     if (error) { toast.error('خطا: ' + error.message); return }
     toast.success('حذف شد')
+    setDeleteTarget(null)
     load()
   }
 
   const handleStatusChange = async (orderId, newStatus, trackingCode = null, shippingMethod = null) => {
     const updates = { status: newStatus }
-    if (trackingCode !== null) updates.tracking_code = trackingCode
-    if (shippingMethod !== null) updates.shipping_method = shippingMethod
+
+    // اگه برگشت به pending یا paid → کد رهگیری پاک بشه
+    if (newStatus === 'pending' || newStatus === 'paid' || newStatus === 'canceled') {
+      updates.tracking_code = null
+      updates.shipping_method = null
+    } else {
+      if (trackingCode !== null) updates.tracking_code = trackingCode
+      if (shippingMethod !== null) updates.shipping_method = shippingMethod
+    }
 
     const { error } = await supabase.from('orders').update(updates).eq('id', orderId)
     if (error) { toast.error('خطا: ' + error.message); return false }
@@ -114,7 +186,9 @@ function Dashboard({ onLogout }) {
             <div className="w-9 h-9 rounded-xl bg-brand flex items-center justify-center text-white font-extrabold text-sm">ب</div>
             <div>
               <div className="font-extrabold text-sm">پنل مدیریت</div>
-              <div className="text-[10px] text-muted">کافه ترشی</div>
+              <div className="text-[10px] text-muted truncate max-w-[140px]" style={{ direction: 'ltr', textAlign: 'right' }}>
+                {user?.email}
+              </div>
             </div>
           </div>
           <button onClick={onLogout} className="p-2 rounded-xl bg-cream text-muted active:scale-95">
@@ -155,7 +229,7 @@ function Dashboard({ onLogout }) {
                   <button onClick={() => setEditing(p)} className="p-2 rounded-xl bg-cream active:scale-95">
                     <Edit2 size={14} />
                   </button>
-                  <button onClick={() => handleDelete(p.id)} className="p-2 rounded-xl bg-danger/10 text-danger active:scale-95">
+                  <button onClick={() => setDeleteTarget(p.id)} className="p-2 rounded-xl bg-danger/10 text-danger active:scale-95">
                     <Trash2 size={14} />
                   </button>
                 </div>
@@ -242,6 +316,48 @@ function Dashboard({ onLogout }) {
           }}
         />
       )}
+      {deleteTarget && (
+        <DeleteModal
+          productId={deleteTarget}
+          onCancel={() => setDeleteTarget(null)}
+          onConfirm={handleDelete}
+        />
+      )}
+    </div>
+  )
+}
+
+function DeleteModal({ productId, onCancel, onConfirm }) {
+  const [deleting, setDeleting] = useState(false)
+  const handle = async () => {
+    setDeleting(true)
+    await onConfirm()
+    setDeleting(false)
+  }
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center px-5 bg-black/50 backdrop-blur-sm">
+      <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div className="relative h-24 flex items-center justify-center"
+          style={{ background: 'linear-gradient(135deg, #DC2626 0%, #991B1B 100%)' }}>
+          <div className="absolute -top-8 -left-8 w-24 h-24 rounded-full bg-white/10"></div>
+          <div className="relative w-14 h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center border-2 border-white/40">
+            <Trash2 size={24} className="text-white" />
+          </div>
+        </div>
+        <div className="p-5 text-center">
+          <h3 className="font-extrabold text-base text-ink mb-2">حذف محصول</h3>
+          <p className="text-xs text-muted leading-6">مطمئنی؟ این کار قابل بازگشت نیست.</p>
+        </div>
+        <div className="p-4 pt-0 flex gap-2">
+          <button onClick={onCancel} className="flex-1 bg-cream border border-border text-ink font-bold py-3 rounded-2xl active:scale-[0.98] text-xs">
+            انصراف
+          </button>
+          <button onClick={handle} disabled={deleting}
+            className="flex-1 bg-danger text-white font-extrabold py-3 rounded-2xl active:scale-[0.98] text-xs disabled:opacity-60 flex items-center justify-center gap-1.5">
+            {deleting ? <Loader2 className="animate-spin" size={14} /> : 'بله، حذف کن'}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
@@ -252,12 +368,17 @@ function TrackingModal({ data, onClose, onSave }) {
   const [saving, setSaving] = useState(false)
 
   const handle = async () => {
-    if (!code.trim()) {
+    const cleanCode = code.trim()
+    if (!cleanCode) {
       toast.error('کد رهگیری پستی رو وارد کن')
       return
     }
+    if (cleanCode.length < 10 || !/^[A-Z0-9]+$/i.test(cleanCode)) {
+      toast.error('کد رهگیری حداقل ۱۰ کاراکتر و شامل حروف و اعداد')
+      return
+    }
     setSaving(true)
-    await onSave(code.trim(), method)
+    await onSave(cleanCode, method)
     setSaving(false)
   }
 
@@ -286,7 +407,7 @@ function TrackingModal({ data, onClose, onSave }) {
             </label>
             <input value={code}
               onChange={e => setCode(e.target.value)}
-              placeholder="مثلاً 12345678901234567890"
+              placeholder="حداقل ۱۰ کاراکتر"
               className="w-full bg-cream border border-border rounded-2xl px-3.5 py-3 text-sm outline-none focus:border-brand transition font-mono"
               style={{ direction: 'ltr', textAlign: 'center' }} />
           </div>
@@ -348,7 +469,7 @@ function ProductForm({ product, onClose }) {
   const [form, setForm] = useState({
     id: product.id || '',
     title: product.title || '',
-    category: product.category || 'headphone',
+    category: product.category || 'cucumber',
     brand: product.brand || '',
     price: product.price || 0,
     old_price: product.old_price || '',
