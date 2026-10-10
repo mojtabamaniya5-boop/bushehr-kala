@@ -6,9 +6,10 @@ import { supabase } from '../utils/supabase'
 import { formatPrice, formatDate } from '../utils/storage'
 import { getCurrentUser } from '../utils/auth'
 import { canSearch, recordAttempt, isValidOrderCode, isValidPhone, clearAttempts } from '../utils/track-security'
-import { Package, Search, Loader2, Copy, Check, CreditCard, ShoppingBag, Phone, RotateCcw, Truck, Lock, AlertTriangle } from 'lucide-react'
+import { Package, Search, Loader2, Copy, Check, CreditCard, ShoppingBag, Phone, RotateCcw, Truck, Lock, AlertTriangle, ExternalLink } from 'lucide-react'
 import { toast } from '../components/Toast'
 import { SHOP_INFO } from '../data/products'
+import { getTrackingUrl, getTrackingLabel, getShippingName } from '../utils/tracking-url'
 
 const STATUS_LABEL = {
   pending: 'در انتظار پرداخت',
@@ -263,7 +264,7 @@ export default function Track() {
                   </div>
                   <div className="flex-1">
                     <p className="text-xs font-extrabold text-blue-600">
-                      {order.shippingMethod === 'tipax' ? 'ارسال با تیپاکس' : 'ارسال با پست'}
+                      {getShippingName(order.shippingMethod)}
                     </p>
                     <p className="text-[10px] text-muted">کد رهگیری مرسوله شما</p>
                   </div>
@@ -281,10 +282,10 @@ export default function Track() {
                   </button>
                 </div>
 
-                <a href="https://tracking.post.ir/" target="_blank" rel="noreferrer"
+                <a href={getTrackingUrl(order.trackingCode, order.shippingMethod)} target="_blank" rel="noreferrer"
                   className="w-full flex items-center justify-center gap-2 bg-white border border-blue-500/30 text-blue-600 font-extrabold py-3 rounded-2xl active:scale-[0.98] text-xs">
                   <Truck size={14} />
-                  پیگیری در سایت پست
+                  {getTrackingLabel(order.shippingMethod)}
                 </a>
               </div>
             )}

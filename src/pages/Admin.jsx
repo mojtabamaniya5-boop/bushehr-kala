@@ -3,25 +3,40 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../utils/supabase'
 import { formatPrice } from '../utils/storage'
 import { toast } from '../components/Toast'
-import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Hash, ShieldCheck } from 'lucide-react'
+import AdminCustomers from './AdminCustomers'
+import { checkAdminSession, updateSessionTimestamp, clearSession, sendPasswordReset, changePassword, isRecoveryMode } from '../utils/admin-auth'
+import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Hash, ShieldCheck, Users, Mail, KeyRound } from 'lucide-react'
 
 export default function Admin() {
   const [session, setSession] = useState(null)
   const [checking, setChecking] = useState(true)
+  const [tab, setTab] = useState('products')
+  const [showCustomers, setShowCustomers] = useState(false)
+  const [recovery, setRecovery] = useState(false)
 
   useEffect(() => {
-    // چک session فعلی
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session)
+    if (isRecoveryMode()) setRecovery(true)
+
+    checkAdminSession().then(s => {
+      setSession(s)
       setChecking(false)
     })
 
-    // گوش دادن به تغییرات
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
+    const { data: listener } = supabase.auth.onAuthStateChange((event, s) => {
+      setSession(s)
+      if (s) updateSessionTimestamp()
+      if (event === 'PASSWORD_RECOVERY') setRecovery(true)
     })
 
-    return () => listener.subscription.unsubscribe()
+    // هر ۵ دقیقه timestamp رو آپدیت کن
+    const t = setInterval(() => {
+      if (session) updateSessionTimestamp()
+    }, 5 * 60 * 1000)
+
+    return () => {
+      listener.subscription.unsubscribe()
+      clearInterval(t)
+    }
   }, [])
 
   if (checking) {
@@ -32,9 +47,82 @@ export default function Admin() {
     )
   }
 
+  if (recovery) return <RecoveryPassword onDone={() => setRecovery(false)} />
+
   if (!session) return <Login onLogin={() => {}} />
 
-  return <Dashboard user={session.user} onLogout={() => supabase.auth.signOut()} />
+  if (showCustomers) return <AdminCustomers onClose={() => setShowCustomers(false)} />
+
+  return (
+    <Dashboard
+      user={session.user}
+      tab={tab}
+      setTab={setTab}
+      onShowCustomers={() => setShowCustomers(true)}
+      onLogout={async () => {
+        clearSession()
+        await supabase.auth.signOut()
+      }}
+    />
+  )
+}
+
+function RecoveryPassword({ onDone }) {
+  const [pass, setPass] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const submit = async () => {
+    if (pass.length < 8) { toast.error('رمز باید حداقل ۸ کاراکتر باشد'); return }
+    if (pass !== confirm) { toast.error('رمزها یکسان نیستند'); return }
+    setLoading(true)
+    const res = await changePassword(pass)
+    setLoading(false)
+    if (!res.ok) { toast.error(res.error || 'خطا'); return }
+    toast.success('رمز عبور تغییر کرد')
+    window.location.hash = '#/admin'
+    onDone()
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-cream px-6">
+      <div className="w-full max-w-sm">
+        <div className="bg-white rounded-3xl p-6 border border-border shadow-[0_8px_28px_rgba(0,0,0,0.06)]">
+          <div className="w-14 h-14 rounded-2xl bg-brand-light flex items-center justify-center mx-auto mb-4">
+            <KeyRound size={24} className="text-brand" />
+          </div>
+          <h1 className="font-extrabold text-ink text-lg mb-1 text-center">تعیین رمز جدید</h1>
+          <p className="text-xs text-muted mb-5 text-center">رمز جدید رو وارد کن</p>
+
+          <input
+            type="password"
+            value={pass}
+            onChange={e => setPass(e.target.value)}
+            placeholder="رمز جدید (حداقل ۸ کاراکتر)"
+            className="w-full bg-cream border border-border rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-brand transition text-center mb-2"
+            style={{ direction: 'ltr' }}
+          />
+          <input
+            type="password"
+            value={confirm}
+            onChange={e => setConfirm(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && submit()}
+            placeholder="تکرار رمز"
+            className="w-full bg-cream border border-border rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-brand transition text-center mb-3"
+            style={{ direction: 'ltr' }}
+          />
+
+          <button
+            onClick={submit}
+            disabled={loading}
+            className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl active:scale-[0.98] transition disabled:opacity-60 flex items-center justify-center gap-2"
+          >
+            {loading ? <><Loader2 className="animate-spin" size={16} /> در حال ذخیره...</> : 'ذخیره رمز جدید'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function Login({ onLogin }) {
@@ -42,6 +130,8 @@ function Login({ onLogin }) {
   const [pass, setPass] = useState('')
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState('')
+  const [forgotMode, setForgotMode] = useState(false)
+  const [forgotSent, setForgotSent] = useState(false)
 
   const submit = async () => {
     if (!email.trim() || !pass.trim()) {
@@ -61,7 +151,24 @@ function Login({ onLogin }) {
       setErr('ایمیل یا رمز عبور اشتباه است')
       return
     }
+    updateSessionTimestamp()
     onLogin()
+  }
+
+  const sendReset = async () => {
+    if (!email.trim()) {
+      setErr('اول ایمیل رو وارد کن')
+      return
+    }
+    setLoading(true)
+    const res = await sendPasswordReset(email.trim())
+    setLoading(false)
+    if (res.ok) {
+      setForgotSent(true)
+      setErr('')
+    } else {
+      setErr(res.error || 'خطا در ارسال ایمیل')
+    }
   }
 
   return (
@@ -70,51 +177,106 @@ function Login({ onLogin }) {
         <Link to="/" className="flex items-center gap-2 text-muted text-xs mb-6">
           <ArrowRight size={16} /> بازگشت به سایت
         </Link>
+
         <div className="bg-white rounded-3xl p-6 border border-border shadow-[0_8px_28px_rgba(0,0,0,0.06)]">
           <div className="w-14 h-14 rounded-2xl bg-brand-light flex items-center justify-center mx-auto mb-4">
             <ShieldCheck size={24} className="text-brand" />
           </div>
-          <h1 className="font-extrabold text-ink text-lg mb-1 text-center">ورود امن ادمین</h1>
-          <p className="text-xs text-muted mb-5 text-center">با حساب Supabase خودت وارد شو</p>
 
-          <input
-            type="email"
-            value={email}
-            onChange={e => { setEmail(e.target.value); setErr('') }}
-            placeholder="ایمیل"
-            autoComplete="email"
-            className="w-full bg-cream border border-border rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-brand transition text-center mb-2"
-            style={{ direction: 'ltr' }}
-          />
+          {!forgotMode ? (
+            <>
+              <h1 className="font-extrabold text-ink text-lg mb-1 text-center">ورود امن ادمین</h1>
+              <p className="text-xs text-muted mb-5 text-center">با حساب Supabase خودت وارد شو</p>
 
-          <input
-            type="password"
-            value={pass}
-            onChange={e => { setPass(e.target.value); setErr('') }}
-            onKeyDown={e => e.key === 'Enter' && submit()}
-            placeholder="رمز عبور"
-            autoComplete="current-password"
-            className="w-full bg-cream border border-border rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-brand transition text-center mb-2"
-            style={{ direction: 'ltr' }}
-          />
+              <input
+                type="email"
+                value={email}
+                onChange={e => { setEmail(e.target.value); setErr('') }}
+                placeholder="ایمیل"
+                autoComplete="email"
+                className="w-full bg-cream border border-border rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-brand transition text-center mb-2"
+                style={{ direction: 'ltr' }}
+              />
 
-          {err && <p className="text-[10px] text-danger mb-3 text-center">{err}</p>}
+              <input
+                type="password"
+                value={pass}
+                onChange={e => { setPass(e.target.value); setErr('') }}
+                onKeyDown={e => e.key === 'Enter' && submit()}
+                placeholder="رمز عبور"
+                autoComplete="current-password"
+                className="w-full bg-cream border border-border rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-brand transition text-center mb-2"
+                style={{ direction: 'ltr' }}
+              />
 
-          <button
-            onClick={submit}
-            disabled={loading}
-            className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl active:scale-[0.98] transition disabled:opacity-60 flex items-center justify-center gap-2"
-          >
-            {loading ? <><Loader2 className="animate-spin" size={16} /> در حال ورود...</> : 'ورود امن'}
-          </button>
+              {err && <p className="text-[10px] text-danger mb-3 text-center">{err}</p>}
+
+              <button
+                onClick={submit}
+                disabled={loading}
+                className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl active:scale-[0.98] transition disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {loading ? <><Loader2 className="animate-spin" size={16} /> در حال ورود...</> : 'ورود امن'}
+              </button>
+
+              <button
+                onClick={() => { setForgotMode(true); setErr('') }}
+                className="w-full text-center text-[11px] text-muted font-bold mt-4 underline"
+              >
+                رمز عبور را فراموش کرده‌ام
+              </button>
+            </>
+          ) : (
+            <>
+              <h1 className="font-extrabold text-ink text-lg mb-1 text-center">فراموشی رمز</h1>
+              <p className="text-xs text-muted mb-5 text-center leading-6">
+                ایمیل خودت رو وارد کن، لینک بازیابی برات ارسال میشه
+              </p>
+
+              {forgotSent ? (
+                <div className="bg-brand-light/40 rounded-2xl p-4 border border-brand/20 mb-4 text-center">
+                  <Mail size={32} className="text-brand mx-auto mb-2" />
+                  <p className="text-xs text-ink font-bold mb-1">ایمیل ارسال شد!</p>
+                  <p className="text-[10px] text-muted leading-5">
+                    صندوق ایمیلت رو چک کن و روی لینک بازیابی بزن
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => { setEmail(e.target.value); setErr('') }}
+                    placeholder="ایمیل"
+                    className="w-full bg-cream border border-border rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-brand transition text-center mb-2"
+                    style={{ direction: 'ltr' }}
+                  />
+                  {err && <p className="text-[10px] text-danger mb-3 text-center">{err}</p>}
+                  <button
+                    onClick={sendReset}
+                    disabled={loading}
+                    className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl active:scale-[0.98] transition disabled:opacity-60 flex items-center justify-center gap-2"
+                  >
+                    {loading ? <><Loader2 className="animate-spin" size={16} /> در حال ارسال...</> : <><Mail size={16} /> ارسال لینک بازیابی</>}
+                  </button>
+                </>
+              )}
+
+              <button
+                onClick={() => { setForgotMode(false); setForgotSent(false); setErr('') }}
+                className="w-full text-center text-[11px] text-muted font-bold mt-4"
+              >
+                ← بازگشت به ورود
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-function Dashboard({ user, onLogout }) {
-  const [tab, setTab] = useState('products')
+function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
   const [products, setProducts] = useState([])
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
@@ -147,7 +309,6 @@ function Dashboard({ user, onLogout }) {
   const handleStatusChange = async (orderId, newStatus, trackingCode = null, shippingMethod = null) => {
     const updates = { status: newStatus }
 
-    // اگه برگشت به pending یا paid → کد رهگیری پاک بشه
     if (newStatus === 'pending' || newStatus === 'paid' || newStatus === 'canceled') {
       updates.tracking_code = null
       updates.shipping_method = null
@@ -191,9 +352,15 @@ function Dashboard({ user, onLogout }) {
               </div>
             </div>
           </div>
-          <button onClick={onLogout} className="p-2 rounded-xl bg-cream text-muted active:scale-95">
-            <LogOut size={16} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={onShowCustomers}
+              className="p-2 rounded-xl bg-brand-light text-brand active:scale-95" title="مشتریان">
+              <Users size={16} />
+            </button>
+            <button onClick={onLogout} className="p-2 rounded-xl bg-cream text-muted active:scale-95">
+              <LogOut size={16} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -318,7 +485,6 @@ function Dashboard({ user, onLogout }) {
       )}
       {deleteTarget && (
         <DeleteModal
-          productId={deleteTarget}
           onCancel={() => setDeleteTarget(null)}
           onConfirm={handleDelete}
         />
@@ -327,7 +493,7 @@ function Dashboard({ user, onLogout }) {
   )
 }
 
-function DeleteModal({ productId, onCancel, onConfirm }) {
+function DeleteModal({ onCancel, onConfirm }) {
   const [deleting, setDeleting] = useState(false)
   const handle = async () => {
     setDeleting(true)
@@ -369,10 +535,7 @@ function TrackingModal({ data, onClose, onSave }) {
 
   const handle = async () => {
     const cleanCode = code.trim()
-    if (!cleanCode) {
-      toast.error('کد رهگیری پستی رو وارد کن')
-      return
-    }
+    if (!cleanCode) { toast.error('کد رهگیری پستی رو وارد کن'); return }
     if (cleanCode.length < 10 || !/^[A-Z0-9]+$/i.test(cleanCode)) {
       toast.error('کد رهگیری حداقل ۱۰ کاراکتر و شامل حروف و اعداد')
       return
@@ -486,21 +649,12 @@ function ProductForm({ product, onClose }) {
   const handleUpload = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('حجم عکس باید کمتر از ۵ مگابایت باشد')
-      return
-    }
+    if (file.size > 5 * 1024 * 1024) { toast.error('حجم عکس باید کمتر از ۵ مگابایت باشد'); return }
     setUploading(true)
     const ext = file.name.split('.').pop() || 'jpg'
     const fileName = `product-${Date.now()}.${ext}`
-    const { error } = await supabase.storage
-      .from('product-images')
-      .upload(fileName, file, { contentType: file.type, upsert: false })
-    if (error) {
-      setUploading(false)
-      toast.error('خطا در آپلود: ' + error.message)
-      return
-    }
+    const { error } = await supabase.storage.from('product-images').upload(fileName, file, { contentType: file.type, upsert: false })
+    if (error) { setUploading(false); toast.error('خطا در آپلود: ' + error.message); return }
     const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(fileName)
     setForm(f => ({ ...f, image: urlData.publicUrl }))
     setUploading(false)
@@ -512,17 +666,12 @@ function ProductForm({ product, onClose }) {
     setSaving(true)
     const payload = {
       id: form.id || 'p' + Date.now(),
-      title: form.title,
-      category: form.category,
-      brand: form.brand,
-      price: Number(form.price),
-      old_price: form.old_price ? Number(form.old_price) : null,
-      stock: Number(form.stock) || 0,
-      image: form.image || '',
+      title: form.title, category: form.category, brand: form.brand,
+      price: Number(form.price), old_price: form.old_price ? Number(form.old_price) : null,
+      stock: Number(form.stock) || 0, image: form.image || '',
       description: form.description,
       features: form.features.split(',').map(s => s.trim()).filter(Boolean),
-      best_seller: form.best_seller,
-      active: form.active,
+      best_seller: form.best_seller, active: form.active,
     }
     const { error } = isNew
       ? await supabase.from('products').insert(payload)
@@ -545,11 +694,7 @@ function ProductForm({ product, onClose }) {
             <label className="text-[10px] font-bold text-muted block mb-2">تصویر محصول</label>
             <div className="flex items-center gap-3">
               <div className="w-20 h-20 rounded-2xl bg-cream border border-border flex items-center justify-center overflow-hidden flex-shrink-0">
-                {form.image ? (
-                  <img src={form.image} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <ImageIcon size={24} className="text-muted" />
-                )}
+                {form.image ? <img src={form.image} alt="" className="w-full h-full object-cover" /> : <ImageIcon size={24} className="text-muted" />}
               </div>
               <div className="flex-1 space-y-2">
                 <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />

@@ -7,9 +7,10 @@ import { formatPrice, formatDate } from '../utils/storage'
 import { getCurrentUser } from '../utils/auth'
 import { fetchUserOrders } from '../utils/orders'
 import { supabase } from '../utils/supabase'
-import { Package, Loader2, ChevronLeft, CreditCard, Copy, Check, Trash2, Truck } from 'lucide-react'
+import { Package, Loader2, ChevronLeft, CreditCard, Copy, Check, Trash2, Truck, ExternalLink } from 'lucide-react'
 import { toast } from '../components/Toast'
 import { SHOP_INFO } from '../data/products'
+import { getTrackingUrl, getTrackingLabel, getShippingName } from '../utils/tracking-url'
 
 const STATUS_LABEL = {
   pending: { label: 'در انتظار پرداخت', color: 'bg-accent/20 text-ink' },
@@ -170,7 +171,7 @@ export default function MyOrders() {
                       <div className="flex items-center gap-2 mb-2">
                         <Truck size={16} className="text-blue-600" />
                         <span className="text-[11px] font-extrabold text-blue-600">
-                          {o.shippingMethod === 'tipax' ? 'ارسال با تیپاکس' : 'ارسال با پست'}
+                          {getShippingName(o.shippingMethod)}
                         </span>
                       </div>
                       <div className="text-[10px] text-muted mb-1.5">کد رهگیری</div>
@@ -185,9 +186,9 @@ export default function MyOrders() {
                         </button>
                       </div>
                       <div className="mt-3 pt-3 border-t border-blue-500/20 flex gap-2">
-                        <a href="https://tracking.post.ir/" target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
+                        <a href={getTrackingUrl(o.trackingCode, o.shippingMethod)} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
                           className="flex-1 text-center bg-white border border-blue-500/30 text-blue-600 font-bold py-2 rounded-xl text-[10px] active:scale-95">
-                          پیگیری در سایت پست
+                          {getTrackingLabel(o.shippingMethod)}
                         </a>
                       </div>
                     </div>
