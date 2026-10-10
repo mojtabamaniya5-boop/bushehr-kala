@@ -4,7 +4,9 @@ import Header from '../components/Header'
 import TrackStepper from '../components/TrackStepper'
 import { supabase } from '../utils/supabase'
 import { formatPrice, formatDate } from '../utils/storage'
-import { Package, Search, Loader2, Copy, Check, CreditCard, ShoppingBag, Phone, RotateCcw, Truck } from 'lucide-react'
+import { getCurrentUser } from '../utils/auth'
+import { canSearch, recordAttempt, isValidOrderCode, isValidPhone, clearAttempts } from '../utils/track-security'
+import { Package, Search, Loader2, Copy, Check, CreditCard, ShoppingBag, Phone, RotateCcw, Truck, Lock, AlertTriangle } from 'lucide-react'
 import { toast } from '../components/Toast'
 import { SHOP_INFO } from '../data/products'
 
@@ -19,30 +21,54 @@ const STATUS_LABEL = {
 export default function Track() {
   const { orderId } = useParams()
   const navigate = useNavigate()
+  const loggedUser = getCurrentUser()
+
   const [code, setCode] = useState(orderId || '')
+  const [phone, setPhone] = useState(loggedUser?.phone || '')
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
   const [copied, setCopied] = useState(false)
   const [copiedTracking, setCopiedTracking] = useState(false)
+  const [blockInfo, setBlockInfo] = useState(null)
+
+  // اگه لاگین نیست، فیلد موبایل قابل ویرایش
+  const phoneEditable = !loggedUser
 
   useEffect(() => {
-    if (orderId) search(orderId)
-  }, [orderId])
+    if (orderId && loggedUser?.phone) search()
+  }, [])
 
   const search = async (searchCode) => {
     const q = (searchCode || code).trim().toUpperCase().replace('#', '')
-    if (!q) {
-      toast.error('کد سفارش را وارد کن')
+    const ph = phone.replace(/\D/g, '')
+
+    if (!isValidOrderCode(q)) {
+      toast.error('کد سفارش معتبر وارد کن')
       return
     }
+    if (!isValidPhone(ph)) {
+      toast.error('شماره موبایل معتبر وارد کن (۰۹...)')
+      return
+    }
+
+    // چک rate limit
+    const limit = canSearch()
+    if (!limit.allowed) {
+      setBlockInfo(limit.remainingMin)
+      toast.error('تعداد تلاش زیاد. ' + limit.remainingMin + ' دقیقه دیگه امتحان کن')
+      return
+    }
+
     setLoading(true)
     setSearched(true)
+    setBlockInfo(null)
 
     try {
       const { data, error } = await supabase
         .from('orders').select('*')
-        .or(`code.eq.${q},id.eq.${q}`)
+        .eq('code', q)
+        .eq('customer_phone', ph)
         .limit(1).maybeSingle()
 
       if (!error && data) {
@@ -60,15 +86,17 @@ export default function Track() {
           trackingCode: data.tracking_code,
           shippingMethod: data.shipping_method,
         })
+        clearAttempts()  // موفق → پاک کن
         setLoading(false)
         return
       }
     } catch (e) { console.warn(e) }
 
+    // اگه توی DB نبود، localStorage رو چک کن
     const lsOrders = JSON.parse(localStorage.getItem('bk-orders') || '[]')
     const found = lsOrders.find(o =>
-      o.id === q || o.id?.toUpperCase() === q ||
-      (o.id || '').slice(-6).toUpperCase() === q
+      (o.id === q || o.id?.toUpperCase() === q) &&
+      o.customer?.phone === ph
     )
 
     if (found) {
@@ -86,8 +114,12 @@ export default function Track() {
         trackingCode: found.trackingCode,
         shippingMethod: found.shippingMethod,
       })
+      clearAttempts()
     } else {
       setOrder(null)
+      recordAttempt()
+      const after = canSearch()
+      if (!after.allowed) setBlockInfo(after.remainingMin)
     }
     setLoading(false)
   }
@@ -121,25 +153,61 @@ export default function Track() {
       <main className="max-w-lg mx-auto px-4 pb-32 pt-5 fade-up">
 
         <div className="bg-white rounded-2xl p-4 border border-border mb-5">
-          <h2 className="font-extrabold text-sm text-brand mb-3 flex items-center gap-2">
-            <Search size={16} />
-            کد سفارش خود را وارد کنید
-          </h2>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center">
+              <Lock size={14} className="text-brand" />
+            </div>
+            <div>
+              <h2 className="font-extrabold text-sm text-brand">رهگیری امن سفارش</h2>
+              <p className="text-[10px] text-muted">برای امنیت، کد سفارش + شماره موبایل</p>
+            </div>
+          </div>
 
-          <div className="flex gap-2">
+          {/* کد سفارش */}
+          <div className="mb-3">
+            <label className="text-[10px] font-bold text-muted block mb-1.5">کد سفارش</label>
             <input
               value={code}
               onChange={e => setCode(e.target.value.toUpperCase())}
-              onKeyDown={e => e.key === 'Enter' && search()}
               placeholder="مثلاً ABC123"
-              className="flex-1 bg-cream border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:border-brand transition font-mono tracking-wider"
+              className="w-full bg-cream border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:border-brand transition font-mono tracking-wider"
               style={{ direction: 'ltr', textAlign: 'center' }}
             />
-            <button onClick={() => search()}
-              className="px-5 bg-brand text-white rounded-2xl font-bold text-sm active:scale-95 transition">
-              پیدا کن
-            </button>
           </div>
+
+          {/* شماره موبایل */}
+          <div className="mb-4">
+            <label className="text-[10px] font-bold text-muted block mb-1.5">
+              شماره موبایل {phoneEditable ? '(همونی که موقع سفارش دادی)' : '(از حساب شما)'}
+            </label>
+            <input
+              value={phone}
+              onChange={e => phoneEditable && setPhone(e.target.value)}
+              disabled={!phoneEditable}
+              placeholder="09123456789"
+              inputMode="tel"
+              className={`w-full border rounded-2xl px-4 py-3 text-sm outline-none transition font-mono ${
+                phoneEditable
+                  ? 'bg-cream border-border focus:border-brand'
+                  : 'bg-brand-light/40 border-brand/20 text-muted cursor-not-allowed'
+              }`}
+              style={{ direction: 'ltr', textAlign: 'center' }}
+            />
+          </div>
+
+          <button onClick={() => search()} disabled={loading || !!blockInfo}
+            className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl active:scale-[0.98] transition disabled:opacity-60 flex items-center justify-center gap-2">
+            {loading ? <><Loader2 className="animate-spin" size={16} /> جستجو...</> : <><Search size={16} /> پیگیری سفارش</>}
+          </button>
+
+          {blockInfo && (
+            <div className="mt-3 bg-danger/10 border border-danger/30 rounded-2xl p-3 flex items-start gap-2">
+              <AlertTriangle size={14} className="text-danger flex-shrink-0 mt-0.5" />
+              <p className="text-[10px] text-danger leading-5">
+                تعداد تلاش‌ها زیاد شده. لطفاً <b>{blockInfo} دقیقه</b> دیگه امتحان کن.
+              </p>
+            </div>
+          )}
         </div>
 
         {loading && (
@@ -148,13 +216,15 @@ export default function Track() {
           </div>
         )}
 
-        {!loading && searched && !order && (
+        {!loading && searched && !order && !blockInfo && (
           <div className="text-center py-10">
             <div className="w-20 h-20 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-4">
               <Package size={32} className="text-danger" />
             </div>
             <p className="font-extrabold text-ink mb-1">سفارشی پیدا نشد</p>
-            <p className="text-xs text-muted mb-5">کد رو دوباره چک کن</p>
+            <p className="text-xs text-muted mb-5">
+              کد سفارش و شماره موبایل رو دقیق چک کن
+            </p>
             <Link to="/contact" className="text-xs text-brand font-bold">
               با پشتیبانی تماس بگیر
             </Link>
@@ -185,7 +255,6 @@ export default function Track() {
               </p>
             </div>
 
-            {/* ═══ کد رهگیری ═══ */}
             {isSent && order.trackingCode && (
               <div className="bg-blue-500/10 border border-blue-500/30 rounded-3xl p-5 fade-up">
                 <div className="flex items-center gap-2 mb-3">
@@ -288,7 +357,7 @@ export default function Track() {
               </Link>
             </div>
 
-            <button onClick={() => { setOrder(null); setCode(''); setSearched(false) }}
+            <button onClick={() => { setOrder(null); setSearched(false) }}
               className="w-full flex items-center justify-center gap-1.5 text-[11px] font-bold text-muted py-3">
               <RotateCcw size={12} />
               جستجوی سفارش دیگر
