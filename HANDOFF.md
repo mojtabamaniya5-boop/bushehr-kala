@@ -273,3 +273,18 @@ Supabase REST با کلید sb_secret_ → 403 Forbidden.
 ۲. Config متمرکز (shop.js) برای فروش پکیج
 ۳. UI tweaks (اگه نیاز داری)
 ۴. اینستاگرام + اولین مشتری
+
+---
+
+## 🔄 آپدیت v3.13 (۱۴۰۵/۰۷/۲۳) — برگشت my_orders
+
+### حل شد
+- ✅ RPCهای `my_orders` و `delete_my_order` برگشتند (فقط برای service_role)
+- ✅ پنل کاربر «سفارش‌های من» حالا سفارش‌ها را نشان می‌دهد
+- ✅ علت: حذف RPC در v3.8 بدون آپدیت relay
+
+### 🔴 کارهای بعدی
+۱. APK Release + keystore
+۲. Config متمرکز (shop.js)
+۳. UI tweaks
+۴. اینستاگرام + اولین مشتری

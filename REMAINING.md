@@ -269,3 +269,21 @@ pm2 restart cafetorshi-relay --update-env
 - Config متمرکز (shop.js)
 - UI tweaks
 - اولین مشتری
+
+---
+
+## 🆕 آپدیت v3.13 (۱۴۰۵/۰۷/۲۳)
+
+### ✅ حل‌شده
+- برگشت RPC `my_orders` و `delete_my_order`
+- پنل کاربر «سفارش‌های من» درست شد
+
+### 🔴 باقی‌مانده
+- APK Release
+- Config متمرکز (shop.js)
+- UI tweaks
+- اولین مشتری
+
+### ⚠️ نکته امنیتی
+- RPCها فقط برای service_role قابل اجرا هستند
+- اگه روزی relay را عوض کردی، این RPCها را یادت باشه

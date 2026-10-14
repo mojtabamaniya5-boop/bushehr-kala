@@ -249,3 +249,23 @@
 - فرانت فقط از relay (`https://relay.cafetorshi.ir`) استفاده می‌کنه
 - مسیر پرداخت: Frontend → relay (Arvan) → Zibal
 - Supabase Edge Functions نقشی در پرداخت ندارن
+
+---
+
+## ۱۴۰۵/۰۷/۲۳ — v3.13 (برگشت RPCهای my_orders)
+
+### باگ
+- پس از حذف RPC `my_orders` و `delete_my_order` در v3.8،
+  relay همچنان `rpc/my_orders` را صدا می‌زد → 404 → پنل کاربر خالی
+- علامت: پنل ادمین سفارش‌ها را نشان می‌داد ولی «سفارش‌های من» خالی بود
+
+### راه‌حل
+- برگرداندن دو تابع RPC با GRANT فقط به service_role:
+  - `my_orders(p_phone text)` → RETURNS SETOF orders
+  - `delete_my_order(p_code text, p_phone text)` → RETURNS boolean
+- REVOKE از PUBLIC/anon/authenticated
+- GRANT EXECUTE فقط به service_role
+
+### درس طلایی
+- وقتی RPC/endpoint پاک می‌شود، حتماً grep کن که مصرف‌کننده باقی نمانده
+- relay باید همراه تغییرات Supabase آپدیت شود
