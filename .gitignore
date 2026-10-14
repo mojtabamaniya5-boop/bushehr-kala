@@ -27,3 +27,4 @@ pnpm-workspace.yaml
 *.bak*
 .private/
 *.private-backup
+*.backup
