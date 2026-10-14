@@ -1,0 +1,45 @@
+#!/bin/bash
+cd ~/bushehr-kala
+echo "=========================================="
+echo "📦 برای چت جدید، این رو کپی کن:"
+echo "=========================================="
+echo ""
+echo "سلام. من مجتبی، صاحب کافه ترشی (cafetorshi.ir)."
+echo ""
+echo "وظیفه:"
+echo "1. اسناد رو کامل بخون"
+echo "2. خلاصه ۵ خطی بده"
+echo "3. مشکل فعلی رو از REMAINING + HANDOFF استخراج کن"
+echo "4. منتظر «شروع کن» بمون"
+echo ""
+echo "قوانین:"
+echo "- فارسی"
+echo "- کد کوتاه و کامل"
+echo "- هر دستور، بگو کجا اجرا شه"
+echo "- هر تغییر → آپدیت اسناد → git push"
+echo "- کلیدهای حساس تو اسناد نباشن"
+echo ""
+echo "محدودیت:"
+echo "- Termux فقط، بدون کامپیوتر"
+echo "- JavaScript نه TypeScript"
+echo ""
+echo "منتظر ۵ فایل هستم."
+echo ""
+echo "=========================================="
+echo "=== START.md ==="
+cat START.md 2>/dev/null
+echo ""
+echo "=== MASTER-V3.md ==="
+cat MASTER-V3.md
+echo ""
+echo "=== HANDOFF.md ==="
+cat HANDOFF.md
+echo ""
+echo "=== AI-CONTRACT.md ==="
+cat AI-CONTRACT.md
+echo ""
+echo "=== CHANGELOG.md ==="
+cat CHANGELOG.md
+echo ""
+echo "=== REMAINING.md ==="
+cat REMAINING.md
