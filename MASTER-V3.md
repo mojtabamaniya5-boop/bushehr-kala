@@ -541,3 +541,18 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO service_role
 ### درس طلایی
 - قبل از گرفتن درگاه، شرایط rotate رو بپرس
 - درگاه ایرانی = سیاست سفت
+
+---
+
+## 🔄 v3.13 — RPCهای فعال relay (۱۴۰۵/۰۷/۲۳)
+
+### RPCهای مورد نیاز relay
+- `my_orders(p_phone)` → برای /api/my-orders
+- `delete_my_order(p_code, p_phone)` → برای /api/delete-order
+- `track_order(p_code, p_phone)` → برای Track.jsx
+- `get_order_by_code(p_code)` → برای Pay.jsx
+
+### قوانین
+- RPCهای حساس: فقط GRANT EXECUTE به service_role
+- اگه RPC جدیدی حذف شد → grep در /root/relay/server.js
+- relay = مصرف‌کننده اصلی RPCها
