@@ -2,7 +2,7 @@ import { supabase } from '../utils/supabase'
 import { PRODUCTS as STATIC_PRODUCTS, CATEGORIES as STATIC_CATEGORIES } from '../data/products'
 
 const CACHE_KEY = 'bk-products-cache'
-const CACHE_TTL = 60 * 60 * 1000
+const CACHE_TTL = 2 * 60 * 1000
 
 function getCache(key) {
   try {
