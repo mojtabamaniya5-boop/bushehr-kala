@@ -269,3 +269,31 @@
 ### درس طلایی
 - وقتی RPC/endpoint پاک می‌شود، حتماً grep کن که مصرف‌کننده باقی نمانده
 - relay باید همراه تغییرات Supabase آپدیت شود
+
+---
+
+## ۱۴۰۵/۰۷/۲۳ — v3.14 (APK Release + callbackUrl fix)
+
+### حل شد
+- ✅ ساخت keystore (cafetorshi-release.keystore, 2752 bytes)
+- ✅ ۴ سکرت GitHub: KEYSTORE_BASE64/PASSWORD + KEY_ALIAS/PASSWORD
+- ✅ workflow آپدیت شد: `assembleRelease` + امضا
+- ✅ APK Release ساخته شد (7.16 MB)
+- ✅ آیکون درست نصب شد
+- ✅ callbackUrl هارد‌کد شد به `https://cafetorshi.ir/#/verify?orderId=...`
+
+### باگ اصلی — callback در اپ
+- ❌ قبل: `${window.location.origin}${window.location.pathname}#/verify?...`
+- در Capacitor می‌شد `https://localhost/#/verify` → خطا
+- ✅ بعد: هارد‌کد `https://cafetorshi.ir/#/verify?orderId=...`
+- فایل: `src/pages/Pay.jsx:58`
+- Commit: `2c2c9ad`
+
+### تست موفق
+- خرید از اپ → زیبال → cafetorshi.ir → پرداخت موفق ✅
+- سفارش QFE81N auto paid شد
+
+### باقی‌مانده
+- Deep Link (برگشت از مرورگر به اپ) — بعد از اولین مشتری
+- APK Release در GitHub Releases (اگه بخوای)
+

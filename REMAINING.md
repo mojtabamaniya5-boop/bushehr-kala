@@ -287,3 +287,31 @@ pm2 restart cafetorshi-relay --update-env
 ### ⚠️ نکته امنیتی
 - RPCها فقط برای service_role قابل اجرا هستند
 - اگه روزی relay را عوض کردی، این RPCها را یادت باشه
+
+---
+
+## 🆕 آپدیت v3.14 (۱۴۰۵/۰۷/۲۳)
+
+### ✅ حل‌شده
+- APK Release + keystore + GitHub Secrets
+- callbackUrl fix (خرید از اپ کار می‌کنه)
+- آیکون نصب شد
+- تست موفق سفارش QFE81N
+
+### 🔴 باقی‌مانده اولویت‌دار
+
+#### ۱) Deep Link (اختیاری)
+برگشت از مرورگر به اپ بعد از پرداخت — نیاز به `@capacitor/app` یا `@capacitor/app-launcher`
+
+#### ۲) APK در GitHub Releases
+آپلود APK به Releases برای دانلود مستقیم لینک (به جای Artifacts که نیاز به لاگین داره)
+
+### 🟠 متوسط
+- Config متمرکز (shop.js)
+- README کامل برای فروش پکیج
+- نمونه‌کار دوم
+
+### 🟡 پایین
+- سایت Lianapp
+- اینستاگرام + اولین مشتری
+

@@ -202,3 +202,22 @@ Policyهای موجود orders:
 ### ۴) دستور کلی
 - داده حساس مشتری → relay + JWT
 - داده عمومی → RPC یا جدول عمومی
+
+---
+
+## 🆕 قوانین v3.14
+
+### ۱) callbackUrl
+- ❌ هرگز از `window.location.origin` برای callbackUrl استفاده نکن (در Capacitor می‌شه localhost)
+- ✅ همیشه هارد‌کد به `https://cafetorshi.ir/#/verify?orderId=...`
+
+### ۲) APK Release
+- workflow: `.github/workflows/build-apk.yml`
+- از `assembleRelease` استفاده کن (نه `assembleDebug`)
+- signing از GitHub Secrets (۴ عدد)
+
+### ۳) keystore
+- ❌ هرگز keystore یا پسورد رو در مخزن git نگذار
+- ✅ فقط در GitHub Secrets و ایمیل/یادداشت امن
+- ⚠️ گم شدن keystore = عدم توانایی آپدیت اپ
+

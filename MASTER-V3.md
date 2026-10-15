@@ -556,3 +556,33 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO service_role
 - RPCهای حساس: فقط GRANT EXECUTE به service_role
 - اگه RPC جدیدی حذف شد → grep در /root/relay/server.js
 - relay = مصرف‌کننده اصلی RPCها
+
+---
+
+## 🔄 v3.14 — APK Release + callbackUrl fix (۱۴۰۵/۰۷/۲۳)
+
+### keystore
+- فایل: `cafetorshi-release.keystore` (2752 bytes)
+- Alias: cafetorshi
+- Validity: 10000 days (~27 سال)
+- SHA1: 6C:0F:10:98:3C:5B:03:59:9B:62:A7:17:38:06:98:94:EB:2B:70:7B
+- ⚠️ پسورد در ایمیل + یادداشت امن (نه در اسناد)
+
+### GitHub Secrets (۴ عدد)
+- KEYSTORE_BASE64 — محتوای base64 keystore
+- KEYSTORE_PASSWORD — پسورد keystore
+- KEY_ALIAS — cafetorshi
+- KEY_PASSWORD — پسورد key
+
+### Workflow Release
+- `pnpm exec cap add android`
+- `./gradlew assembleRelease`
+- Output: `app-release.apk` (7.16 MB)
+- Artifact: `cafetorshi-release-apk`
+
+### باگ callbackUrl
+- فایل: `src/pages/Pay.jsx` خط ۵۸
+- قبل: `${window.location.origin}${window.location.pathname}#/verify?orderId=...`
+- بعد: `https://cafetorshi.ir/#/verify?orderId=...`
+- علت: Capacitor آدرس `localhost` می‌ده، زیبال نمی‌تونه برگرده
+

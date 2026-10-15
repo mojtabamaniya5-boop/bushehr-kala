@@ -288,3 +288,28 @@ Supabase REST با کلید sb_secret_ → 403 Forbidden.
 ۲. Config متمرکز (shop.js)
 ۳. UI tweaks
 ۴. اینستاگرام + اولین مشتری
+
+---
+
+## 🔄 آپدیت v3.14 (۱۴۰۵/۰۷/۲۳) — APK Release + callbackUrl
+
+### حل شد
+- ✅ keystore ساخته شد + بکاپ در ایمیل
+- ✅ GitHub Secrets (۴ عدد)
+- ✅ APK Release (7.16 MB) ساخته و تست شد
+- ✅ callbackUrl در Pay.jsx هارد‌کد شد
+- ✅ خرید از اپ → موفق (QFE81N auto paid)
+
+### 🔴 کارهای بعدی
+۱. Deep Link (برگشت از مرورگر به اپ) — اختیاری، بعد از مشتری
+۲. Config متمرکز (shop.js)
+۳. اینستاگرام + اولین مشتری
+۴. نمونه‌کار دوم
+۵. سایت Lianapp
+
+### نکات مهم برای چت بعدی
+- APK Release: workflow `Build Android APK` (branch main)
+- دانلود: Actions → آخرین run → Artifacts
+- keystore در ایمیل + یادداشت امن (پسورد نه در اسناد)
+- سفارش‌های تست: QFE81N, D6B08Z, IQ9N7Z, 1L1A3E (همه paid)
+
