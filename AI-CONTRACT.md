@@ -221,3 +221,19 @@ Policyهای موجود orders:
 - ✅ فقط در GitHub Secrets و ایمیل/یادداشت امن
 - ⚠️ گم شدن keystore = عدم توانایی آپدیت اپ
 
+
+---
+
+## 🆕 قوانین v3.15
+
+### ۱) Supabase write
+- select() بعد از insert/update/delete اجباری
+- چک data.length === 0
+
+### ۲) GRANT
+GRANT SELECT, INSERT, UPDATE, DELETE ON products TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON orders TO authenticated;
+
+### ۳) TTL
+- محصولات: ۲ دقیقه
+

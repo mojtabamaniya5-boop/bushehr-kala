@@ -313,3 +313,21 @@ Supabase REST با کلید sb_secret_ → 403 Forbidden.
 - keystore در ایمیل + یادداشت امن (پسورد نه در اسناد)
 - سفارش‌های تست: QFE81N, D6B08Z, IQ9N7Z, 1L1A3E (همه paid)
 
+
+---
+
+## 🔄 آپدیت v3.15 (۱۴۰۵/۰۷/۲۳)
+
+### حل شد
+- GRANT products برای authenticated
+- Admin.jsx: select + data check
+- TTL محصولات ۲ دقیقه
+- تست موفق: قیمت ۵۰۰ تومان در اپ
+
+### کارهای بعدی
+۱. Realtime
+۲. APK در GitHub Releases
+۳. Config متمرکز (shop.js)
+
+### Commit آخر: 51edf4f
+

@@ -297,3 +297,17 @@
 - Deep Link (برگشت از مرورگر به اپ) — بعد از اولین مشتری
 - APK Release در GitHub Releases (اگه بخوای)
 
+
+---
+
+## ۱۴۰۵/۰۷/۲۳ — v3.15 (fix پنل ادمین + GRANT + TTL)
+
+### حل شد
+- GRANT روی products: authenticated مجوز UPDATE/INSERT/DELETE گرفت
+- Admin.jsx: `.select()` + چک `data.length` در save/delete
+- TTL محصولات: ۱ ساعت → ۲ دقیقه
+
+### Commit
+- see1543 fix(products): TTL ۲ دقیقه
+- 51edf4f fix(admin): select + data check در save/delete محصولات
+

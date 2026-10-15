@@ -315,3 +315,19 @@ pm2 restart cafetorshi-relay --update-env
 - سایت Lianapp
 - اینستاگرام + اولین مشتری
 
+
+---
+
+## 🆕 آپدیت v3.15 (۱۴۰۵/۰۷/۲۳)
+
+### حل‌شده
+- GRANT products
+- Admin.jsx select + data check
+- TTL محصولات ۲ دقیقه
+
+### باقی‌مانده
+۱. Realtime (فردا)
+۲. APK در GitHub Releases
+۳. Config متمرکز (shop.js)
+۴. اینستاگرام + اولین مشتری
+

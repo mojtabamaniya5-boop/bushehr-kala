@@ -586,3 +586,15 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO service_role
 - بعد: `https://cafetorshi.ir/#/verify?orderId=...`
 - علت: Capacitor آدرس `localhost` می‌ده، زیبال نمی‌تونه برگرده
 
+
+---
+
+## 🔄 v3.15 — fix پنل ادمین محصولات (۱۴۰۵/۰۷/۲۳)
+
+### GRANT products
+- authenticated: SELECT + INSERT + UPDATE + DELETE
+- SQL: GRANT SELECT, INSERT, UPDATE, DELETE ON products TO authenticated;
+
+### TTL products
+- src/api/products.js خط ۵: 60*60*1000 → 2*60*1000
+
