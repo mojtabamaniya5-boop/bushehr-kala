@@ -299,8 +299,9 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
 
   const handleDelete = async () => {
     if (!deleteTarget) return
-    const { error } = await supabase.from('products').delete().eq('id', deleteTarget)
+    const { error, data } = await supabase.from('products').delete().eq('id', deleteTarget).select()
     if (error) { toast.error('خطا: ' + error.message); return }
+    if (!data || data.length === 0) { toast.error('حذف نشد — دسترسی یا policy'); return }
     toast.success('حذف شد')
     setDeleteTarget(null)
     load()
@@ -688,11 +689,12 @@ function ProductForm({ product, onClose }) {
       features: form.features.split(',').map(s => s.trim()).filter(Boolean),
       best_seller: form.best_seller, active: form.active,
     }
-    const { error } = isNew
-      ? await supabase.from('products').insert(payload)
-      : await supabase.from('products').update(payload).eq('id', form.id)
+    const { error, data } = isNew
+      ? await supabase.from('products').insert(payload).select()
+      : await supabase.from('products').update(payload).eq('id', form.id).select()
     setSaving(false)
     if (error) { toast.error('خطا: ' + error.message); return }
+  if (!data || data.length === 0) { toast.error('ذخیره نشد — دسترسی یا policy'); return }
     toast.success(isNew ? 'محصول اضافه شد' : 'ذخیره شد')
     onClose()
   }
