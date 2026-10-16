@@ -441,7 +441,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
           <Stat label="فروش" value={formatPrice(stats.revenue).replace(' تومان', '')} small />
         </div>
 
-        <div className="flex gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4">
           <TabBtn active={tab === 'products'} onClick={() => setTab('products')} icon={Package} label="محصولات" />
           <TabBtn active={tab === 'orders'} onClick={() => setTab('orders')} icon={ShoppingBag} label="سفارش‌ها" />
           <TabBtn active={tab === 'stats'} onClick={() => setTab('stats')} icon={BarChart3} label="آمار" />
