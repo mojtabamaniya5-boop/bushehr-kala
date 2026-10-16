@@ -6,6 +6,7 @@ import { getFavorites } from '../utils/cart'
 import { getCurrentUser, logoutUser } from '../utils/auth'
 import { fetchUserOrders } from '../utils/orders'
 import { PRODUCTS, SHOP_INFO } from '../data/products'
+import { getShopSettings } from '../api/shop'
 import ProductImage from '../components/ProductImage'
 import { Heart, Phone, Send, MapPin, LogOut, LogIn, Package } from 'lucide-react'
 import { toast } from '../components/Toast'
@@ -16,6 +17,11 @@ export default function Profile() {
   const [favCount, setFavCount] = useState(getFavorites().length)
   const [ordersCount, setOrdersCount] = useState(0)
   const [loadingOrders, setLoadingOrders] = useState(false)
+  const [shopSettings, setShopSettings] = useState(SHOP_INFO)
+
+  useEffect(() => {
+    getShopSettings().then(setShopSettings).catch(() => {})
+  }, [])
 
   useEffect(() => {
     const update = () => {
@@ -151,21 +157,21 @@ export default function Profile() {
           📞 ارتباط با ما
         </h3>
         <div className="space-y-2 mb-5">
-          <a href={`tel:${SHOP_INFO.phone}`}
+          <a href={`tel:${shopSettings.phone}`}
             className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Phone size={16} className="text-brand" />
             </div>
             <span className="text-xs font-bold flex-1 text-ink">تماس تلفنی</span>
-            <span className="text-[10px] text-muted" style={{ direction: 'ltr' }}>{SHOP_INFO.phone}</span>
+            <span className="text-[10px] text-muted" style={{ direction: 'ltr' }}>{shopSettings.phone}</span>
           </a>
-          <a href={`https://ble.ir/${SHOP_INFO.telegram}`} target="_blank" rel="noreferrer"
+          <a href={`https://ble.ir/${shopSettings.telegram}`} target="_blank" rel="noreferrer"
             className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Send size={16} className="text-brand" />
             </div>
             <span className="text-xs font-bold flex-1 text-ink">پیام‌رسان بله</span>
-            <span className="text-[10px] text-muted">@{SHOP_INFO.telegram}</span>
+            <span className="text-[10px] text-muted">@{shopSettings.telegram}</span>
           </a>
           <Link to="/contact"
             className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
@@ -190,14 +196,14 @@ export default function Profile() {
             </div>
             <div className="font-mono text-base font-extrabold tracking-widest mb-3"
               style={{ direction: 'ltr', textAlign: 'right' }}>
-              {SHOP_INFO.card.number.replace(/(\d{4})/g, '$1 ').trim()}
+              {shopSettings.card.number.replace(/(\d{4})/g, '$1 ').trim()}
             </div>
             <div className="flex items-end justify-between">
               <div>
                 <div className="text-[9px] opacity-70 mb-0.5">صاحب حساب</div>
-                <div className="text-xs font-bold">{SHOP_INFO.card.holder}</div>
+                <div className="text-xs font-bold">{shopSettings.card.holder}</div>
               </div>
-              <div className="text-[10px] opacity-80">{SHOP_INFO.card.bank}</div>
+              <div className="text-[10px] opacity-80">{shopSettings.card.bank}</div>
             </div>
           </div>
         </div>
