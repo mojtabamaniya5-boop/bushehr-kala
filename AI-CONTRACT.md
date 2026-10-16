@@ -237,3 +237,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON orders TO authenticated;
 ### ۳) TTL
 - محصولات: ۲ دقیقه
 
+
+## v3.16-v3.18
+- State hierarchy: state در parent که همه children ببینن
+- ErrorBoundary همیشه App رو بپیچه
+- بعد هر build، docs/ رو commit کن
+- callbackUrl در Capacitor: هارد‌کد به دامنه
+- shop_settings: id=1، cache 2min، fallback SHOP_INFO

@@ -311,3 +311,70 @@
 - see1543 fix(products): TTL ۲ دقیقه
 - 51edf4f fix(admin): select + data check در save/delete محصولات
 
+
+---
+
+## ۱۴۰۵/۰۷/۲۴ — v3.16 (تنظیمات فروشگاه از Supabase)
+
+### افزوده
+- جدول `shop_settings` (تک‌ردیفه) در Supabase
+- `src/api/shop.js`: getShopSettings() + cache 2min + fallback
+- GRANT SELECT/INSERT/UPDATE/DELETE ON shop_settings TO authenticated
+- RLS: read for all, write for authenticated
+
+### تغییر
+- `calculateShipping` پارامتر `settings` گرفت
+- Checkout.jsx و Cart.jsx از DB می‌خونن (نه SHOP_INFO)
+
+### Commit
+- `c9082f7` feat: تنظیمات فروشگاه از Supabase
+
+---
+
+## ۱۴۰۵/۰۷/۲۴ — v3.17 (تب تنظیمات پنل ادمین)
+
+### افزوده
+- `src/pages/AdminSettings.jsx` (فرم کامل)
+- `src/ErrorBoundary.jsx` (برای دیباگ موبایل)
+- تب «تنظیمات» در پنل ادمین
+
+### حل باگ مهم
+- 🐛 **ReferenceError: shopSettings is not defined**
+  - علت: state در `Admin` تعریف شده بود ولی `Dashboard` می‌خواستش
+  - Fix: انتقال state به `Dashboard`
+- 🐛 **TabBtn 4th ناپدید**
+  - Fix: `flex-wrap` روی ردیف تب‌ها
+
+### Commit
+- `43da1e3` feat(admin): تب تنظیمات
+- `9f6ac3b` fix(admin): flex-wrap
+- `927f9ff` debug: ErrorBoundary
+
+---
+
+## ۱۴۰۵/۰۷/۲۴ — v3.18 (Profile از DB + SEO)
+
+### تغییر
+- Profile.jsx از `shopSettings` می‌خونه (نه SHOP_INFO)
+- index.html: عنوان «کافه ترشی | فروشگاه آنلاین ترشی خانگی بوشهر»
+- description SEO آپدیت
+
+### Commit
+- `dadad48` fix: Profile از تنظیمات DB + SEO
+
+---
+
+## 🎓 درس‌های طلایی جدید (v3.16-v3.18)
+
+9. **State hierarchy در React** — state باید در parent تعریف شه که همه children ببینن
+10. **ErrorBoundary** — سریع‌ترین راه دیباگ روی موبایل بدون DevTools
+11. **GitHub Pages از `docs/`** می‌خونه — `pnpm build` + `git add .` با هم
+12. **CallbackUrl در Capacitor** — هارد‌کد به دامنه (نه window.location)
+13. **Cache PWA** — بعد هر build، باید در مرورگر clear شه
+
+## ۱۴۰۵/۰۷/۲۴ — v3.16-v3.18
+- جدول shop_settings در Supabase
+- تب تنظیمات پنل ادمین (AdminSettings.jsx)
+- ErrorBoundary برای دیباگ موبایل
+- Profile.jsx از DB (نه SHOP_INFO)
+- SEO عنوان + توضیحات

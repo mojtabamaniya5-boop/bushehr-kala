@@ -331,3 +331,15 @@ pm2 restart cafetorshi-relay --update-env
 ۳. Config متمرکز (shop.js)
 ۴. اینستاگرام + اولین مشتری
 
+
+## v3.16-v3.18 (۱۴۰۵/۰۷/۲۴)
+### حل‌شده
+- تنظیمات فروشگاه از DB
+- تب تنظیمات ادمین
+- ErrorBoundary
+- Profile + SEO
+### باقی‌مانده
+- Realtime
+- APK در GitHub Releases
+- Search Console
+- Config فروش پکیج

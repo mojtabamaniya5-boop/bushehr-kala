@@ -598,3 +598,49 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO service_role
 ### TTL products
 - src/api/products.js خط ۵: 60*60*1000 → 2*60*1000
 
+
+---
+
+## 🔄 v3.16-v3.18 — تنظیمات فروشگاه از DB (۱۴۰۵/۰۷/۲۴)
+
+### جدول shop_settings (تک‌ردیفه)
+```sql
+CREATE TABLE shop_settings (
+  id int PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  name text, tagline text, phone text, telegram text, address text,
+  card_number text, card_holder text, card_bank text,
+  shipping_fast int, shipping_normal int, free_shipping_from int,
+  free_shipping_cities text[], same_day_cities text[],
+  free_postal_prefixes text[],
+  updated_at timestamptz DEFAULT now()
+);
+GRANT SELECT ON shop_settings TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
+```
+
+فایل‌های جدید
+
+· src/api/shop.js — getShopSettings() + clearShopCache() (cache 2min)
+· src/pages/AdminSettings.jsx — فرم تنظیمات
+· src/ErrorBoundary.jsx — گرفتن خطاها
+
+فایل‌های آپدیت
+
+· src/data/products.js — calculateShipping(…, settings)
+· src/pages/Checkout.jsx — از DB می‌خونه
+· src/pages/Cart.jsx — از DB می‌خونه
+· src/pages/Profile.jsx — از DB می‌خونه
+· src/pages/Admin.jsx — تب تنظیمات
+· src/main.jsx — ErrorBoundary wrap
+· index.html — SEO
+
+الگوی State hierarchy (درس مهم)
+
+هر state باید در parent کامپوننتی تعریف شه که همه children ببینن.
+مثال: shopSettings در Dashboard تعریف شد (نه Admin) چون همه تب‌ها اونجان.
+
+## v3.16-v3.18 — تنظیمات فروشگاه از DB
+- جدول: shop_settings (id=1، تک‌ردیفه)
+- فایل‌ها: api/shop.js، pages/AdminSettings.jsx، ErrorBoundary.jsx
+- GRANT authenticated: SELECT/INSERT/UPDATE/DELETE
+- cache 2min در frontend، fallback به SHOP_INFO

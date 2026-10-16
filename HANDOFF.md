@@ -331,3 +331,13 @@ Supabase REST با کلید sb_secret_ → 403 Forbidden.
 
 ### Commit آخر: 51edf4f
 
+
+## آپدیت v3.16-v3.18 (۱۴۰۵/۰۷/۲۴)
+### حل شد
+- تنظیمات فروشگاه از DB
+- تب تنظیمات ادمین + فرم کامل
+- باگ ReferenceError shopSettings
+- Profile.jsx از DB + SEO
+### کار بعدی
+- Realtime / APK Releases / اولین مشتری
+### آخرین commit: dadad48
