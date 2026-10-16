@@ -123,21 +123,25 @@ export const searchProducts = (q) => {
   )
 }
 
-// ═══ محاسبه هزینه ارسال هوشمند ═══
-export function calculateShipping(postalCode, address, subtotal, shippingType = 'fast') {
+export function calculateShipping(postalCode, address, subtotal, shippingType = 'fast', settings = SHOP_INFO) {
   const code = (postalCode || '').trim()
   const addr = (address || '').toLowerCase()
 
-  // بوشهر رایگان
-  const isBushehr = /^75\d{8}$/.test(code) || addr.includes('بوشهر')
-  if (isBushehr) return { cost: 0, free: true, sameDay: true }
+  const prefixes = settings.freePostalPrefixes || ['75']
+  const freeCities = settings.freeShippingCities || ['بوشهر']
 
-  // سفارش بالای ۵۰۰ هزار
-  if (subtotal >= SHOP_INFO.freeShippingFrom) return { cost: 0, free: true, sameDay: false }
+  const isFreeCity = prefixes.some(p => code.startsWith(p))
+    || freeCities.some(c => addr.includes(String(c).toLowerCase()))
+  if (isFreeCity) return { cost: 0, free: true, sameDay: true }
+
+  if (subtotal >= (settings.freeShippingFrom || 0)) {
+    return { cost: 0, free: true, sameDay: false }
+  }
 
   return {
-    cost: shippingType === 'fast' ? SHOP_INFO.shippingFast : SHOP_INFO.shippingNormal,
+    cost: shippingType === 'fast' ? settings.shippingFast : settings.shippingNormal,
     free: false,
     sameDay: false,
   }
 }
+

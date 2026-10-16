@@ -6,6 +6,7 @@ import { storage, formatPrice, uid } from '../utils/storage'
 import { SHOP_INFO, calculateShipping } from '../data/products'
 import { saveOrderToDB } from '../utils/supabase'
 import { getCurrentUser } from '../utils/auth'
+import { getShopSettings } from '../api/shop'
 import { User, Phone, MapPin, Wallet, Truck, Zap, LogIn, Hash } from 'lucide-react'
 import { toast } from '../components/Toast'
 
@@ -17,6 +18,11 @@ export default function Checkout() {
   const savedUser = loggedUser ? storage.get('user', {}) : {}
 
   const [shippingType, setShippingType] = useState('fast')
+  const [shopSettings, setShopSettings] = useState(SHOP_INFO)
+
+  useEffect(() => {
+    getShopSettings().then(setShopSettings).catch(() => {})
+  }, [])
   const [form, setForm] = useState({
     name: loggedUser?.name || savedUser.name || '',
     phone: loggedUser?.phone || savedUser.phone || '',
@@ -31,7 +37,7 @@ export default function Checkout() {
     if (items.length === 0) navigate('/cart', { replace: true })
   }, [items.length, navigate])
 
-  const shipInfo = calculateShipping(form.postalCode, form.address, subtotal, shippingType)
+  const shipInfo = calculateShipping(form.postalCode, form.address, subtotal, shippingType, shopSettings)
   const shipping = items.length ? shipInfo.cost : 0
   const isBushehr = shipInfo.sameDay
   const total = subtotal + shipping

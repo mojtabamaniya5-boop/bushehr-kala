@@ -5,6 +5,7 @@ import ConfirmModal from '../components/ConfirmModal'
 import { getCart, updateQty, removeFromCart, cartTotal, clearCart } from '../utils/cart'
 import { formatPrice, storage } from '../utils/storage'
 import { SHOP_INFO, calculateShipping } from '../data/products'
+import { getShopSettings } from '../api/shop'
 import { Trash2, Minus, Plus, ShoppingBag, Zap } from 'lucide-react'
 import { toast } from '../components/Toast'
 
@@ -23,7 +24,13 @@ export default function Cart() {
   const total = cartTotal()
   const lastAddr = storage.get('last-address', '')
   const lastPostal = storage.get('last-postal', '')
-  const shipInfo = calculateShipping(lastPostal, lastAddr, total, 'fast')
+  const [shopSettings, setShopSettings] = useState(SHOP_INFO)
+
+  useEffect(() => {
+    getShopSettings().then(setShopSettings).catch(() => {})
+  }, [])
+
+  const shipInfo = calculateShipping(lastPostal, lastAddr, total, 'fast', shopSettings)
   const shipping = items.length ? shipInfo.cost : 0
   const isBushehr = shipInfo.sameDay
 
