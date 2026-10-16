@@ -13,8 +13,6 @@ export default function Admin() {
   const [session, setSession] = useState(null)
   const [checking, setChecking] = useState(true)
   const [tab, setTab] = useState('products')
-  const [shopSettings, setShopSettings] = useState(null)
-  const [savingSettings, setSavingSettings] = useState(false)
   const [showCustomers, setShowCustomers] = useState(false)
   const [recovery, setRecovery] = useState(false)
 
@@ -287,6 +285,8 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
   const [editing, setEditing] = useState(null)
   const [statusModal, setStatusModal] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
+  const [shopSettings, setShopSettings] = useState(null)
+  const [savingSettings, setSavingSettings] = useState(false)
 
   const loadShopSettings = async () => {
     try {
