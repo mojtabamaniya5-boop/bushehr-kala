@@ -545,12 +545,15 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
           </div>
         )}
         {!loading && tab === 'settings' && (
-          <AdminSettings
-            settings={shopSettings}
-            setSettings={setShopSettings}
-            onSave={handleSaveSettings}
-            saving={savingSettings}
-          />
+          <div className="p-6 bg-yellow-100 rounded-2xl border-2 border-yellow-400 text-center">
+            <div className="text-lg font-bold">🔧 INLINE TEST</div>
+            <div className="text-sm mt-2">
+              settings: {shopSettings ? '✅ loaded' : '❌ null'}
+            </div>
+            <div className="text-xs mt-2">
+              name: {String(shopSettings?.name)}
+            </div>
+          </div>
         )}
       </div>
 
