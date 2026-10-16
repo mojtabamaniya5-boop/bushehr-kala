@@ -544,8 +544,6 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
             </div>
           </div>
         )}
-      </div>
-
         {!loading && tab === 'settings' && (
           <AdminSettings
             settings={shopSettings}
@@ -554,6 +552,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
             saving={savingSettings}
           />
         )}
+      </div>
 
       {editing && <ProductForm product={editing} onClose={() => { setEditing(null); load() }} />}
       {statusModal && (
