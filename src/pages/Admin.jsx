@@ -1,16 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../utils/supabase'
+import { getShopSettings, clearShopCache } from '../api/shop'
 import { formatPrice } from '../utils/storage'
 import { toast } from '../components/Toast'
 import AdminCustomers from './AdminCustomers'
+import AdminSettings from './AdminSettings'
 import { checkAdminSession, updateSessionTimestamp, clearSession, sendPasswordReset, changePassword, isRecoveryMode } from '../utils/admin-auth'
-import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Hash, ShieldCheck, Users, Mail, KeyRound } from 'lucide-react'
+import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Settings, Hash, ShieldCheck, Users, Mail, KeyRound } from 'lucide-react'
 
 export default function Admin() {
   const [session, setSession] = useState(null)
   const [checking, setChecking] = useState(true)
   const [tab, setTab] = useState('products')
+  const [shopSettings, setShopSettings] = useState(null)
+  const [savingSettings, setSavingSettings] = useState(false)
   const [showCustomers, setShowCustomers] = useState(false)
   const [recovery, setRecovery] = useState(false)
 
@@ -284,6 +288,21 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
   const [statusModal, setStatusModal] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
 
+  const loadShopSettings = async () => {
+    try {
+      const s = await getShopSettings()
+      setShopSettings(s)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  useEffect(() => {
+    if (tab === 'settings' && !shopSettings) {
+      loadShopSettings()
+    }
+  }, [tab])
+
   const load = async () => {
     setLoading(true)
     const [{ data: p }, { data: o }] = await Promise.all([
@@ -305,6 +324,44 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
     toast.success('حذف شد')
     setDeleteTarget(null)
     load()
+  }
+
+  
+  const handleSaveSettings = async () => {
+    if (!shopSettings) return
+    setSavingSettings(true)
+    try {
+      const payload = {
+        name: shopSettings.name,
+        tagline: shopSettings.tagline,
+        phone: shopSettings.phone,
+        telegram: shopSettings.telegram,
+        address: shopSettings.address,
+        card_number: shopSettings.card?.number,
+        card_holder: shopSettings.card?.holder,
+        card_bank: shopSettings.card?.bank,
+        shipping_fast: Number(shopSettings.shippingFast),
+        shipping_normal: Number(shopSettings.shippingNormal),
+        free_shipping_from: Number(shopSettings.freeShippingFrom),
+        free_shipping_cities: shopSettings.freeShippingCities,
+        same_day_cities: shopSettings.sameDayCities,
+        free_postal_prefixes: shopSettings.freePostalPrefixes,
+        updated_at: new Date().toISOString(),
+      }
+      const { error, data } = await supabase
+        .from('shop_settings')
+        .update(payload)
+        .eq('id', 1)
+        .select()
+      setSavingSettings(false)
+      if (error) { toast.error('ذخیره: ' + error.message); return }
+      if (!data || data.length === 0) { toast.error('ذخیره نشد'); return }
+      clearShopCache()
+      toast.success('تنظیمات ذخیره شد')
+    } catch (e) {
+      setSavingSettings(false)
+      toast.error('خطا: ' + e.message)
+    }
   }
 
   const handleStatusChange = async (orderId, newStatus, trackingCode = null, shippingMethod = null) => {
@@ -388,6 +445,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
           <TabBtn active={tab === 'products'} onClick={() => setTab('products')} icon={Package} label="محصولات" />
           <TabBtn active={tab === 'orders'} onClick={() => setTab('orders')} icon={ShoppingBag} label="سفارش‌ها" />
           <TabBtn active={tab === 'stats'} onClick={() => setTab('stats')} icon={BarChart3} label="آمار" />
+          <TabBtn active={tab === 'settings'} onClick={() => setTab('settings')} icon={Settings} label="تنظیمات" />
         </div>
 
         {loading && <div className="flex justify-center py-10"><Loader2 className="animate-spin text-brand" size={24} /></div>}
@@ -487,6 +545,15 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
           </div>
         )}
       </div>
+
+        {!loading && tab === 'settings' && (
+          <AdminSettings
+            settings={shopSettings}
+            setSettings={setShopSettings}
+            onSave={handleSaveSettings}
+            saving={savingSettings}
+          />
+        )}
 
       {editing && <ProductForm product={editing} onClose={() => { setEditing(null); load() }} />}
       {statusModal && (
