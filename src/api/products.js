@@ -43,7 +43,7 @@ function normalizeProduct(p) {
 
 export async function getProducts(forceRefresh = false) {
   if (!forceRefresh) {
-    const cached = !forceRefresh ? getCache(CACHE_KEY) : null
+    const cached = getCache(CACHE_KEY)
     if (cached && cached.length > 0) return cached
   }
 
@@ -68,7 +68,7 @@ export async function getProducts(forceRefresh = false) {
 export async function getProductById(id) {
   if (!id) return null
 
-  const cached = !forceRefresh ? getCache(CACHE_KEY) : null || []
+  const cached = getCache(CACHE_KEY) || []
   const found = cached.find(p => p.id === id)
   if (found) return found
 
