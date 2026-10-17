@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
 import App from './App.jsx'
 import ErrorBoundary from './ErrorBoundary.jsx'
+import { setupRealtime } from './utils/realtime'
 import './index.css'
 
 // ── چک اول: اگه از Zibal برگشتیم ──
@@ -19,6 +20,8 @@ if (zibalParams.has('trackId') || zibalParams.has('success')) {
   localStorage.removeItem('bk-theme')
   document.documentElement.classList.remove('dark')
   document.documentElement.setAttribute('data-theme', 'light')
+
+  setupRealtime() // فعال‌سازی Realtime
 
   ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
