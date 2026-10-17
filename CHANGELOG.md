@@ -378,3 +378,8 @@
 - ErrorBoundary برای دیباگ موبایل
 - Profile.jsx از DB (نه SHOP_INFO)
 - SEO عنوان + توضیحات
+
+## v3.20 (۱۴۰۵/۰۷/۲۵)
+- غیرفعال‌سازی کش HTTP مرورگر برای Supabase (cache: no-store).
+- بهینه‌سازی Polling با focus و visibilitychange.
+- تصمیم: مشکل Polling و آپدیت لحظه‌ای برای آینده (بعد از ۱۰ مشتری) به تعویق افتاد.

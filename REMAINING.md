@@ -343,3 +343,8 @@ pm2 restart cafetorshi-relay --update-env
 - APK در GitHub Releases
 - Search Console
 - Config فروش پکیج
+
+## v3.20
+### باقی‌مانده (مهم)
+- فروش قالب (تسک اصلی 86bckdpag)
+- محاسبه قیمت سمت سرور در Checkout

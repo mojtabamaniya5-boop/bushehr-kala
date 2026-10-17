@@ -644,3 +644,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 - فایل‌ها: api/shop.js، pages/AdminSettings.jsx، ErrorBoundary.jsx
 - GRANT authenticated: SELECT/INSERT/UPDATE/DELETE
 - cache 2min در frontend، fallback به SHOP_INFO
+
+## v3.20
+- utils/supabase.js: fetch با { cache: 'no-store' }
+- Home.jsx: لود دیتا فقط هنگام visible بودن تب

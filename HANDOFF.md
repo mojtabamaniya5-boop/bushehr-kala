@@ -341,3 +341,7 @@ Supabase REST با کلید sb_secret_ → 403 Forbidden.
 ### کار بعدی
 - Realtime / APK Releases / اولین مشتری
 ### آخرین commit: dadad48
+
+## v3.20
+- بهینه‌سازی نهایی Polling و دور زدن کش HTTP.
+- (هشدار برای آینده: محاسبه قیمت نهایی در پرداخت باید سمت سرور باشد).

@@ -244,3 +244,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON orders TO authenticated;
 - بعد هر build، docs/ رو commit کن
 - callbackUrl در Capacitor: هارد‌کد به دامنه
 - shop_settings: id=1، cache 2min، fallback SHOP_INFO
+
+## v3.20
+- همیشه در createClient از fetch با cache: 'no-store' استفاده شود.
+- هرگز قیمت ارسال شده از مرورگر در پرداخت را معتبر ندانید (باید سمت سرور چک شود).
