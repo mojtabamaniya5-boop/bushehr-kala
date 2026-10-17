@@ -32,7 +32,7 @@ export default function Home() {
     const handleUpdate = (e) => {
       if (e.detail.table === 'products') {
         console.log('🔄 Home: تغییر Realtime دریافت شد')
-        fetchItems()
+        fetchItems(true)
       }
     }
     window.addEventListener('shop-data-updated', handleUpdate)
@@ -40,7 +40,7 @@ export default function Home() {
     // ۲. سیستم Polling (هر ۳۰ ثانیه چک می‌کنه - ضد بلاک اینترنت ایران)
     const intervalId = setInterval(() => {
       console.log('⏱️ Home: چک دوره‌ای محصولات...')
-      fetchItems()
+      fetchItems(true) // 🔥 باگ فیکس شد: true برای دور زدن کش
     }, 30000) // 30000 میلی‌ثانیه = ۳۰ ثانیه
 
     return () => {
