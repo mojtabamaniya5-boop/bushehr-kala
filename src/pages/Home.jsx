@@ -12,10 +12,8 @@ import { Leaf, ShieldCheck, Truck, Loader2 } from 'lucide-react'
 export default function Home() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [dbgText, setDbgText] = useState('')
 
   useEffect(() => {
-    window.alert('🚀 نسخه دیباگ لود شد!')
     let mounted = true
 
     const fetchItems = (force = false) => {
@@ -62,12 +60,6 @@ export default function Home() {
     }
   }, [])
 
-
-  useEffect(() => {
-    const h = () => setDbgText(window.__dbg || '')
-    window.addEventListener('dbg', h)
-    return () => window.removeEventListener('dbg', h)
-  }, [])
 
   const bestSellers = products.filter(p => p.bestSeller)
   const newArrivals = products.slice(0, 4)
@@ -176,9 +168,7 @@ export default function Home() {
 
         <EnamadFooter />
 
-        <div style={{position:'fixed',top:'70px',left:'10px',right:'10px',background:'red',color:'white',fontSize:'14px',fontWeight:'bold',padding:'8px',zIndex:9999,direction:'ltr',borderRadius:'8px',textAlign:'center'}}>
-          DBG: {dbgText || 'در حال دریافت دیتا...'}
-        </div>
+
       </main>
     </>
   )
