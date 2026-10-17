@@ -25,8 +25,8 @@ export default function Home() {
       })
     }
 
-    // لود اولیه
-    fetchItems()
+    // لود اولیه (همیشه دیتای تازه بگیره)
+    fetchItems(true)
 
     // ۱. گوش دادن به تغییرات Realtime (برای اینترنت‌هایی که WebSocket رو بلاک نمی‌کنن)
     const handleUpdate = (e) => {
@@ -46,17 +46,26 @@ export default function Home() {
     // ۳. آپدیت فوری وقتی کاربر از تب دیگه برمی‌گرده به سایت
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        console.log('👁️ کاربر به تب برگشت - آپدیت فوری')
         fetchItems(true)
       }
     }
     document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    // ۴. آپدیت فوری وقتی ادمین تو تب دیگه قیمت رو عوض می‌کنه (storage event)
+    const handleStorage = (e) => {
+      if (e.key === 'shop-updated') {
+        console.log('⚡ Home: سیگنال تغییر از تب ادمین دریافت شد')
+        fetchItems(true)
+      }
+    }
+    window.addEventListener('storage', handleStorage)
 
     return () => {
       mounted = false
       window.removeEventListener('shop-data-updated', handleUpdate)
       clearInterval(intervalId)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('storage', handleStorage)
     }
   }, [])
 

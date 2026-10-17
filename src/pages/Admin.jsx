@@ -357,6 +357,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
       if (error) { toast.error('ذخیره: ' + error.message); return }
       if (!data || data.length === 0) { toast.error('ذخیره نشد'); return }
       clearShopCache()
+      localStorage.setItem('shop-updated', Date.now().toString())
       toast.success('تنظیمات ذخیره شد')
     } catch (e) {
       setSavingSettings(false)
