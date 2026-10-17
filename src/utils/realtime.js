@@ -30,7 +30,7 @@ export function setupRealtime() {
     .subscribe((status) => {
       if (status === 'SUBSCRIBED') {
         console.log('✅ Realtime: متصل شد')
-        window.alert('✅ Realtime وصل شد!')
+
         if (retryTimeout) { clearTimeout(retryTimeout); retryTimeout = null }
       } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
         console.warn('⚠️ Realtime: قطع شد، تلاش دوباره در ۵ ثانیه...')
