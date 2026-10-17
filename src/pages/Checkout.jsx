@@ -92,6 +92,17 @@ export default function Checkout() {
     setTimeout(() => navigate(`/pay/${order.id}`, { replace: true }), 400)
   }
 
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e.detail.table === 'shop_settings' || e.detail.table === 'shop_settings') {
+        // رفرش دیتای صفحه با متدهای موجود
+        window.location.reload() // فعلاً ساده‌ترین راه برای این ۳ صفحه
+      }
+    }
+    window.addEventListener('shop-data-updated', handleUpdate)
+    return () => window.removeEventListener('shop-data-updated', handleUpdate)
+  }, [])
+
   return (
     <>
       <Header title="تسویه حساب" back />

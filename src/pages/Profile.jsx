@@ -59,6 +59,17 @@ export default function Profile() {
   const favProducts = PRODUCTS.filter(p => getFavorites().includes(p.id))
   const initial = user?.name ? user.name.charAt(0).toUpperCase() : '؟'
 
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e.detail.table === 'shop_settings' || e.detail.table === 'shop_settings') {
+        // رفرش دیتای صفحه با متدهای موجود
+        window.location.reload() // فعلاً ساده‌ترین راه برای این ۳ صفحه
+      }
+    }
+    window.addEventListener('shop-data-updated', handleUpdate)
+    return () => window.removeEventListener('shop-data-updated', handleUpdate)
+  }, [])
+
   return (
     <>
       <Header title="پروفایل" />
