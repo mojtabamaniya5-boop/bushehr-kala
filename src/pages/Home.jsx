@@ -16,8 +16,8 @@ export default function Home() {
   useEffect(() => {
     let mounted = true
 
-    const fetchItems = () => {
-      getProducts().then(items => {
+    const fetchItems = (force = false) => {
+      getProducts(force).then(items => {
         if (mounted) {
           setProducts(items)
           setLoading(false)
