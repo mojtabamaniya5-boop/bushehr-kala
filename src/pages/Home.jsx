@@ -43,10 +43,20 @@ export default function Home() {
       fetchItems(true) // 🔥 باگ فیکس شد: true برای دور زدن کش
     }, 30000) // 30000 میلی‌ثانیه = ۳۰ ثانیه
 
+    // ۳. آپدیت فوری وقتی کاربر از تب دیگه برمی‌گرده به سایت
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('👁️ کاربر به تب برگشت - آپدیت فوری')
+        fetchItems(true)
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
     return () => {
       mounted = false
       window.removeEventListener('shop-data-updated', handleUpdate)
       clearInterval(intervalId)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
 
