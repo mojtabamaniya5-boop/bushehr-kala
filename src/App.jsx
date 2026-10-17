@@ -7,6 +7,7 @@ import Drawer from './components/Drawer'
 import { storage } from './utils/storage'
 
 import Home from './pages/Home'
+import NotFound from './pages/NotFound'
 import Categories from './pages/Categories'
 import Cart from './pages/Cart'
 import Orders from './pages/Orders'
