@@ -15,13 +15,33 @@ export default function Home() {
 
   useEffect(() => {
     let mounted = true
-    getProducts().then(items => {
-      if (mounted) {
-        setProducts(items)
-        setLoading(false)
+
+    const fetchItems = () => {
+      getProducts().then(items => {
+        if (mounted) {
+          setProducts(items)
+          setLoading(false)
+        }
+      })
+    }
+
+    // لود اولیه
+    fetchItems()
+
+    // گوش دادن به تغییرات Realtime
+    const handleUpdate = (e) => {
+      if (e.detail.table === 'products') {
+        console.log('🔄 Home: بروزرسانی خودکار محصولات')
+        fetchItems() // بدون رفرش صفحه، دوباره می‌خونه
       }
-    })
-    return () => { mounted = false }
+    }
+
+    window.addEventListener('shop-data-updated', handleUpdate)
+
+    return () => {
+      mounted = false
+      window.removeEventListener('shop-data-updated', handleUpdate)
+    }
   }, [])
 
   const bestSellers = products.filter(p => p.bestSeller)
