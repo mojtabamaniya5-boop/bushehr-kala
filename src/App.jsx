@@ -80,7 +80,6 @@ export default function App() {
         <Route path="/track" element={<Track />} />
         <Route path="/track/:orderId" element={<Track />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="*" element={<Home />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
 
