@@ -397,7 +397,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
   const stats = {
     products: products.length,
     orders: orders.length,
-    revenue: orders.filter(o => o.status !== 'canceled').reduce((s, o) => s + (o.total || 0), 0),
+    revenue: orders.filter(o => ['paid', 'sent', 'done'].includes(o.status)).reduce((s, o) => s + (o.total || 0), 0),
     pending: orders.filter(o => o.status === 'pending').length,
   }
 
