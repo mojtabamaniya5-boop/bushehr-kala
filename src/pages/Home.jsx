@@ -15,6 +15,7 @@ export default function Home() {
   const [dbgText, setDbgText] = useState('')
 
   useEffect(() => {
+    window.alert('🚀 نسخه دیباگ لود شد!')
     let mounted = true
 
     const fetchItems = (force = false) => {
@@ -175,8 +176,8 @@ export default function Home() {
 
         <EnamadFooter />
 
-        <div style={{position:'fixed',bottom:0,left:0,background:'#000',color:'#0f0',fontSize:12,padding:'4px 8px',zIndex:9999,direction:'ltr',opacity:0.8}}>
-          DBG: {dbgText}
+        <div style={{position:'fixed',top:'70px',left:'10px',right:'10px',background:'red',color:'white',fontSize:'14px',fontWeight:'bold',padding:'8px',zIndex:9999,direction:'ltr',borderRadius:'8px',textAlign:'center'}}>
+          DBG: {dbgText || 'در حال دریافت دیتا...'}
         </div>
       </main>
     </>
