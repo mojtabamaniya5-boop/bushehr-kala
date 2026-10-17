@@ -12,13 +12,14 @@ import { Leaf, ShieldCheck, Truck, Loader2 } from 'lucide-react'
 export default function Home() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [dbgText, setDbgText] = useState('')
 
   useEffect(() => {
     let mounted = true
 
     const fetchItems = (force = false) => {
       getProducts(force).then(items => {
-        if (mounted) {
+        if (mounted && items) { // فقط اگر دیتا معتبر بود جایگزین کن
           setProducts(items)
           setLoading(false)
         }
@@ -58,6 +59,13 @@ export default function Home() {
       clearInterval(intervalId)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
+  }, [])
+
+
+  useEffect(() => {
+    const h = () => setDbgText(window.__dbg || '')
+    window.addEventListener('dbg', h)
+    return () => window.removeEventListener('dbg', h)
   }, [])
 
   const bestSellers = products.filter(p => p.bestSeller)
@@ -166,6 +174,10 @@ export default function Home() {
         </div>
 
         <EnamadFooter />
+
+        <div style={{position:'fixed',bottom:0,left:0,background:'#000',color:'#0f0',fontSize:12,padding:'4px 8px',zIndex:9999,direction:'ltr',opacity:0.8}}>
+          DBG: {dbgText}
+        </div>
       </main>
     </>
   )

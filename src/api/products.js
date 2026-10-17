@@ -1,6 +1,12 @@
 import { supabase } from '../utils/supabase'
 import { PRODUCTS as STATIC_PRODUCTS, CATEGORIES as STATIC_CATEGORIES } from '../data/products'
 
+
+const dbg = (s) => { 
+  window.__dbg = new Date().toLocaleTimeString() + ' ' + s; 
+  window.dispatchEvent(new Event('dbg')) 
+}
+
 const CACHE_KEY = 'bk-products-cache'
 const CACHE_TTL = 2 * 60 * 1000
 
@@ -44,7 +50,7 @@ function normalizeProduct(p) {
 export async function getProducts(forceRefresh = false) {
   if (!forceRefresh) {
     const cached = getCache(CACHE_KEY)
-    if (cached && cached.length > 0) return cached
+    if (cached && cached.length > 0) { dbg('cache'); return cached }
   }
 
   try {
@@ -55,14 +61,17 @@ export async function getProducts(forceRefresh = false) {
 
     if (!error && data && data.length > 0) {
       const items = data.map(normalizeProduct)
+      dbg('net ' + (items[0]?.price || '?'))
       setCache(CACHE_KEY, items)
       return items
     }
   } catch (e) {
+    dbg('FAIL ' + e.message)
     console.warn('getProducts failed, using static:', e.message)
   }
 
-  return STATIC_PRODUCTS
+  dbg('static/null')
+  return forceRefresh ? null : STATIC_PRODUCTS
 }
 
 export async function getProductById(id) {
