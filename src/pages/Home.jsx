@@ -28,19 +28,25 @@ export default function Home() {
     // لود اولیه
     fetchItems()
 
-    // گوش دادن به تغییرات Realtime
+    // ۱. گوش دادن به تغییرات Realtime (برای اینترنت‌هایی که WebSocket رو بلاک نمی‌کنن)
     const handleUpdate = (e) => {
       if (e.detail.table === 'products') {
-        console.log('🔄 Home: بروزرسانی خودکار محصولات')
-        fetchItems() // بدون رفرش صفحه، دوباره می‌خونه
+        console.log('🔄 Home: تغییر Realtime دریافت شد')
+        fetchItems()
       }
     }
-
     window.addEventListener('shop-data-updated', handleUpdate)
+
+    // ۲. سیستم Polling (هر ۳۰ ثانیه چک می‌کنه - ضد بلاک اینترنت ایران)
+    const intervalId = setInterval(() => {
+      console.log('⏱️ Home: چک دوره‌ای محصولات...')
+      fetchItems()
+    }, 30000) // 30000 میلی‌ثانیه = ۳۰ ثانیه
 
     return () => {
       mounted = false
       window.removeEventListener('shop-data-updated', handleUpdate)
+      clearInterval(intervalId)
     }
   }, [])
 
