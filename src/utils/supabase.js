@@ -1,7 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 import { SUPABASE_URL, SUPABASE_KEY } from './supabase-config'
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  global: {
+    fetch: (url, opts = {}) => fetch(url, { ...opts, cache: 'no-store' })
+  }
+})
 
 export async function fetchProducts() {
   const { data, error } = await supabase

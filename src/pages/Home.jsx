@@ -14,58 +14,26 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let mounted = true
-
-    const fetchItems = (force = false) => {
-      getProducts(force).then(items => {
-        if (mounted && items) { // فقط اگر دیتا معتبر بود جایگزین کن
-          setProducts(items)
-          setLoading(false)
-        }
-      })
+    let alive = true
+    const load = async () => {
+      const items = await getProducts(true)
+      if (alive && items) setProducts(items)
+      if (alive) setLoading(false)
     }
-
-    // لود اولیه (همیشه دیتای تازه بگیره)
-    fetchItems(true)
-
-    // ۱. گوش دادن به تغییرات Realtime (برای اینترنت‌هایی که WebSocket رو بلاک نمی‌کنن)
-    const handleUpdate = (e) => {
-      if (e.detail.table === 'products') {
-        console.log('🔄 Home: تغییر Realtime دریافت شد')
-        fetchItems(true)
-      }
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') load()
     }
-    window.addEventListener('shop-data-updated', handleUpdate)
-
-    // ۲. سیستم Polling (هر ۳۰ ثانیه چک می‌کنه - ضد بلاک اینترنت ایران)
-    const intervalId = setInterval(() => {
-      console.log('⏱️ Home: چک دوره‌ای محصولات...')
-      fetchItems(true) // 🔥 باگ فیکس شد: true برای دور زدن کش
-    }, 30000) // 30000 میلی‌ثانیه = ۳۰ ثانیه
-
-    // ۳. آپدیت فوری وقتی کاربر از تب دیگه برمی‌گرده به سایت
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        fetchItems(true)
-      }
-    }
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-
-    // ۴. آپدیت فوری وقتی ادمین تو تب دیگه قیمت رو عوض می‌کنه (storage event)
-    const handleStorage = (e) => {
-      if (e.key === 'shop-updated') {
-        console.log('⚡ Home: سیگنال تغییر از تب ادمین دریافت شد')
-        fetchItems(true)
-      }
-    }
-    window.addEventListener('storage', handleStorage)
-
+    load()
+    const id = setInterval(onVisible, 30000)
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('focus', load)
+    window.addEventListener('pageshow', load)
     return () => {
-      mounted = false
-      window.removeEventListener('shop-data-updated', handleUpdate)
-      clearInterval(intervalId)
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-      window.removeEventListener('storage', handleStorage)
+      alive = false
+      clearInterval(id)
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('focus', load)
+      window.removeEventListener('pageshow', load)
     }
   }, [])
 
