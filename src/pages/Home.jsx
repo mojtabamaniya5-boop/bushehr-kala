@@ -98,7 +98,7 @@ export default function Home() {
                   </h3>
                   <p className="text-[10px] text-ink/70 mb-3">روی ترشی‌ها و خیارشورهای منتخب</p>
                   <Link to="/category"
-                    className="inline-flex items-center gap-1.5 bg-brand text-white text-[11px] font-extrabold px-4 py-2.5 rounded-full shadow-md active:scale-95 transition">
+                    className="inline-flex items-center gap-1.5 bg-brand text-white text-[11px] font-extrabold px-4 py-2.5 rounded-full shadow-md active:scale-95 transition rounded-3xl">
                     <span>مشاهده محصولات</span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'scaleX(-1)' }}>
                       <polyline points="9 18 15 12 9 6" />
@@ -109,7 +109,7 @@ export default function Home() {
                   <div className="w-24 h-24 rounded-full bg-card/60 backdrop-blur-sm flex items-center justify-center shadow-lg border-2 border-card/70">
                     <img src={`${import.meta.env.BASE_URL}assets/categories/mixed.png`} alt="تخفیف" className="w-20 h-20 object-contain" />
                   </div>
-                  <div className="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-extrabold rounded-full px-2 py-1 shadow-md border-2 border-card">
+                  <div className="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-extrabold rounded-full px-2 py-1 shadow-md border-2 border-card rounded-3xl">
                     ۲۰٪
                   </div>
                 </div>

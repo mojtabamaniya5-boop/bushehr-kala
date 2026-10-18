@@ -76,7 +76,7 @@ export default function Profile() {
       <Header title="پروفایل" />
       <main className="max-w-lg mx-auto px-4 pb-32 pt-3 fade-up relative z-10">
         {user ? (
-          <div className="bg-gradient-to-br from-brand to-accent p-5 mb-4 relative overflow-hidden text-white">
+          <div className="bg-gradient-to-br from-brand to-accent p-5 mb-4 relative overflow-hidden text-white rounded-3xl">
             <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-card/10"></div>
             <div className="absolute bottom-0 right-0 w-20 h-20 rounded-full bg-accent/20"></div>
             <div className="relative flex items-center gap-3 mb-4">
@@ -90,11 +90,11 @@ export default function Profile() {
                 </div>
               </div>
             </div>
-            <p className="relative text-[10px] text-white/80">🫙 خوش آمدی به کافه ترشی</p>
+            <p className="relative text-[10px] text-white/80 rounded-3xl">🫙 خوش آمدی به کافه ترشی</p>
           </div>
         ) : (
           <Link to="/login"
-            className="bg-gradient-to-br from-brand to-accent block p-5 mb-4 relative overflow-hidden text-white active:scale-[0.98] transition">
+            className="bg-gradient-to-br from-brand to-accent block p-5 mb-4 relative overflow-hidden text-white active:scale-[0.98] transition rounded-3xl">
             <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-card/10"></div>
             <div className="relative flex items-center gap-3">
               <div className="w-14 h-14 rounded-full bg-card/25 flex items-center justify-center border-2 border-white/40">
@@ -111,7 +111,7 @@ export default function Profile() {
 
         <div className="grid grid-cols-2 gap-3 mb-4">
           <Link to={user ? '/my-orders' : '/login'}
-            className="bg-white p-4 border border-border border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
+            className="bg-white p-4 border border-border border border-border/20 flex items-center gap-3 active:scale-[0.98] transition rounded-2xl">
             <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
               {loadingOrders ? (
                 <div className="w-5 h-5 rounded-full border-2 border-brand border-t-transparent animate-spin"></div>
@@ -127,7 +127,7 @@ export default function Profile() {
             </div>
           </Link>
           <Link to="/favorites"
-            className="bg-white p-4 border border-border border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
+            className="bg-white p-4 border border-border border border-border/20 flex items-center gap-3 active:scale-[0.98] transition rounded-2xl">
             <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
               <Heart className="text-brand" size={20} />
             </div>
@@ -195,7 +195,7 @@ export default function Profile() {
         <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
           💳 اطلاعات پرداخت
         </h3>
-        <div className="bg-gradient-to-br from-brand-dark to-brand p-5 mb-5 relative overflow-hidden text-white">
+        <div className="bg-gradient-to-br from-brand-dark to-brand p-5 mb-5 relative overflow-hidden text-white rounded-3xl">
           <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-card/10"></div>
           <div className="absolute bottom-0 right-0 w-24 h-24 rounded-full bg-accent/20"></div>
           <div className="relative">
