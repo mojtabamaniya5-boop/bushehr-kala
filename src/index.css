@@ -7,9 +7,11 @@
   --color-brand: 46 125 50;        /* #2E7D32 */
   --color-brand-dark: 24 92 40;    /* #185C28 */
   --color-brand-light: 232 245 233; /* #E8F5E9 */
-  --color-accent: 248 192 45;      /* #F8C02D */
+  --color-accent: 248 192 45;
+  --color-accent-dark: 203 150 10;      /* #F8C02D */
   --color-cream: 255 248 232;      /* #FFF8E8 */
-  --color-ink: 36 48 36;           /* #243024 */
+  --color-ink: 36 48 36;
+  --color-muted: 119 119 119;           /* #243024 */
 }
 
 * { -webkit-tap-highlight-color: transparent; }
