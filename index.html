@@ -10,12 +10,14 @@
 <meta name="enamad" content="5536523" />
 
     
+
 <script>
     (function(){
       try {
         var tId = localStorage.getItem('shop-theme-id') || 'forest';
         if(tId === 'green') tId = 'forest';
         if(tId === 'blue') tId = 'ocean';
+        if(tId === 'sunset') tId = 'orange';
         var themes = {
           forest: { brand: '8 116 67', dark: '6 95 53', light: '184 243 206', accent: '255 157 36', accentDark: '204 72 8', cream: '6 46 37', ink: '242 255 246', muted: '179 212 193' },
           orange: { brand: '255 90 10', dark: '204 72 8', light: '255 157 36', accent: '255 157 36', accentDark: '204 72 8', cream: '255 244 229', ink: '87 34 13', muted: '155 116 95' },

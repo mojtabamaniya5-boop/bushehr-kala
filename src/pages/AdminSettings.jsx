@@ -1,26 +1,40 @@
-import { Save, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import { Save, Loader2, Upload } from 'lucide-react'
+import { supabase } from '../utils/supabase'
+import { applyTheme } from '../utils/theme'
 
 export default function AdminSettings({ settings, setSettings, onSave, saving }) {
   if (!settings) {
-    return (
-      <div className="text-center text-muted py-10 text-sm">
-        در حال بارگذاری تنظیمات...
-      </div>
-    )
+    return <div className="text-center text-muted py-10 text-sm">در حال بارگذاری تنظیمات...</div>
   }
 
-  const upd = (key, val) => setSettings({ ...settings, [key]: val })
-  const updCard = (key, val) => setSettings({
-    ...settings,
-    card: { ...(settings.card || {}), [key]: val }
-  })
-  const updArr = (key, val) => setSettings({
-    ...settings,
-    [key]: val.split(',').map(s => s.trim()).filter(Boolean)
-  })
+  const upd = (key, val) => {
+    setSettings({ ...settings, [key]: val })
+    if (key === 'themeColor') applyTheme(val) // پیش‌نمایش زنده
+  }
+  
+  const updCard = (key, val) => setSettings({ ...settings, card: { ...(settings.card || {}), [key]: val } })
+  const updArr = (key, val) => setSettings({ ...settings, [key]: val.split(',').map(s => s.trim()).filter(Boolean) })
 
   return (
     <div className="space-y-3 pb-6">
+      {/* تم سایت */}
+      <div className="bg-white rounded-2xl p-4 border border-border">
+        <div className="text-xs font-extrabold mb-3">پالت رنگی سایت (تم)</div>
+        <select
+          value={settings.themeColor || 'forest'}
+          onChange={e => upd('themeColor', e.target.value)}
+          className="w-full bg-cream border border-border rounded-xl px-3 py-3 text-sm font-bold focus:border-brand outline-none"
+        >
+          <option value="forest">جنگل نیمه‌شب (Midnight Forest)</option>
+          <option value="orange">موج نارنجی (Orange Pulse)</option>
+          <option value="ocean">اقیانوس آرام (Calm Ocean)</option>
+        </select>
+        <div className="text-[10px] text-muted mt-2">
+          با انتخاب هر تم، تمام رنگ‌های سایت (دکمه‌ها، پس‌زمینه و متن) با هم هماهنگ می‌شوند.
+        </div>
+      </div>
+
       {/* اطلاعات فروشگاه */}
       <div className="bg-white rounded-2xl p-4 border border-border">
         <div className="text-xs font-extrabold mb-3">اطلاعات فروشگاه</div>
@@ -45,43 +59,12 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
         <Field label="ارسال سریع (تومان)" value={settings.shippingFast ?? 0} onChange={v => upd('shippingFast', v)} type="number" />
         <Field label="ارسال عادی (تومان)" value={settings.shippingNormal ?? 0} onChange={v => upd('shippingNormal', v)} type="number" />
         <Field label="آستانه ارسال رایگان (۰=غیرفعال)" value={settings.freeShippingFrom ?? 0} onChange={v => upd('freeShippingFrom', v)} type="number" />
-        <Field
-          label="پیش‌شماره کدپستی رایگان (با کاما)"
-          value={(settings.freePostalPrefixes || []).join(', ')}
-          onChange={v => updArr('freePostalPrefixes', v)}
-        />
-        <Field
-          label="شهرهای رایگان (با کاما)"
-          value={(settings.freeShippingCities || []).join(', ')}
-          onChange={v => updArr('freeShippingCities', v)}
-        />
-        <Field
-          label="شهرهای تحویل همان روز"
-          value={(settings.sameDayCities || []).join(', ')}
-          onChange={v => updArr('sameDayCities', v)}
-        />
+        <Field label="پیش‌شماره کدپستی رایگان (با کاما)" value={(settings.freePostalPrefixes || []).join(', ')} onChange={v => updArr('freePostalPrefixes', v)} />
+        <Field label="شهرهای رایگان (با کاما)" value={(settings.freeShippingCities || []).join(', ')} onChange={v => updArr('freeShippingCities', v)} />
+        <Field label="شهرهای تحویل همان روز" value={(settings.sameDayCities || []).join(', ')} onChange={v => updArr('sameDayCities', v)} />
       </div>
 
-      
-            {/* تم سایت */}
-      <div className="bg-white rounded-2xl p-4 border border-border">
-        <div className="text-xs font-extrabold mb-3">پالت رنگی سایت (تم)</div>
-        <select
-          value={settings.themeColor || 'green'}
-          onChange={e => upd('themeColor', e.target.value)}
-          className="w-full bg-cream border border-border rounded-xl px-3 py-3 text-sm font-bold focus:border-brand outline-none"
-        >
-          <option value="green">کافه ترشی (سبز طبیعی)</option>
-          <option value="blue">اقیانوس آرام (آبی مدرن)</option>
-          <option value="sunset">غروب آفتاب (نارنجی پرانرژی)</option>
-          <option value="midnight">شب آرام (دارک پریمیوم)</option>
-        </select>
-        <div className="text-[10px] text-muted mt-2">
-          با انتخاب هر تم، تمام رنگ‌های سایت (دکمه‌ها، پس‌زمینه و متن) با هم هماهنگ می‌شوند.
-        </div>
-      </div>
-
-{/* دکمه ذخیره */}
+      {/* دکمه ذخیره */}
       <button
         onClick={onSave}
         disabled={saving}

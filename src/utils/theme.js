@@ -20,9 +20,9 @@ export const THEMES = {
 }
 
 export function applyTheme(themeId) {
-  // پشتیبانی از اسم‌های قدیمی برای جلوگیری از باگ
   if (themeId === 'green') themeId = 'forest';
   if (themeId === 'blue') themeId = 'ocean';
+  if (themeId === 'sunset') themeId = 'orange';
   
   const theme = THEMES[themeId] || THEMES.forest;
   const root = document.documentElement;
