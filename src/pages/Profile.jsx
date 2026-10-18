@@ -76,12 +76,11 @@ export default function Profile() {
       <Header title="پروفایل" />
       <main className="max-w-lg mx-auto px-4 pb-32 pt-3 fade-up">
         {user ? (
-          <div className="rounded-3xl p-5 mb-4 text-white relative overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
-            <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-white/10"></div>
+          <div className="theme-hero p-5 mb-4 relative overflow-hidden">
+            <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-card/10"></div>
             <div className="absolute bottom-0 right-0 w-20 h-20 rounded-full bg-accent/20"></div>
             <div className="relative flex items-center gap-3 mb-4">
-              <div className="w-14 h-14 rounded-full bg-white/25 backdrop-blur flex items-center justify-center text-2xl font-extrabold border-2 border-white/40">
+              <div className="w-14 h-14 rounded-full bg-card/25 backdrop-blur flex items-center justify-center text-2xl font-extrabold border-2 border-white/40">
                 {initial}
               </div>
               <div className="flex-1 min-w-0">
@@ -95,11 +94,10 @@ export default function Profile() {
           </div>
         ) : (
           <Link to="/login"
-            className="block rounded-3xl p-5 mb-4 text-white relative overflow-hidden active:scale-[0.98] transition"
-            style={{ background: 'linear-gradient(135deg, #2E7D32 0%, #185C28 100%)' }}>
-            <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-white/10"></div>
+            className="theme-hero block p-5 mb-4 relative overflow-hidden active:scale-[0.98] transition">
+            <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-card/10"></div>
             <div className="relative flex items-center gap-3">
-              <div className="w-14 h-14 rounded-full bg-white/25 flex items-center justify-center border-2 border-white/40">
+              <div className="w-14 h-14 rounded-full bg-card/25 flex items-center justify-center border-2 border-white/40">
                 <LogIn size={24} />
               </div>
               <div className="flex-1">
@@ -122,10 +120,10 @@ export default function Profile() {
               )}
             </div>
             <div>
-              <div className="text-xl font-extrabold text-ink">
+              <div className="text-xl font-extrabold text-on-card">
                 {loadingOrders ? '...' : ordersCount}
               </div>
-              <div className="text-[10px] text-muted">سفارش</div>
+              <div className="text-[10px] text-on-page-muted">سفارش</div>
             </div>
           </Link>
           <Link to="/favorites"
@@ -134,26 +132,26 @@ export default function Profile() {
               <Heart className="text-brand" size={20} />
             </div>
             <div>
-              <div className="text-xl font-extrabold text-ink">{favCount}</div>
-              <div className="text-[10px] text-muted">علاقه‌مندی</div>
+              <div className="text-xl font-extrabold text-on-card">{favCount}</div>
+              <div className="text-[10px] text-on-page-muted">علاقه‌مندی</div>
             </div>
           </Link>
         </div>
 
         {favProducts.length > 0 && (
           <>
-            <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
+            <h3 className="font-extrabold text-sm mb-3 text-on-card flex items-center gap-1.5">
               ❤️ علاقه‌مندی‌های من
             </h3>
             <div className="space-y-2 mb-5">
               {favProducts.slice(0, 3).map(p => (
                 <Link key={p.id} to={`/product/${p.id}`}
-                  className="flex items-center gap-3 bg-white rounded-2xl p-2.5 border border-border active:scale-[0.98] transition">
+                  className="flex items-center gap-3 bg-card rounded-2xl p-2.5 border border-border active:scale-[0.98] transition">
                   <div className="w-14 h-14 rounded-xl overflow-hidden bg-cream flex-shrink-0">
                     <ProductImage product={p} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold text-ink truncate mb-1">{p.title}</div>
+                    <div className="text-xs font-bold text-on-card truncate mb-1">{p.title}</div>
                     <div className="text-[11px] font-extrabold text-brand">{formatPrice(p.price)}</div>
                   </div>
                   <div className="w-7 h-7 rounded-full bg-brand-light flex items-center justify-center">
@@ -165,41 +163,40 @@ export default function Profile() {
           </>
         )}
 
-        <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
+        <h3 className="font-extrabold text-sm mb-3 text-on-card flex items-center gap-1.5">
           📞 ارتباط با ما
         </h3>
         <div className="space-y-2 mb-5">
           <a href={`tel:${shopSettings.phone}`}
-            className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Phone size={16} className="text-brand" />
             </div>
-            <span className="text-xs font-bold flex-1 text-ink">تماس تلفنی</span>
-            <span className="text-[10px] text-muted" style={{ direction: 'ltr' }}>{shopSettings.phone}</span>
+            <span className="text-xs font-bold flex-1 text-on-card">تماس تلفنی</span>
+            <span className="text-[10px] text-on-page-muted" style={{ direction: 'ltr' }}>{shopSettings.phone}</span>
           </a>
           <a href={`https://ble.ir/${shopSettings.telegram}`} target="_blank" rel="noreferrer"
-            className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Send size={16} className="text-brand" />
             </div>
-            <span className="text-xs font-bold flex-1 text-ink">پیام‌رسان بله</span>
-            <span className="text-[10px] text-muted">@{shopSettings.telegram}</span>
+            <span className="text-xs font-bold flex-1 text-on-card">پیام‌رسان بله</span>
+            <span className="text-[10px] text-on-page-muted">@{shopSettings.telegram}</span>
           </a>
           <Link to="/contact"
-            className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <MapPin size={16} className="text-brand" />
             </div>
-            <span className="text-xs font-bold flex-1 text-ink">تماس و آدرس کامل</span>
+            <span className="text-xs font-bold flex-1 text-on-card">تماس و آدرس کامل</span>
           </Link>
         </div>
 
-        <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
+        <h3 className="font-extrabold text-sm mb-3 text-on-card flex items-center gap-1.5">
           💳 اطلاعات پرداخت
         </h3>
-        <div className="rounded-3xl p-5 mb-5 text-white relative overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, #185C28 0%, #2E7D32 60%, #4CAF50 100%)' }}>
-          <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-white/10"></div>
+        <div className="theme-hero p-5 mb-5 relative overflow-hidden">
+          <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-card/10"></div>
           <div className="absolute bottom-0 right-0 w-24 h-24 rounded-full bg-accent/20"></div>
           <div className="relative">
             <div className="flex items-center justify-between mb-4">
@@ -222,13 +219,13 @@ export default function Profile() {
 
         {user && (
           <button onClick={handleLogout}
-            className="w-full bg-white border border-border text-danger font-bold text-sm py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition mb-3">
+            className="w-full bg-card border border-border text-danger font-bold text-sm py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition mb-3">
             <LogOut size={16} />
             خروج از حساب
           </button>
         )}
 
-        <p className="text-center text-[10px] text-muted mt-4 pb-2">
+        <p className="text-center text-[10px] text-on-page-muted mt-4 pb-2">
           کافه ترشی — نسخه ۱.۰
         </p>
       </main>
