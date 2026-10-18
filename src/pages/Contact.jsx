@@ -1,5 +1,5 @@
 import Header from '../components/Header'
-import { SHOP_INFO } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 import { Phone, Send, MapPin, Clock, MessageSquare } from 'lucide-react'
 
 export default function Contact() {
@@ -7,23 +7,23 @@ export default function Contact() {
     {
       icon: Phone,
       title: 'تماس تلفنی',
-      value: SHOP_INFO.phone,
-      href: `tel:${SHOP_INFO.phone}`,
+      value: SHOP_CONFIG.phone,
+      href: `tel:${SHOP_CONFIG.phone}`,
       color: '#2196F3',
       ltr: true,
     },
     {
       icon: Send,
       title: 'پیام‌رسان بله',
-      value: '@' + SHOP_INFO.telegram,
-      href: `https://ble.ir/${SHOP_INFO.telegram}`,
+      value: '@' + SHOP_CONFIG.telegram,
+      href: `https://ble.ir/${SHOP_CONFIG.telegram}`,
       color: '#0088cc',
       ltr: true,
     },
     {
       icon: MapPin,
       title: 'آدرس فروشگاه',
-      value: SHOP_INFO.address,
+      value: SHOP_CONFIG.address,
       href: null,
       color: '#E91E63',
       ltr: false,
@@ -96,7 +96,7 @@ export default function Contact() {
             <p className="text-[11px] opacity-90 leading-5 mb-3">
               برای پاسخ سریع‌تر، توی پیام‌رسان بله پیام بده — معمولاً در کمتر از ۱۰ دقیقه جواب می‌دیم.
             </p>
-            <a href={`https://ble.ir/${SHOP_INFO.telegram}`} target="_blank" rel="noreferrer"
+            <a href={`https://ble.ir/${SHOP_CONFIG.telegram}`} target="_blank" rel="noreferrer"
               className="inline-flex items-center gap-2 bg-white text-brand text-xs font-extrabold px-4 py-2.5 rounded-full active:scale-95 transition">
               <Send size={14} />
               ارسال پیام در بله

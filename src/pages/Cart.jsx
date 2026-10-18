@@ -4,7 +4,8 @@ import Header from '../components/Header'
 import ConfirmModal from '../components/ConfirmModal'
 import { getCart, updateQty, removeFromCart, cartTotal, clearCart } from '../utils/cart'
 import { formatPrice, storage } from '../utils/storage'
-import { SHOP_INFO, calculateShipping } from '../data/products'
+import { calculateShipping } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 import { getShopSettings } from '../api/shop'
 import { Trash2, Minus, Plus, ShoppingBag, Zap } from 'lucide-react'
 import { toast } from '../components/Toast'
@@ -24,7 +25,7 @@ export default function Cart() {
   const total = cartTotal()
   const lastAddr = storage.get('last-address', '')
   const lastPostal = storage.get('last-postal', '')
-  const [shopSettings, setShopSettings] = useState(SHOP_INFO)
+  const [shopSettings, setShopSettings] = useState(SHOP_CONFIG)
 
   useEffect(() => {
     getShopSettings().then(setShopSettings).catch(() => {})

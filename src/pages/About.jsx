@@ -1,5 +1,5 @@
 import Header from '../components/Header'
-import { SHOP_INFO } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 import Logo from '../components/Logo'
 import { Heart, Leaf, Truck, Award } from 'lucide-react'
 
@@ -13,7 +13,7 @@ export default function About() {
         <div className="flex flex-col items-center text-center mb-7">
           <Logo size={80} />
           <h1 className="font-extrabold text-2xl text-brand mt-3 mb-1">کافه ترشی</h1>
-          <p className="text-xs text-muted">{SHOP_INFO.tagline}</p>
+          <p className="text-xs text-muted">{SHOP_CONFIG.tagline}</p>
           <svg viewBox="0 0 100 6" width="80" height="6" className="mt-2">
             <path d="M 4 4 Q 25 1 50 3 Q 75 5 96 2" stroke="#F8C02D" strokeWidth="2" fill="none" strokeLinecap="round"/>
           </svg>
@@ -60,15 +60,15 @@ export default function About() {
           <div className="space-y-3 text-xs">
             <div className="flex justify-between items-start">
               <span className="text-muted">نام فروشگاه</span>
-              <span className="font-bold text-ink">{SHOP_INFO.name}</span>
+              <span className="font-bold text-ink">{SHOP_CONFIG.name}</span>
             </div>
             <div className="flex justify-between items-start">
               <span className="text-muted">نشانی</span>
-              <span className="font-bold text-ink text-left" style={{ maxWidth: '60%' }}>{SHOP_INFO.address}</span>
+              <span className="font-bold text-ink text-left" style={{ maxWidth: '60%' }}>{SHOP_CONFIG.address}</span>
             </div>
             <div className="flex justify-between items-start">
               <span className="text-muted">تلفن</span>
-              <span className="font-bold text-ink" style={{ direction: 'ltr' }}>{SHOP_INFO.phone}</span>
+              <span className="font-bold text-ink" style={{ direction: 'ltr' }}>{SHOP_CONFIG.phone}</span>
             </div>
             <div className="flex justify-between items-start">
               <span className="text-muted">اینماد</span>

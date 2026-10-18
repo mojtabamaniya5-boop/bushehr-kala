@@ -1,5 +1,5 @@
 import Header from '../components/Header'
-import { SHOP_INFO } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 
 const SECTIONS = [
   {
@@ -24,7 +24,7 @@ const SECTIONS = [
       'ارسال سریع: ۲ تا ۳ روز کاری.',
       'ارسال عادی: ۳ تا ۵ روز کاری.',
       'هزینه ارسال در صفحه تسویه حساب قابل مشاهده است.',
-      'برای سفارش‌های بالای ' + SHOP_INFO.freeShippingFrom.toLocaleString('fa-IR') + ' تومان، ارسال رایگان است.',
+      'برای سفارش‌های بالای ' + SHOP_CONFIG.freeShippingFrom.toLocaleString('fa-IR') + ' تومان، ارسال رایگان است.',
     ],
   },
   {

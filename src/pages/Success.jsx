@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { CheckCircle2, Send, Home, ShoppingBag } from 'lucide-react'
-import { SHOP_INFO } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 
 export default function Success() {
   const { id } = useParams()
@@ -36,15 +36,15 @@ export default function Success() {
           <div className="bg-white/80 rounded-xl p-3">
             <div className="text-[9px] text-muted mb-1">شماره کارت</div>
             <div className="font-mono text-sm font-extrabold text-ink" style={{ direction: 'ltr', textAlign: 'right' }}>
-              {SHOP_INFO.card.number.replace(/(\d{4})/g, '$1 ').trim()}
+              {SHOP_CONFIG.card.number.replace(/(\d{4})/g, '$1 ').trim()}
             </div>
-            <div className="text-[10px] text-muted mt-1">به نام {SHOP_INFO.card.holder}</div>
+            <div className="text-[10px] text-muted mt-1">به نام {SHOP_CONFIG.card.holder}</div>
           </div>
         </div>
 
         {/* دکمه‌ها */}
         <div className="space-y-2">
-          <a href={`https://t.me/${SHOP_INFO.telegram}`} target="_blank" rel="noreferrer"
+          <a href={`https://t.me/${SHOP_CONFIG.telegram}`} target="_blank" rel="noreferrer"
             className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] shadow-md">
             <Send size={16} /> ارسال رسید در تلگرام
           </a>

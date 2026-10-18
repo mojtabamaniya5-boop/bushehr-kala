@@ -8,7 +8,7 @@ import { getCurrentUser } from '../utils/auth'
 import { canSearch, recordAttempt, isValidOrderCode, isValidPhone, clearAttempts } from '../utils/track-security'
 import { Package, Search, Loader2, Copy, Check, CreditCard, ShoppingBag, Phone, RotateCcw, Truck, Lock, AlertTriangle, ExternalLink } from 'lucide-react'
 import { toast } from '../components/Toast'
-import { SHOP_INFO } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 import { getTrackingUrl, getTrackingLabel, getShippingName } from '../utils/tracking-url'
 
 const STATUS_LABEL = {

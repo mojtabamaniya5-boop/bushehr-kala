@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { getCart, cartTotal } from '../utils/cart'
 import { storage, formatPrice, uid } from '../utils/storage'
-import { SHOP_INFO, calculateShipping } from '../data/products'
+import { calculateShipping } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 import { saveOrderToDB } from '../utils/supabase'
 import { getCurrentUser } from '../utils/auth'
 import { getShopSettings } from '../api/shop'
@@ -18,7 +19,7 @@ export default function Checkout() {
   const savedUser = loggedUser ? storage.get('user', {}) : {}
 
   const [shippingType, setShippingType] = useState('fast')
-  const [shopSettings, setShopSettings] = useState(SHOP_INFO)
+  const [shopSettings, setShopSettings] = useState(SHOP_CONFIG)
 
   useEffect(() => {
     getShopSettings().then(setShopSettings).catch(() => {})

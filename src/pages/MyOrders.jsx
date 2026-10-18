@@ -9,7 +9,7 @@ import { fetchUserOrders, deleteOrder } from '../utils/orders'
 import { supabase } from '../utils/supabase'
 import { Package, Loader2, ChevronLeft, CreditCard, Copy, Check, Trash2, Truck, ExternalLink } from 'lucide-react'
 import { toast } from '../components/Toast'
-import { SHOP_INFO } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 import { getTrackingUrl, getTrackingLabel, getShippingName } from '../utils/tracking-url'
 
 const STATUS_LABEL = {
@@ -44,7 +44,7 @@ export default function MyOrders() {
 
   const copyCard = async (orderId) => {
     try {
-      await navigator.clipboard.writeText(SHOP_INFO.card.number)
+      await navigator.clipboard.writeText(SHOP_CONFIG.card.number)
       setCopiedCard(orderId)
       toast.success('شماره کارت کپی شد')
       setTimeout(() => setCopiedCard(null), 1500)
@@ -200,10 +200,10 @@ export default function MyOrders() {
                       <div className="relative">
                         <div className="text-[10px] opacity-80 mb-1">شماره کارت برای واریز</div>
                         <div className="font-mono text-sm font-extrabold tracking-wider mb-2 text-center" style={{ direction: 'ltr' }}>
-                          {SHOP_INFO.card.number.replace(/(\d{4})/g, '$1 ').trim()}
+                          {SHOP_CONFIG.card.number.replace(/(\d{4})/g, '$1 ').trim()}
                         </div>
                         <div className="flex items-center justify-between mb-3">
-                          <span className="text-[10px] opacity-90">به نام {SHOP_INFO.card.holder}</span>
+                          <span className="text-[10px] opacity-90">به نام {SHOP_CONFIG.card.holder}</span>
                           <button onClick={(e) => { e.stopPropagation(); copyCard(o.id) }}
                             className="text-[10px] bg-white/20 px-2.5 py-1 rounded-full active:scale-95 flex items-center gap-1">
                             {copiedCard === o.id ? <><Check size={10} /> کپی شد</> : <><Copy size={10} /> کپی</>}

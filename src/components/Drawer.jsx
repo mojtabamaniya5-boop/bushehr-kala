@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { X, Home, Grid3x3, Heart, ShoppingCart, Package, User, Phone, Info, FileText, Send, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { SHOP_INFO } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 
 const mainMenu = [
   { path: '/',          label: 'خانه',            icon: Home,         emoji: '🏠' },
@@ -61,7 +61,7 @@ export default function Drawer({ open, onClose }) {
                   </button>
                 </div>
                 <h2 className="font-extrabold text-lg text-white leading-none">کافه ترشی</h2>
-                <p className="text-[10px] text-white/80 mt-1.5">🫙 {SHOP_INFO.tagline}</p>
+                <p className="text-[10px] text-white/80 mt-1.5">🫙 {SHOP_CONFIG.tagline}</p>
               </div>
             </div>
 
@@ -100,7 +100,7 @@ export default function Drawer({ open, onClose }) {
               {/* تماس سریع */}
               <p className="text-[9px] font-extrabold text-muted px-2 mb-2 tracking-wider">ارتباط سریع</p>
               <div className="space-y-0.5 mb-4">
-                <a href={`tel:${SHOP_INFO.phone}`}
+                <a href={`tel:${SHOP_CONFIG.phone}`}
                   className="flex items-center gap-3 px-2.5 py-2.5 rounded-2xl text-ink active:scale-[0.98] transition hover:bg-white">
                   <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                     style={{ background: '#F8C02D30' }}>
@@ -108,12 +108,12 @@ export default function Drawer({ open, onClose }) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-bold">تماس تلفنی</div>
-                    <div className="text-[10px] text-muted" style={{ direction: 'ltr', textAlign: 'right' }}>{SHOP_INFO.phone}</div>
+                    <div className="text-[10px] text-muted" style={{ direction: 'ltr', textAlign: 'right' }}>{SHOP_CONFIG.phone}</div>
                   </div>
                   <span className="text-base">📞</span>
                 </a>
 
-                <a href={`https://ble.ir/${SHOP_INFO.telegram}`} target="_blank" rel="noreferrer"
+                <a href={`https://ble.ir/${SHOP_CONFIG.telegram}`} target="_blank" rel="noreferrer"
                   className="flex items-center gap-3 px-2.5 py-2.5 rounded-2xl text-ink active:scale-[0.98] transition hover:bg-white">
                   <div className="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center flex-shrink-0">
                     <Send size={16} className="text-brand" />

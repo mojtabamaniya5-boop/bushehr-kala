@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { requestZibalPayment } from '../utils/payment'
 import { fetchOrderById, markOrderPaidClaimed } from '../utils/orders'
-import { SHOP_INFO } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 import { formatPrice, formatDate } from '../utils/storage'
 import { toast } from '../components/Toast'
 import { Copy, Check, CreditCard, AlertCircle, Send, Loader2, CheckCircle2, Zap, ArrowRight, ArrowLeft } from 'lucide-react'
@@ -28,7 +28,7 @@ export default function Pay() {
 
   const copyCard = async () => {
     try {
-      await navigator.clipboard.writeText(SHOP_INFO.card.number)
+      await navigator.clipboard.writeText(SHOP_CONFIG.card.number)
       setCopied(true)
       toast.success('شماره کارت کپی شد')
       setTimeout(() => setCopied(false), 2000)
@@ -280,7 +280,7 @@ export default function Pay() {
 
                 <div className="font-mono text-xl font-extrabold tracking-widest mb-2 text-center"
                   style={{ direction: 'ltr' }}>
-                  {SHOP_INFO.card.number.replace(/(\d{4})/g, '$1 ').trim()}
+                  {SHOP_CONFIG.card.number.replace(/(\d{4})/g, '$1 ').trim()}
                 </div>
 
                 <button onClick={copyCard}
@@ -291,9 +291,9 @@ export default function Pay() {
                 <div className="flex items-end justify-between pt-4 border-t border-white/20">
                   <div>
                     <div className="text-[9px] opacity-70 mb-0.5">صاحب حساب</div>
-                    <div className="text-xs font-bold">{SHOP_INFO.card.holder}</div>
+                    <div className="text-xs font-bold">{SHOP_CONFIG.card.holder}</div>
                   </div>
-                  <div className="text-[10px] opacity-80">{SHOP_INFO.card.bank}</div>
+                  <div className="text-[10px] opacity-80">{SHOP_CONFIG.card.bank}</div>
                 </div>
               </div>
             </div>
@@ -329,7 +329,7 @@ export default function Pay() {
                 <p className="text-[11px] text-muted leading-5 mb-4">
                   حالا عکس رسید را در بله بفرست تا سفارشت تأیید بشه
                 </p>
-                <a href={`https://ble.ir/${SHOP_INFO.telegram}`} target="_blank" rel="noreferrer"
+                <a href={`https://ble.ir/${SHOP_CONFIG.telegram}`} target="_blank" rel="noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 bg-brand text-white font-extrabold py-3.5 rounded-2xl active:scale-[0.98]">
                   <Send size={16} />
                   ارسال رسید در بله

@@ -5,7 +5,8 @@ import { formatPrice } from '../utils/storage'
 import { getFavorites } from '../utils/cart'
 import { getCurrentUser, logoutUser } from '../utils/auth'
 import { fetchUserOrders } from '../utils/orders'
-import { PRODUCTS, SHOP_INFO } from '../data/products'
+import { PRODUCTS } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 import { getShopSettings } from '../api/shop'
 import ProductImage from '../components/ProductImage'
 import { Heart, Phone, Send, MapPin, LogOut, LogIn, Package } from 'lucide-react'
@@ -17,7 +18,7 @@ export default function Profile() {
   const [favCount, setFavCount] = useState(getFavorites().length)
   const [ordersCount, setOrdersCount] = useState(0)
   const [loadingOrders, setLoadingOrders] = useState(false)
-  const [shopSettings, setShopSettings] = useState(SHOP_INFO)
+  const [shopSettings, setShopSettings] = useState(SHOP_CONFIG)
 
   useEffect(() => {
     getShopSettings().then(setShopSettings).catch(() => {})
