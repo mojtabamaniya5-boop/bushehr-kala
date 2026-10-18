@@ -20,6 +20,14 @@ body { font-family: 'Vazirmatn', sans-serif; overscroll-behavior-y: none; }
     --text: #f2fff6;
     --muted: #b3d4c1;
     --border: rgba(184, 243, 206, .16);
+    
+    /* اتصال به متغیرهای تیلویند */
+    --color-brand: 8 116 67;
+    --color-brand-dark: 6 95 53;
+    --color-brand-light: 184 243 206;
+    --color-cream: 6 46 37;
+    --color-ink: 242 255 246;
+    --color-muted: 179 212 193;
 
     background: radial-gradient(ellipse at 5% 5%, rgba(22, 163, 74, .24), transparent 35%), radial-gradient(ellipse at 95% 90%, rgba(4, 120, 87, .25), transparent 40%), linear-gradient(145deg, #031e19, var(--page) 55%, #064e3b);
     color: var(--text);
@@ -35,6 +43,14 @@ body { font-family: 'Vazirmatn', sans-serif; overscroll-behavior-y: none; }
     --muted: #9b745f;
     --border: rgba(255, 115, 20, .18);
 
+    /* اتصال به متغیرهای تیلویند */
+    --color-brand: 255 90 10;
+    --color-brand-dark: 204 72 8;
+    --color-brand-light: 255 157 36;
+    --color-cream: 255 244 229;
+    --color-ink: 87 34 13;
+    --color-muted: 155 116 95;
+
     background: radial-gradient(ellipse at 100% 0%, rgba(255, 177, 48, .30), transparent 38%), radial-gradient(ellipse at 0% 100%, rgba(255, 90, 10, .12), transparent 38%), linear-gradient(145deg, #fff8ed, var(--page) 60%, #ffe4bd);
     color: var(--text);
   }
@@ -48,6 +64,14 @@ body { font-family: 'Vazirmatn', sans-serif; overscroll-behavior-y: none; }
     --text: #103766;
     --muted: #6484a4;
     --border: rgba(8, 123, 234, .15);
+
+    /* اتصال به متغیرهای تیلویند */
+    --color-brand: 8 123 234;
+    --color-brand-dark: 6 98 187;
+    --color-brand-light: 101 214 255;
+    --color-cream: 234 247 255;
+    --color-ink: 16 55 102;
+    --color-muted: 100 132 164;
 
     background: radial-gradient(ellipse at 100% 0%, rgba(101, 214, 255, .35), transparent 38%), radial-gradient(ellipse at 0% 100%, rgba(8, 123, 234, .12), transparent 40%), linear-gradient(145deg, #f5fcff, var(--page) 55%, #d7efff);
     color: var(--text);
