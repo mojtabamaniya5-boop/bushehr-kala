@@ -287,3 +287,18 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON orders TO authenticated;
 - ❌ عبور پول مشتری از درگاه (Zibal) ما ممنوع است.
 - ✅ کلیدهای حساس (Service Role, Zibal, SMS) فقط در Relay و Edge Function.
 - ✅ ریپوی اصلی باید Private باشد. هر کلیدی که در گیت‌هاب پابلیک لو رفته، باید Rotate شود.
+
+---
+
+## 🆕 قوانین v3.23 — SaaS & Multi-tenant
+
+### ۱) معماری داده (Multi-tenant)
+- ❌ هرگز کوئری بدون فیلتر `shop_id` نزنید (مگر برای ادمین کل).
+- ✅ جدول `shop_admins` مبنای RLS است. هر ادمین فقط داده‌های `shop_id` خودش را می‌بیند.
+- ✅ مبلغ پرداخت حتماً باید در Relay از DB خوانده شود (هرگز از کلاینت).
+
+### ۲) سورس‌کد و امنیت
+- ❌ فروش سورس‌کد ممنوع. تحویل فقط به صورت سرویس (SaaS).
+- ❌ عبور پول مشتری از درگاه (Zibal) ما ممنوع است.
+- ✅ کلیدهای حساس (Service Role, Zibal, SMS) فقط در Relay و Edge Function.
+- ✅ ریپوی اصلی باید Private باشد. هر کلیدی که در گیت‌هاب پابلیک لو رفته، باید Rotate شود.
