@@ -18,23 +18,6 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
 
   return (
     <div className="space-y-3 pb-6">
-      {/* تم سایت */}
-      <div className="bg-white rounded-2xl p-4 border border-border">
-        <div className="text-xs font-extrabold mb-3">پالت رنگی سایت (تم)</div>
-        <select
-          value={settings.themeColor || 'forest'}
-          onChange={e => upd('themeColor', e.target.value)}
-          className="w-full bg-cream border border-border rounded-xl px-3 py-3 text-sm font-bold focus:border-brand outline-none"
-        >
-          <option value="forest">جنگل نیمه‌شب (سبز تیره)</option>
-          <option value="orange">موج نارنجی (گرم و پرانرژی)</option>
-          <option value="ocean">اقیانوس آرام (آبی مدرن)</option>
-        </select>
-        <div className="text-[10px] text-muted mt-2">
-          با انتخاب هر تم، تمام رنگ‌های سایت (دکمه‌ها، پس‌زمینه و متن) با هم هماهنگ می‌شوند.
-        </div>
-      </div>
-
       {/* اطلاعات فروشگاه */}
       <div className="bg-white rounded-2xl p-4 border border-border">
         <div className="text-xs font-extrabold mb-3">اطلاعات فروشگاه</div>
@@ -85,7 +68,7 @@ function Field({ label, value, onChange, type = 'text' }) {
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
-        className="w-full bg-card border border-border/30 rounded-xl px-3 py-2 text-xs text-on-card focus:border-brand outline-none"
+        className="w-full bg-cream border border-border rounded-xl px-3 py-2 text-xs focus:border-brand outline-none"
       />
     </div>
   )

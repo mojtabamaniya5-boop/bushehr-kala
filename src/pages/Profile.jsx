@@ -111,7 +111,7 @@ export default function Profile() {
 
         <div className="grid grid-cols-2 gap-3 mb-4">
           <Link to={user ? '/my-orders' : '/login'}
-            className="bg-card p-4 shadow-sm rounded-2xl border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
+            className="bg-white p-4 border border-border border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
             <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
               {loadingOrders ? (
                 <div className="w-5 h-5 rounded-full border-2 border-brand border-t-transparent animate-spin"></div>
@@ -120,19 +120,19 @@ export default function Profile() {
               )}
             </div>
             <div>
-              <div className="text-xl font-extrabold text-on-card">
+              <div className="text-xl font-extrabold text-ink">
                 {loadingOrders ? '...' : ordersCount}
               </div>
               <div className="text-[10px] text-on-page/70">سفارش</div>
             </div>
           </Link>
           <Link to="/favorites"
-            className="bg-card p-4 shadow-sm rounded-2xl border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
+            className="bg-white p-4 border border-border border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
             <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
               <Heart className="text-brand" size={20} />
             </div>
             <div>
-              <div className="text-xl font-extrabold text-on-card">{favCount}</div>
+              <div className="text-xl font-extrabold text-ink">{favCount}</div>
               <div className="text-[10px] text-on-page/70">علاقه‌مندی</div>
             </div>
           </Link>
@@ -140,7 +140,7 @@ export default function Profile() {
 
         {favProducts.length > 0 && (
           <>
-            <h3 className="font-extrabold text-sm mb-3 text-on-card flex items-center gap-1.5">
+            <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
               ❤️ علاقه‌مندی‌های من
             </h3>
             <div className="space-y-2 mb-5">
@@ -151,7 +151,7 @@ export default function Profile() {
                     <ProductImage product={p} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold text-on-card truncate mb-1">{p.title}</div>
+                    <div className="text-xs font-bold text-ink truncate mb-1">{p.title}</div>
                     <div className="text-[11px] font-extrabold text-brand">{formatPrice(p.price)}</div>
                   </div>
                   <div className="w-7 h-7 rounded-full bg-brand-light flex items-center justify-center">
@@ -163,36 +163,36 @@ export default function Profile() {
           </>
         )}
 
-        <h3 className="font-extrabold text-sm mb-3 text-on-card flex items-center gap-1.5">
+        <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
           📞 ارتباط با ما
         </h3>
         <div className="space-y-2 mb-5">
           <a href={`tel:${shopSettings.phone}`}
-            className="flex items-center gap-3 bg-card rounded-2xl p-3 shadow-sm active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Phone size={16} className="text-brand" />
             </div>
-            <span className="text-xs font-bold flex-1 text-on-card">تماس تلفنی</span>
-            <span className="text-[10px] text-on-card/70" style={{ direction: 'ltr' }}>{shopSettings.phone}</span>
+            <span className="text-xs font-bold flex-1 text-ink">تماس تلفنی</span>
+            <span className="text-[10px] text-ink/70" style={{ direction: 'ltr' }}>{shopSettings.phone}</span>
           </a>
           <a href={`https://ble.ir/${shopSettings.telegram}`} target="_blank" rel="noreferrer"
-            className="flex items-center gap-3 bg-card rounded-2xl p-3 shadow-sm active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Send size={16} className="text-brand" />
             </div>
-            <span className="text-xs font-bold flex-1 text-on-card">پیام‌رسان بله</span>
+            <span className="text-xs font-bold flex-1 text-ink">پیام‌رسان بله</span>
             <span className="text-[10px] text-on-page/70">@{shopSettings.telegram}</span>
           </a>
           <Link to="/contact"
-            className="flex items-center gap-3 bg-card rounded-2xl p-3 shadow-sm active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <MapPin size={16} className="text-brand" />
             </div>
-            <span className="text-xs font-bold flex-1 text-on-card">تماس و آدرس کامل</span>
+            <span className="text-xs font-bold flex-1 text-ink">تماس و آدرس کامل</span>
           </Link>
         </div>
 
-        <h3 className="font-extrabold text-sm mb-3 text-on-card flex items-center gap-1.5">
+        <h3 className="font-extrabold text-sm mb-3 text-ink flex items-center gap-1.5">
           💳 اطلاعات پرداخت
         </h3>
         <div className="bg-gradient-to-br from-brand-dark to-brand p-5 mb-5 relative overflow-hidden text-white">
