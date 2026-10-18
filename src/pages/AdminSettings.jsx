@@ -26,9 +26,9 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
           onChange={e => upd('themeColor', e.target.value)}
           className="w-full bg-cream border border-border rounded-xl px-3 py-3 text-sm font-bold focus:border-brand outline-none"
         >
-          <option value="forest">جنگل نیمه‌شب (Midnight Forest)</option>
-          <option value="orange">موج نارنجی (Orange Pulse)</option>
-          <option value="ocean">اقیانوس آرام (Calm Ocean)</option>
+          <option value="forest">جنگل نیمه‌شب (سبز تیره)</option>
+          <option value="orange">موج نارنجی (گرم و پرانرژی)</option>
+          <option value="ocean">اقیانوس آرام (آبی مدرن)</option>
         </select>
         <div className="text-[10px] text-muted mt-2">
           با انتخاب هر تم، تمام رنگ‌های سایت (دکمه‌ها، پس‌زمینه و متن) با هم هماهنگ می‌شوند.
