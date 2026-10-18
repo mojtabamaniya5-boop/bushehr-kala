@@ -251,3 +251,24 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON orders TO authenticated;
 
 ## v3.21
 - هرگز مبلغ نهایی (amount) را از کلاینت (مرورگر) به درگاه پرداخت یا Relay نفرستید. مبلغ باید همیشه سمت سرور از دیتابیس خوانده شود.
+
+---
+
+## 🆕 قوانین v3.22 — Config مرکزی
+
+### ۱) تک‌منبع حقیقت
+- ❌ هرگز مقدار برند/تماس/کارت/ارسال را مستقیم در کامپوننت هارد‌کد نکن
+- ✅ همیشه از `SHOP_CONFIG` (config/shop.js) یا `getShopSettings()` استفاده کن
+
+### ۲) اولویت منابع
+1. `getShopSettings()` (DB، اولویت اول — cache ۲ دقیقه)
+2. `SHOP_CONFIG` (fallback اولیه)
+3. ❌ `SHOP_INFO` (فقط برای سازگاری گذشته — مصرف‌کننده جدید نساز)
+
+### ۳) `src/config/shop.js` — فایل محافظت‌شده فروش
+- برای هر مشتری جدید: **فقط** این فایل + ردیف `shop_settings` در DB + `tailwind.config.js` + `index.html`
+- هیچ فایل دیگری نباید تغییر کند
+
+### ۴) کلید حساس
+- ❌ هرگز کلید (Supabase/SMSIR/Zibal/JWT) را در `config/shop.js` نگذار
+- ✅ کلیدها فقط در `/root/relay/.env`

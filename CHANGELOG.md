@@ -387,3 +387,23 @@
 ## v3.21 (۱۴۰۵/۰۷/۲۶)
 - امنیت پرداخت: حذف پارامتر amount از فرانت‌اند (Pay.jsx).
 - امنیت سرور: محاسبه قیمت نهایی در Relay (Node.js) با خواندن مستقیم از Supabase.
+
+---
+
+## ۱۴۰۵/۰۷/۲۶ — v3.22 (Config مرکزی قالب)
+
+### افزوده
+- `src/config/shop.js` — SHOP_CONFIG (تک‌منبع حقیقت)
+- ساختار ۸ بخشی: برند، تم، SEO، تماس، پرداخت، ارسال، فیچرها، سرویس‌ها
+
+### تغییر
+- `api/shop.js`: fallback از SHOP_INFO → SHOP_CONFIG
+
+### Commit
+- `fec3d99` feat(config): مرکزی‌سازی تنظیمات قالب
+
+### باقی‌مانده (فروش قالب)
+- مهاجرت ۱۰ مصرف‌کننده SHOP_INFO → SHOP_CONFIG
+- فیکس Checkout shipping price از DB
+- README-CLIENT.md
+- همگام‌سازی index.html + tailwind.config.js

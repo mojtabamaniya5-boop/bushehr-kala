@@ -652,3 +652,33 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 ## v3.21 — محاسبه قیمت سمت سرور
 - Relay (server.js): تابع /zibal/request حالا خودش قیمت سفارش را از دیتابیس می‌خواند.
 - فرانت‌اند (Pay.jsx): دیگر قیمت را ارسال نمی‌کند.
+
+---
+
+## 🔄 v3.22 — Config مرکزی قالب (۱۴۰۵/۰۷/۲۶)
+
+### فایل جدید
+- `src/config/shop.js` — تک‌منبع حقیقت برند/تم/SEO/تماس/کارت/ارسال/فیچرها
+- export: `SHOP_CONFIG` (named) + `default`
+
+### ساختار SHOP_CONFIG
+| بخش | فیلدها |
+|---|---|
+| برند | name, tagline, logo, favicon, domain |
+| تم | primary, accent, cream, font |
+| SEO | title, description, ogImage, keywords |
+| تماس | phone, telegram, instagram, whatsapp, address, workHours |
+| پرداخت | card.{number, holder, bank} |
+| ارسال | shippingFast, shippingNormal, freeShippingFrom, freeShippingCities, sameDayCities, freePostalPrefixes |
+| فیچرها | smsOtp, zibalPayment, baleNotification, cardToCard, crm, apk |
+| سرویس‌ها | relayUrl (بدون کلید حساس) |
+
+### تغییر
+- `src/api/shop.js`: `SHOP_INFO` → `SHOP_CONFIG` (import + fallback)
+- `data/products.js` **دست‌نخورده** (طبق CONTRACT — فایل محافظت‌شده)
+
+### Commit
+- `fec3d99` feat(config): مرکزی‌سازی تنظیمات قالب
+
+### نکته باقی‌مانده
+- ۱۰ مصرف‌کننده مستقیم `SHOP_INFO` (Drawer, Success, About, Contact, Terms, MyOrders, Pay, Cart, Checkout, Profile) هنوز state اولیه رو از SHOP_INFO می‌گیرن — کار بعدی: مهاجرت به SHOP_CONFIG

@@ -350,3 +350,18 @@ Supabase REST با کلید sb_secret_ → 403 Forbidden.
 ### حل شد
 - حفره امنیتی دستکاری قیمت در درگاه پرداخت (Zibal).
 - همگام‌سازی Relay با دیتابیس Supabase.
+
+---
+
+## 🔄 آپدیت v3.22 (۱۴۰۵/۰۷/۲۶) — Config مرکزی
+
+### حل شد
+- ✅ `src/config/shop.js` ساخته شد (SHOP_CONFIG)
+- ✅ `api/shop.js` fallback به SHOP_CONFIG (نه SHOP_INFO)
+- ✅ build موفق + push
+
+### 🔴 کارهای بعدی
+۱. مهاجرت ۱۰ مصرف‌کننده مستقیم `SHOP_INFO` → `SHOP_CONFIG`
+۲. فیکس Checkout.jsx:216–217 (SHOP_INFO.shippingFast → shopSettings.shippingFast)
+۳. README-CLIENT.md برای فروش قالب
+۴. `index.html` + `tailwind.config.js` هم‌راستا با SHOP_CONFIG

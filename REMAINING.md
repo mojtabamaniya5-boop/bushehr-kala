@@ -354,3 +354,31 @@ pm2 restart cafetorshi-relay --update-env
 - امنیت پرداخت (Server-side calculation)
 ### باقی‌مانده
 - ساخت فایل Config مرکزی (shop.js) برای فروش قالب.
+
+---
+
+## 🆕 آپدیت v3.22 (۱۴۰۵/۰۷/۲۶)
+
+### ✅ حل‌شده
+- ساخت `src/config/shop.js` (SHOP_CONFIG)
+- api/shop.js به SHOP_CONFIG وصل شد
+- build + commit + push
+
+### 🔴 فروش قالب — باقی‌مانده (به ترتیب)
+۱. **مهاجرت ۱۰ فایل از SHOP_INFO → SHOP_CONFIG** (فقط import، بدون تغییر منطق)
+   - Drawer, Success, About, Contact, Terms, MyOrders, Pay, Cart, Checkout, Profile
+۲. **فیکس Checkout.jsx:216–217** — استفاده از `shopSettings.shippingFast/Normal` (نه SHOP_INFO)
+۳. **README-CLIENT.md** — راهنمای فروش: مشتری چه چیزهایی باید عوض کند
+   - `src/config/shop.js` (برند/تماس/کارت)
+   - `shop_settings` در Supabase
+   - `tailwind.config.js` (رنگ)
+   - `index.html` (SEO)
+   - `public/CNAME` (دامنه)
+   - `capacitor.config.json` (appId/appName)
+۴. **همگام‌سازی `tailwind.config.js` + `index.html`** با SHOP_CONFIG (دستی چون build-time هستند)
+۵. **تست end-to-end** روی یک نمونه دوم (ابزار آلات)
+
+### 🟡 بعد از فروش
+- Realtime بهینه
+- Deep Link اپ
+- اینستاگرام + اولین مشتری واقعی کافه ترشی
