@@ -27,7 +27,7 @@ export default function BottomNav() {
   return (
     <nav className="fixed bottom-3 left-0 right-0 z-40 flex justify-center px-6">
       <div className="relative w-full max-w-[420px]">
-        <div className="bg-card rounded-3xl shadow-[0_8px_28px_rgba(0,0,0,0.10)] px-2 relative"
+        <div className="bg-card rounded-3xl border border-border/20 shadow-lg shadow-[0_8px_28px_rgba(0,0,0,0.10)] px-2 relative"
           style={{ height: '52px' }}>
           <div className="flex justify-around items-center h-full">
             {items.map(({ path, label, icon: Icon, badge, big, end }) => {

@@ -83,7 +83,7 @@ export default function Home() {
               </>
             )}
 
-            <div className="theme-card p-5 mb-6 overflow-hidden relative">
+            <div className="bg-card p-5 mb-6 overflow-hidden relative shadow-sm rounded-3xl">
               <div className="absolute -top-10 -left-10 w-32 h-32 rounded-full bg-accent/25"></div>
               <div className="absolute -bottom-12 right-1/3 w-24 h-24 rounded-full bg-brand/10"></div>
 
@@ -131,12 +131,12 @@ export default function Home() {
             { icon: ShieldCheck, t: 'پرداخت امن', s: 'درگاه معتبر' },
             { icon: Truck, t: 'ارسال سریع', s: 'به سراسر کشور' },
           ].map(({ icon: Icon, t, s }, i) => (
-            <div key={i} className="bg-card rounded-2xl p-3 flex flex-col items-center gap-1.5 border border-border">
+            <div key={i} className="bg-card rounded-2xl p-3 flex flex-col items-center gap-1.5 shadow-sm">
               <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
                 <Icon size={18} className="text-brand" />
               </div>
               <span className="text-[10px] font-bold text-on-page text-center">{t}</span>
-              <span className="text-[8px] text-on-page-muted text-center">{s}</span>
+              <span className="text-[8px] text-on-page/70 text-center">{s}</span>
             </div>
           ))}
         </div>

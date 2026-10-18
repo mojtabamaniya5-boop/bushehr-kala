@@ -111,7 +111,7 @@ export default function Profile() {
 
         <div className="grid grid-cols-2 gap-3 mb-4">
           <Link to={user ? '/my-orders' : '/login'}
-            className="theme-card p-4 border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
+            className="bg-card p-4 shadow-sm rounded-2xl border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
             <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
               {loadingOrders ? (
                 <div className="w-5 h-5 rounded-full border-2 border-brand border-t-transparent animate-spin"></div>
@@ -123,17 +123,17 @@ export default function Profile() {
               <div className="text-xl font-extrabold text-on-card">
                 {loadingOrders ? '...' : ordersCount}
               </div>
-              <div className="text-[10px] text-on-page-muted">سفارش</div>
+              <div className="text-[10px] text-on-page/70">سفارش</div>
             </div>
           </Link>
           <Link to="/favorites"
-            className="theme-card p-4 border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
+            className="bg-card p-4 shadow-sm rounded-2xl border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
             <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
               <Heart className="text-brand" size={20} />
             </div>
             <div>
               <div className="text-xl font-extrabold text-on-card">{favCount}</div>
-              <div className="text-[10px] text-on-page-muted">علاقه‌مندی</div>
+              <div className="text-[10px] text-on-page/70">علاقه‌مندی</div>
             </div>
           </Link>
         </div>
@@ -168,7 +168,7 @@ export default function Profile() {
         </h3>
         <div className="space-y-2 mb-5">
           <a href={`tel:${shopSettings.phone}`}
-            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border/20 active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-card rounded-2xl p-3 shadow-sm active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Phone size={16} className="text-brand" />
             </div>
@@ -176,15 +176,15 @@ export default function Profile() {
             <span className="text-[10px] text-on-card/70" style={{ direction: 'ltr' }}>{shopSettings.phone}</span>
           </a>
           <a href={`https://ble.ir/${shopSettings.telegram}`} target="_blank" rel="noreferrer"
-            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border/20 active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-card rounded-2xl p-3 shadow-sm active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Send size={16} className="text-brand" />
             </div>
             <span className="text-xs font-bold flex-1 text-on-card">پیام‌رسان بله</span>
-            <span className="text-[10px] text-on-page-muted">@{shopSettings.telegram}</span>
+            <span className="text-[10px] text-on-page/70">@{shopSettings.telegram}</span>
           </a>
           <Link to="/contact"
-            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border/20 active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-card rounded-2xl p-3 shadow-sm active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <MapPin size={16} className="text-brand" />
             </div>
@@ -225,7 +225,7 @@ export default function Profile() {
           </button>
         )}
 
-        <p className="text-center text-[10px] text-on-page-muted mt-4 pb-2">
+        <p className="text-center text-[10px] text-on-page/70 mt-4 pb-2">
           کافه ترشی — نسخه ۱.۰
         </p>
       </main>
