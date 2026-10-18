@@ -213,8 +213,8 @@ export default function Checkout() {
 
             <div className="space-y-2">
               {[
-                { id: 'fast',   label: 'ارسال سریع',  time: '۲-۳ روز کاری', price: SHOP_INFO.shippingFast,   icon: Zap },
-                { id: 'normal', label: 'ارسال عادی',  time: '۳-۵ روز کاری', price: SHOP_INFO.shippingNormal, icon: Truck },
+                { id: 'fast',   label: 'ارسال سریع',  time: '۲-۳ روز کاری', price: shopSettings.shippingFast,   icon: Zap },
+                { id: 'normal', label: 'ارسال عادی',  time: '۳-۵ روز کاری', price: shopSettings.shippingNormal, icon: Truck },
               ].map(({ id, label, time, price, icon: Icon }) => (
                 <button key={id} type="button" onClick={() => setShippingType(id)}
                   className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition text-right ${
