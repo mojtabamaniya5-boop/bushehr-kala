@@ -55,7 +55,6 @@ export default function App() {
     || location.pathname.startsWith('/pay/')
     || location.pathname.startsWith('/verify')
     || location.pathname.startsWith('/checkout')
-    || location.pathname === '/login'
     || location.pathname === '/success'
 
   return (
