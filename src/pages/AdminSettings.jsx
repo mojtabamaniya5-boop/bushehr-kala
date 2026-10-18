@@ -62,6 +62,30 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
         />
       </div>
 
+      
+      {/* رنگ سایت */}
+      <div className="bg-white rounded-2xl p-4 border border-border">
+        <div className="text-xs font-extrabold mb-3">رنگ اصلی سایت (تم)</div>
+        <div className="flex items-center gap-3">
+          <input
+            type="color"
+            value={settings.themeColor || '#2E7D32'}
+            onChange={e => upd('themeColor', e.target.value)}
+            className="w-12 h-12 rounded-xl cursor-pointer border border-border p-0 bg-transparent"
+          />
+          <div className="flex-1">
+            <Field
+              label="کد رنگ (HEX)"
+              value={settings.themeColor || '#2E7D32'}
+              onChange={v => upd('themeColor', v)}
+            />
+          </div>
+        </div>
+        <div className="text-[10px] text-muted mt-2">
+          این رنگ روی کل سایت، دکمه‌ها و هدر اعمال می‌شود.
+        </div>
+      </div>
+
       {/* دکمه ذخیره */}
       <button
         onClick={onSave}

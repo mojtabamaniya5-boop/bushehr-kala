@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
 import App from './App.jsx'
+import { loadSavedTheme } from './utils/theme'
 import ErrorBoundary from './ErrorBoundary.jsx'
 import { setupRealtime } from './utils/realtime'
 import './index.css'
@@ -23,7 +24,9 @@ if (zibalParams.has('trackId') || zibalParams.has('success')) {
 
   setupRealtime() // فعال‌سازی Realtime
 
-  ReactDOM.createRoot(document.getElementById('root')).render(
+  loadSavedTheme()
+
+ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
       <HashRouter>
         <ErrorBoundary>

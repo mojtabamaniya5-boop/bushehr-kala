@@ -1,6 +1,7 @@
 // API تنظیمات فروشگاه — از Supabase می‌خونه
 import { supabase } from '../utils/supabase'
 import { SHOP_CONFIG } from '../config/shop'
+import { applyTheme } from '../utils/theme'
 
 const CACHE_KEY = 'shop-settings-cache'
 const CACHE_TTL = 2 * 60 * 1000 // ۲ دقیقه
@@ -49,6 +50,7 @@ export async function getShopSettings() {
       freeShippingFrom: data.free_shipping_from,
       freeShippingCities: data.free_shipping_cities || [],
       sameDayCities: data.same_day_cities || [],
+      themeColor: data.theme_color || '#2E7D32',
       freePostalPrefixes: data.free_postal_prefixes || ['75'],
     }
     memoryCache = mapped

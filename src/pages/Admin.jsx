@@ -337,6 +337,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
         phone: shopSettings.phone,
         telegram: shopSettings.telegram,
         address: shopSettings.address,
+        theme_color: shopSettings.themeColor,
         card_number: shopSettings.card?.number,
         card_holder: shopSettings.card?.holder,
         card_bank: shopSettings.card?.bank,
