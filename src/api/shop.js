@@ -1,6 +1,6 @@
 // API تنظیمات فروشگاه — از Supabase می‌خونه
 import { supabase } from '../utils/supabase'
-import { SHOP_INFO } from '../data/products'
+import { SHOP_CONFIG } from '../config/shop'
 
 const CACHE_KEY = 'shop-settings-cache'
 const CACHE_TTL = 2 * 60 * 1000 // ۲ دقیقه
@@ -59,8 +59,8 @@ export async function getShopSettings() {
     return mapped
   } catch (e) {
     console.error('getShopSettings خطا:', e)
-    // fallback به SHOP_INFO قدیم
-    return SHOP_INFO
+    // fallback به SHOP_CONFIG (config/shop.js)
+    return SHOP_CONFIG
   }
 }
 
