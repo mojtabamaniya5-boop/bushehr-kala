@@ -131,7 +131,7 @@ export default function Home() {
             { icon: ShieldCheck, t: 'پرداخت امن', s: 'درگاه معتبر' },
             { icon: Truck, t: 'ارسال سریع', s: 'به سراسر کشور' },
           ].map(({ icon: Icon, t, s }, i) => (
-            <div key={i} className="bg-white rounded-2xl p-3 flex flex-col items-center gap-1.5 border border-border">
+            <div key={i} className="bg-white rounded-[20px] p-3 flex flex-col items-center gap-1.5 border border-border">
               <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
                 <Icon size={18} className="text-brand" />
               </div>

@@ -168,7 +168,7 @@ export default function Profile() {
         </h3>
         <div className="space-y-2 mb-5">
           <a href={`tel:${shopSettings.phone}`}
-            className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-white rounded-[20px] p-3 border border-border active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Phone size={16} className="text-brand" />
             </div>
@@ -176,7 +176,7 @@ export default function Profile() {
             <span className="text-[10px] text-ink/70" style={{ direction: 'ltr' }}>{shopSettings.phone}</span>
           </a>
           <a href={`https://ble.ir/${shopSettings.telegram}`} target="_blank" rel="noreferrer"
-            className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-white rounded-[20px] p-3 border border-border active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Send size={16} className="text-brand" />
             </div>
@@ -184,7 +184,7 @@ export default function Profile() {
             <span className="text-[10px] text-on-page/70">@{shopSettings.telegram}</span>
           </a>
           <Link to="/contact"
-            className="flex items-center gap-3 bg-white rounded-2xl p-3 border border-border active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-white rounded-[20px] p-3 border border-border active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <MapPin size={16} className="text-brand" />
             </div>
