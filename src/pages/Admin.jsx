@@ -321,7 +321,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
     if (!deleteTarget) return
     const { error, data } = await supabase.from('products').delete().eq('id', deleteTarget).select()
     if (error) { toast.error('خطا: ' + error.message); return }
-    if (!data || data.length === 0) { toast.error('حذف نشد — دسترسی یا policy'); return }
+    if (!data) { toast.error('حذف نشد — دسترسی یا policy'); return }
     toast.success('حذف شد')
     setDeleteTarget(null)
     load()
@@ -355,9 +355,10 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
         .update(payload)
         .eq('id', 1)
         .select()
+        .single()
       setSavingSettings(false)
       if (error) { toast.error('ذخیره: ' + error.message); return }
-      if (!data || data.length === 0) { toast.error('ذخیره نشد'); return }
+      if (!data) { toast.error('ذخیره نشد'); return }
       clearShopCache()
       applyTheme(payload.theme_color)
       localStorage.setItem('shop-updated', Date.now().toString())
@@ -388,7 +389,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
     console.log('[STATUS UPDATE]', { orderId, newStatus, updated: data, error })
 
     if (error) { toast.error('خطا: ' + error.message); return false }
-    if (!data || data.length === 0) {
+    if (!data) {
       toast.error('آپدیت نشد — لاگین نیستی یا policy')
       return false
     }
@@ -764,7 +765,7 @@ function ProductForm({ product, onClose }) {
       : await supabase.from('products').update(payload).eq('id', form.id).select()
     setSaving(false)
     if (error) { toast.error('خطا: ' + error.message); return }
-  if (!data || data.length === 0) { toast.error('ذخیره نشد — دسترسی یا policy'); return }
+  if (!data) { toast.error('ذخیره نشد — دسترسی یا policy'); return }
     toast.success(isNew ? 'محصول اضافه شد' : 'ذخیره شد')
     onClose()
   }
