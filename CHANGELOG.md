@@ -407,3 +407,8 @@
 - فیکس Checkout shipping price از DB
 - README-CLIENT.md
 - همگام‌سازی index.html + tailwind.config.js
+
+---
+
+## ۱۴۰۵/۰۷/۲۶ — v3.22.1 (فیکس هزینه ارسال Checkout)
+- Checkout.jsx: قیمت ارسال سریع و عادی از دیتابیس (shopSettings) خوانده می‌شود.

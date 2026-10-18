@@ -365,3 +365,10 @@ Supabase REST با کلید sb_secret_ → 403 Forbidden.
 ۲. فیکس Checkout.jsx:216–217 (SHOP_INFO.shippingFast → shopSettings.shippingFast)
 ۳. README-CLIENT.md برای فروش قالب
 ۴. `index.html` + `tailwind.config.js` هم‌راستا با SHOP_CONFIG
+
+---
+
+## 🔄 آپدیت v3.22.1 (۱۴۰۵/۰۷/۲۶)
+### حل شد
+- فیکس باگ قیمت ارسال در Checkout.jsx (خطوط ۲۱۶-۲۱۷)
+- استفاده از shopSettings به جای SHOP_INFO برای قیمت‌های پویا
