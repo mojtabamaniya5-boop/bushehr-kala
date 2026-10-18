@@ -59,7 +59,7 @@ export default function Pay() {
 
       const res = await requestZibalPayment({
         orderId: order.id,
-        amount: order.total * 10,
+        
         callbackUrl,
         phone: order.customer?.phone || '',
       })

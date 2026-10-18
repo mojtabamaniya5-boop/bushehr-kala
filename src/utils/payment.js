@@ -10,11 +10,11 @@ const fetchWithTimeout = async (url, options, ms = 15000) => {
   }
 }
 
-export async function requestZibalPayment({ orderId, amount, callbackUrl, phone }) {
+export async function requestZibalPayment({ orderId, callbackUrl, phone }) {
   const res = await fetchWithTimeout(`${RELAY_URL}/zibal/request`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ orderId, amount, callbackUrl, phone }),
+    body: JSON.stringify({ orderId, callbackUrl, phone }),
   })
   return await res.json()
 }
