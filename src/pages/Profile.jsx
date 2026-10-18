@@ -74,7 +74,7 @@ export default function Profile() {
   return (
     <>
       <Header title="پروفایل" />
-      <main className="max-w-lg mx-auto px-4 pb-32 pt-3 fade-up">
+      <main className="max-w-lg mx-auto px-4 pb-32 pt-3 fade-up relative z-10">
         {user ? (
           <div className="theme-hero p-5 mb-4 relative overflow-hidden">
             <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-card/10"></div>
@@ -173,7 +173,7 @@ export default function Profile() {
               <Phone size={16} className="text-brand" />
             </div>
             <span className="text-xs font-bold flex-1 text-on-card">تماس تلفنی</span>
-            <span className="text-[10px] text-on-page-muted" style={{ direction: 'ltr' }}>{shopSettings.phone}</span>
+            <span className="text-[10px] text-on-card/70" style={{ direction: 'ltr' }}>{shopSettings.phone}</span>
           </a>
           <a href={`https://ble.ir/${shopSettings.telegram}`} target="_blank" rel="noreferrer"
             className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border active:scale-[0.98] transition">

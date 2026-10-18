@@ -29,6 +29,20 @@ import Track from './pages/Track'
 
 export default function App() {
 
+  const [themeClass, setThemeClass] = useState('theme-forest')
+  useEffect(() => {
+    const updateTheme = () => {
+      let t = localStorage.getItem('shop-theme-id') || 'forest'
+      if (t === 'green') t = 'forest'
+      if (t === 'blue') t = 'ocean'
+      setThemeClass('theme-' + t)
+    }
+    updateTheme()
+    window.addEventListener('shop-data-updated', updateTheme)
+    return () => window.removeEventListener('shop-data-updated', updateTheme)
+  }, [])
+
+
   
 
   const [showOnboarding, setShowOnboarding] = useState(false)
@@ -56,7 +70,7 @@ export default function App() {
     || location.pathname === '/success'
 
   return (
-    <div className="min-h-screen page-bg text-on-page">
+    <div className={`min-h-screen ${themeClass}`}>
       {showOnboarding && !isAdmin && <Onboarding onDone={() => setShowOnboarding(false)} />}
       <ToastHost />
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
