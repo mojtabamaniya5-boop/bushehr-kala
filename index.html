@@ -11,32 +11,15 @@
 
     
 
+
 <script>
     (function(){
       try {
-        var tId = localStorage.getItem('shop-theme-id') || 'forest';
-        if(tId === 'green') tId = 'forest';
-        if(tId === 'blue') tId = 'ocean';
-        if(tId === 'sunset') tId = 'orange';
-        var themes = {
-          forest: { brand: '8 116 67', dark: '6 95 53', light: '184 243 206', accent: '255 157 36', accentDark: '204 72 8', cream: '6 46 37', ink: '242 255 246', muted: '179 212 193' },
-          orange: { brand: '255 90 10', dark: '204 72 8', light: '255 157 36', accent: '255 157 36', accentDark: '204 72 8', cream: '255 244 229', ink: '87 34 13', muted: '155 116 95' },
-          ocean: { brand: '8 123 234', dark: '6 98 187', light: '101 214 255', accent: '101 214 255', accentDark: '8 123 234', cream: '234 247 255', ink: '16 55 102', muted: '100 132 164' }
-        };
-        var t = themes[tId] || themes.forest;
-        var root = document.documentElement;
-        root.style.setProperty('--color-brand', t.brand);
-        root.style.setProperty('--color-brand-dark', t.dark);
-        root.style.setProperty('--color-brand-light', t.light);
-        root.style.setProperty('--color-accent', t.accent);
-        root.style.setProperty('--color-accent-dark', t.accentDark);
-        root.style.setProperty('--color-cream', t.cream);
-        root.style.setProperty('--color-ink', t.ink);
-        root.style.setProperty('--color-muted', t.muted);
-      }catch(e){}
+        var s = JSON.parse(localStorage.getItem('shop-theme-css'));
+        if (s) { var r = document.documentElement.style; for (var k in s) r.setProperty(k, s[k]); }
+      } catch(e) {}
     })();
-    </script>
-</head>
+    </script></head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

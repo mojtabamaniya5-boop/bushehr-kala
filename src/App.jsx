@@ -56,7 +56,7 @@ export default function App() {
     || location.pathname === '/success'
 
   return (
-    <div className="min-h-screen bg-cream text-ink">
+    <div className="min-h-screen page-bg text-on-page">
       {showOnboarding && !isAdmin && <Onboarding onDone={() => setShowOnboarding(false)} />}
       <ToastHost />
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
