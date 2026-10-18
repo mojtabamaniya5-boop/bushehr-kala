@@ -8,9 +8,29 @@
 <title>کافه ترشی | فروشگاه آنلاین ترشی خانگی بوشهر</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
 <meta name="enamad" content="5536523" />
-  <script type="module" crossorigin src="./assets/index-DCV0m4VC.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-2LcCdMSZ.css">
-<link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
+<script>
+    (function(){
+      try {
+        var c=localStorage.getItem('shop-theme-color');
+        if(c){
+          var r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(c);
+          if(r){
+            var rgb=[parseInt(r[1],16),parseInt(r[2],16),parseInt(r[3],16)];
+            var adj=function(v,a){return Math.max(0,Math.min(255,Math.round(v+a)))};
+            var dark=rgb.map(function(x){return adj(x,-51)});
+            var light=rgb.map(function(x){return adj(x,204)});
+            var root=document.documentElement;
+            root.style.setProperty('--color-brand',rgb.join(' '));
+            root.style.setProperty('--color-brand-dark',dark.join(' '));
+            root.style.setProperty('--color-brand-light',light.join(' '));
+          }
+        }
+      }catch(e){}
+    })();
+    </script>
+      <script type="module" crossorigin src="./assets/index-CcLwK77O.js"></script>
+      <link rel="stylesheet" crossorigin href="./assets/index-o_OiV-CM.css">
+    <link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
   <body>
     <div id="root"></div>
   </body>

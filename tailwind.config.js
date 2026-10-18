@@ -6,14 +6,14 @@ export default {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#2E7D32',
-          dark: '#185C28',
-          light: '#E8F5E9',
+          DEFAULT: 'rgb(var(--color-brand) / <alpha-value>)',
+          dark: 'rgb(var(--color-brand-dark) / <alpha-value>)',
+          light: 'rgb(var(--color-brand-light) / <alpha-value>)',
         },
-        accent: '#F8C02D',
-        cream: '#FFF8E8',
+        accent: 'rgb(var(--color-accent) / <alpha-value>)',
+        cream: 'rgb(var(--color-cream) / <alpha-value>)',
         brown: '#6B4E37',
-        ink: '#243024',
+        ink: 'rgb(var(--color-ink) / <alpha-value>)',
         muted: '#777777',
         border: '#E9E5D8',
         danger: '#E53935',
