@@ -1,39 +1,21 @@
 export const THEMES = {
   green: {
-    id: 'green',
-    name: 'کافه ترشی (سبز کلاسیک)',
-    brand: '46 125 50',        // #2E7D32 - هدر سبز تیره
-    brandDark: '24 92 40',     // #185C28
-    brandLight: '232 245 233', // #E8F5E9
-    accent: '248 192 45',      // #F8C02D - دکمه زرد طلایی
-    accentDark: '203 150 10',  
-    cream: '255 248 232',      // #FFF8E8 - پس‌زمینه کرم
-    ink: '36 48 36',           // #243024 - متن تیره
-    muted: '119 119 119',      
+    id: 'green', name: 'کافه ترشی (سبز کلاسیک)',
+    brand: '46 125 50', brandDark: '24 92 40', brandLight: '232 245 233',
+    accent: '248 192 45', accentDark: '203 150 10',
+    cream: '255 248 232', ink: '36 48 36', muted: '119 119 119'
   },
   orange: {
-    id: 'orange',
-    name: 'غروب آفتاب (نارنجی مدرن)',
-    brand: '234 88 12',        // #EA580C - هدر نارنجی
-    brandDark: '194 65 12',    // #C2410C
-    brandLight: '255 237 213', // #FFEDD5
-    accent: '220 38 38',       // #DC2626 - دکمه قرمز/نارنجی
-    accentDark: '185 28 28',   // #B91C1C
-    cream: '255 247 237',      // #FFF7ED - پس‌زمینه هلویی
-    ink: '67 20 7',            // #431407
-    muted: '120 113 108',      
+    id: 'orange', name: 'غروب آفتاب (نارنجی مدرن)',
+    brand: '234 88 12', brandDark: '194 65 12', brandLight: '255 237 213',
+    accent: '220 38 38', accentDark: '185 28 28',
+    cream: '255 247 237', ink: '67 20 7', muted: '120 113 108'
   },
   blue: {
-    id: 'blue',
-    name: 'اقیانوس آرام (آبی اقیانوسی)',
-    brand: '37 99 235',        // #2563EB - هدر آبی
-    brandDark: '29 78 216',    // #1D4ED8
-    brandLight: '219 234 254', // #DBEAFE
-    accent: '59 130 246',      // #3B82F6 - دکمه آبی روشن
-    accentDark: '37 99 235',   // #2563EB
-    cream: '239 246 255',      // #EFF6FF - پس‌زمینه آبی ملایم
-    ink: '15 23 42',           // #0F172A
-    muted: '100 116 139',      
+    id: 'blue', name: 'اقیانوس آرام (آبی اقیانوسی)',
+    brand: '37 99 235', brandDark: '29 78 216', brandLight: '219 234 254',
+    accent: '59 130 246', accentDark: '37 99 235',
+    cream: '239 246 255', ink: '15 23 42', muted: '100 116 139'
   }
 }
 

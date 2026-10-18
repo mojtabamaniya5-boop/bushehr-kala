@@ -8,29 +8,32 @@
 <title>کافه ترشی | فروشگاه آنلاین ترشی خانگی بوشهر</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
 <meta name="enamad" content="5536523" />
-<script>
+
+    <script>
     (function(){
       try {
-        var c=localStorage.getItem('shop-theme-color');
-        if(c){
-          var r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(c);
-          if(r){
-            var rgb=[parseInt(r[1],16),parseInt(r[2],16),parseInt(r[3],16)];
-            var adj=function(v,a){return Math.max(0,Math.min(255,Math.round(v+a)))};
-            var dark=rgb.map(function(x){return adj(x,-51)});
-            var light=rgb.map(function(x){return adj(x,204)});
-            var root=document.documentElement;
-            root.style.setProperty('--color-brand',rgb.join(' '));
-            root.style.setProperty('--color-brand-dark',dark.join(' '));
-            root.style.setProperty('--color-brand-light',light.join(' '));
-          }
-        }
+        var themeId = localStorage.getItem('shop-theme-id') || 'green';
+        var themes = {
+          green: { brand: '46 125 50', dark: '24 92 40', light: '232 245 233', accent: '248 192 45', accentDark: '203 150 10', cream: '255 248 232', ink: '36 48 36', muted: '119 119 119' },
+          orange: { brand: '234 88 12', dark: '194 65 12', light: '255 237 213', accent: '220 38 38', accentDark: '185 28 28', cream: '255 247 237', ink: '67 20 7', muted: '120 113 108' },
+          blue: { brand: '37 99 235', dark: '29 78 216', light: '219 234 254', accent: '59 130 246', accentDark: '37 99 235', cream: '239 246 255', ink: '15 23 42', muted: '100 116 139' }
+        };
+        var t = themes[themeId] || themes.green;
+        var root = document.documentElement;
+        root.style.setProperty('--color-brand', t.brand);
+        root.style.setProperty('--color-brand-dark', t.dark);
+        root.style.setProperty('--color-brand-light', t.light);
+        root.style.setProperty('--color-accent', t.accent);
+        root.style.setProperty('--color-accent-dark', t.accentDark);
+        root.style.setProperty('--color-cream', t.cream);
+        root.style.setProperty('--color-ink', t.ink);
+        root.style.setProperty('--color-muted', t.muted);
       }catch(e){}
     })();
     </script>
-      <script type="module" crossorigin src="./assets/index-C1UK5ah7.js"></script>
-      <link rel="stylesheet" crossorigin href="./assets/index-D2JkOxzy.css">
-    <link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
+  <script type="module" crossorigin src="./assets/index-C1UK5ah7.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-D2JkOxzy.css">
+<link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
   <body>
     <div id="root"></div>
   </body>
