@@ -34,6 +34,7 @@ export async function getShopSettings() {
       .eq('id', 1)
       .single()
     if (error || !data) throw error
+    if (data.theme_color) applyTheme(data.theme_color)
     const mapped = {
       name: data.name,
       tagline: data.tagline,

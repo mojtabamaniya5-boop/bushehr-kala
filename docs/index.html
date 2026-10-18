@@ -9,16 +9,19 @@
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
 <meta name="enamad" content="5536523" />
 
-    <script>
+    
+<script>
     (function(){
       try {
-        var themeId = localStorage.getItem('shop-theme-id') || 'green';
+        var tId = localStorage.getItem('shop-theme-id') || 'forest';
+        if(tId === 'green') tId = 'forest';
+        if(tId === 'blue') tId = 'ocean';
         var themes = {
-          green: { brand: '46 125 50', dark: '24 92 40', light: '232 245 233', accent: '248 192 45', accentDark: '203 150 10', cream: '255 248 232', ink: '36 48 36', muted: '119 119 119' },
-          orange: { brand: '234 88 12', dark: '194 65 12', light: '255 237 213', accent: '220 38 38', accentDark: '185 28 28', cream: '255 247 237', ink: '67 20 7', muted: '120 113 108' },
-          blue: { brand: '37 99 235', dark: '29 78 216', light: '219 234 254', accent: '59 130 246', accentDark: '37 99 235', cream: '239 246 255', ink: '15 23 42', muted: '100 116 139' }
+          forest: { brand: '8 116 67', dark: '6 95 53', light: '184 243 206', accent: '255 157 36', accentDark: '204 72 8', cream: '6 46 37', ink: '242 255 246', muted: '179 212 193' },
+          orange: { brand: '255 90 10', dark: '204 72 8', light: '255 157 36', accent: '255 157 36', accentDark: '204 72 8', cream: '255 244 229', ink: '87 34 13', muted: '155 116 95' },
+          ocean: { brand: '8 123 234', dark: '6 98 187', light: '101 214 255', accent: '101 214 255', accentDark: '8 123 234', cream: '234 247 255', ink: '16 55 102', muted: '100 132 164' }
         };
-        var t = themes[themeId] || themes.green;
+        var t = themes[tId] || themes.forest;
         var root = document.documentElement;
         root.style.setProperty('--color-brand', t.brand);
         root.style.setProperty('--color-brand-dark', t.dark);
@@ -31,8 +34,8 @@
       }catch(e){}
     })();
     </script>
-  <script type="module" crossorigin src="./assets/index-C5qLA2pH.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-13pQJR7z.css">
+  <script type="module" crossorigin src="./assets/index-2b8PLIS6.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BSNPunNN.css">
 <link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
   <body>
     <div id="root"></div>
