@@ -31,12 +31,12 @@ export default function ProductCard({ product }) {
 
   return (
     <Link to={`/product/${product.id}`} className="block">
-      <div className="bg-white rounded-[22px] overflow-hidden border border-border active:scale-[0.98] transition"
+      <div className="bg-card rounded-[22px] overflow-hidden border border-border active:scale-[0.98] transition"
         style={{ boxShadow: '0 2px 14px rgba(0,0,0,0.05)' }}>
         <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-cream to-brand-light">
           <ProductImage product={product} />
           {discount > 0 && (
-            <span className="absolute top-2.5 right-2.5 bg-accent text-ink text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-sm">
+            <span className="absolute top-2.5 right-2.5 bg-accent text-on-card text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-sm">
               {discount}٪
             </span>
           )}
@@ -46,15 +46,15 @@ export default function ProductCard({ product }) {
             </span>
           )}
           <button onClick={handleFav}
-            className="absolute top-2.5 left-2.5 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-md active:scale-90">
+            className="absolute top-2.5 left-2.5 w-8 h-8 rounded-full bg-card/90 flex items-center justify-center shadow-md active:scale-90">
             <Heart size={15} className={fav ? 'fill-brand text-brand' : 'text-muted'} />
           </button>
         </div>
         <div className="p-3">
-          <h3 className="text-xs font-bold text-ink line-clamp-2 leading-5 h-10 mb-1.5">{product.title}</h3>
+          <h3 className="text-xs font-bold text-on-card line-clamp-2 leading-5 h-10 mb-1.5">{product.title}</h3>
           <div className="flex items-center gap-1 mb-2.5">
             <Star size={11} className="fill-accent text-accent" />
-            <span className="text-[10px] font-bold text-ink">{product.rating}</span>
+            <span className="text-[10px] font-bold text-on-card">{product.rating}</span>
             <span className="text-[10px] text-muted mr-auto">{product.weight}</span>
           </div>
           <div className="flex items-end justify-between gap-2">
