@@ -372,3 +372,11 @@ Supabase REST با کلید sb_secret_ → 403 Forbidden.
 ### حل شد
 - فیکس باگ قیمت ارسال در Checkout.jsx (خطوط ۲۱۶-۲۱۷)
 - استفاده از shopSettings به جای SHOP_INFO برای قیمت‌های پویا
+
+---
+
+## 🔄 آپدیت v3.22.2 (۱۴۰۵/۰۷/۲۶)
+### حل شد
+- مهاجرت کامل ۱۱ فایل از SHOP_INFO به SHOP_CONFIG
+- پاکسازی فایل .bak2
+- کار روی برنچ `shop-config` (منتظر مرج به main)
