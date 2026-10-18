@@ -76,7 +76,7 @@ export default function Profile() {
       <Header title="پروفایل" />
       <main className="max-w-lg mx-auto px-4 pb-32 pt-3 fade-up relative z-10">
         {user ? (
-          <div className="theme-hero p-5 mb-4 relative overflow-hidden">
+          <div className="bg-gradient-to-br from-brand to-accent p-5 mb-4 relative overflow-hidden text-white">
             <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-card/10"></div>
             <div className="absolute bottom-0 right-0 w-20 h-20 rounded-full bg-accent/20"></div>
             <div className="relative flex items-center gap-3 mb-4">
@@ -94,7 +94,7 @@ export default function Profile() {
           </div>
         ) : (
           <Link to="/login"
-            className="theme-hero block p-5 mb-4 relative overflow-hidden active:scale-[0.98] transition">
+            className="bg-gradient-to-br from-brand to-accent block p-5 mb-4 relative overflow-hidden text-white active:scale-[0.98] transition">
             <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-card/10"></div>
             <div className="relative flex items-center gap-3">
               <div className="w-14 h-14 rounded-full bg-card/25 flex items-center justify-center border-2 border-white/40">
@@ -111,7 +111,7 @@ export default function Profile() {
 
         <div className="grid grid-cols-2 gap-3 mb-4">
           <Link to={user ? '/my-orders' : '/login'}
-            className="theme-card p-4 border border-border flex items-center gap-3 active:scale-[0.98] transition">
+            className="theme-card p-4 border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
             <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
               {loadingOrders ? (
                 <div className="w-5 h-5 rounded-full border-2 border-brand border-t-transparent animate-spin"></div>
@@ -127,7 +127,7 @@ export default function Profile() {
             </div>
           </Link>
           <Link to="/favorites"
-            className="theme-card p-4 border border-border flex items-center gap-3 active:scale-[0.98] transition">
+            className="theme-card p-4 border border-border/20 flex items-center gap-3 active:scale-[0.98] transition">
             <div className="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center">
               <Heart className="text-brand" size={20} />
             </div>
@@ -146,7 +146,7 @@ export default function Profile() {
             <div className="space-y-2 mb-5">
               {favProducts.slice(0, 3).map(p => (
                 <Link key={p.id} to={`/product/${p.id}`}
-                  className="flex items-center gap-3 bg-card rounded-2xl p-2.5 border border-border active:scale-[0.98] transition">
+                  className="flex items-center gap-3 bg-card rounded-2xl p-2.5 border border-border/20 active:scale-[0.98] transition">
                   <div className="w-14 h-14 rounded-xl overflow-hidden bg-cream flex-shrink-0">
                     <ProductImage product={p} />
                   </div>
@@ -168,7 +168,7 @@ export default function Profile() {
         </h3>
         <div className="space-y-2 mb-5">
           <a href={`tel:${shopSettings.phone}`}
-            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border/20 active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Phone size={16} className="text-brand" />
             </div>
@@ -176,7 +176,7 @@ export default function Profile() {
             <span className="text-[10px] text-on-card/70" style={{ direction: 'ltr' }}>{shopSettings.phone}</span>
           </a>
           <a href={`https://ble.ir/${shopSettings.telegram}`} target="_blank" rel="noreferrer"
-            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border/20 active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <Send size={16} className="text-brand" />
             </div>
@@ -184,7 +184,7 @@ export default function Profile() {
             <span className="text-[10px] text-on-page-muted">@{shopSettings.telegram}</span>
           </a>
           <Link to="/contact"
-            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border active:scale-[0.98] transition">
+            className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border/20 active:scale-[0.98] transition">
             <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center">
               <MapPin size={16} className="text-brand" />
             </div>
@@ -195,7 +195,7 @@ export default function Profile() {
         <h3 className="font-extrabold text-sm mb-3 text-on-card flex items-center gap-1.5">
           💳 اطلاعات پرداخت
         </h3>
-        <div className="theme-hero p-5 mb-5 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-brand-dark to-brand p-5 mb-5 relative overflow-hidden text-white">
           <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-card/10"></div>
           <div className="absolute bottom-0 right-0 w-24 h-24 rounded-full bg-accent/20"></div>
           <div className="relative">
@@ -219,7 +219,7 @@ export default function Profile() {
 
         {user && (
           <button onClick={handleLogout}
-            className="w-full bg-card border border-border text-danger font-bold text-sm py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition mb-3">
+            className="w-full bg-card border border-border/20 text-danger font-bold text-sm py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition mb-3">
             <LogOut size={16} />
             خروج از حساب
           </button>

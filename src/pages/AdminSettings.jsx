@@ -85,7 +85,7 @@ function Field({ label, value, onChange, type = 'text' }) {
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
-        className="w-full bg-cream border border-border rounded-xl px-3 py-2 text-xs focus:border-brand outline-none"
+        className="w-full bg-card border border-border/30 rounded-xl px-3 py-2 text-xs text-on-card focus:border-brand outline-none"
       />
     </div>
   )

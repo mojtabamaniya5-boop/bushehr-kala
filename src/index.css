@@ -8,6 +8,7 @@
   --color-cream: 255 248 232; --color-ink: 36 48 36; --color-muted: 119 119 119;
   --color-page: 255 248 232; --color-page2: 255 248 232; --color-card: 255 255 255;
   --color-on-page: 36 48 36; --color-on-page-muted: 119 119 119; --color-on-card: 36 48 36;
+  --color-border: 233 229 216;
 }
 
 * { -webkit-tap-highlight-color: transparent; }
@@ -23,6 +24,7 @@ body { font-family: 'Vazirmatn', sans-serif; overscroll-behavior-y: none; }
   .theme-forest {
     --page: #062e25; --surface: #0b4435; --primary: #087443; --accent: #b8f3ce; --text: #f2fff6; --muted: #b3d4c1; --border: rgba(184, 243, 206, .16);
     --color-page: 6 46 37; --color-page2: 6 46 37; --color-card: 11 68 53; --color-on-card: 242 255 246;
+    --color-border: 255 255 255;
     --color-brand: 8 116 67; --color-brand-dark: 6 95 53; --color-accent: 184 243 206; --color-ink: 242 255 246;
     background: radial-gradient(ellipse at 5% 5%, rgba(22, 163, 74, .24), transparent 35%), radial-gradient(ellipse at 95% 90%, rgba(4, 120, 87, .25), transparent 40%), linear-gradient(145deg, #031e19, var(--page) 55%, #064e3b);
   }
@@ -30,6 +32,7 @@ body { font-family: 'Vazirmatn', sans-serif; overscroll-behavior-y: none; }
   .theme-orange {
     --page: #fff4e5; --surface: #fffaf3; --primary: #ff5a0a; --accent: #ff9d24; --text: #57220d; --muted: #9b745f; --border: rgba(255, 115, 20, .18);
     --color-page: 255 244 229; --color-page2: 255 244 229; --color-card: 255 250 243; --color-on-card: 87 34 13;
+    --color-border: 255 115 20;
     --color-brand: 255 90 10; --color-brand-dark: 204 72 8; --color-accent: 255 157 36; --color-ink: 87 34 13;
     background: radial-gradient(ellipse at 100% 0%, rgba(255, 177, 48, .30), transparent 38%), radial-gradient(ellipse at 0% 100%, rgba(255, 90, 10, .12), transparent 38%), linear-gradient(145deg, #fff8ed, var(--page) 60%, #ffe4bd);
   }
@@ -37,6 +40,7 @@ body { font-family: 'Vazirmatn', sans-serif; overscroll-behavior-y: none; }
   .theme-ocean {
     --page: #eaf7ff; --surface: #ffffff; --primary: #087bea; --accent: #65d6ff; --text: #103766; --muted: #6484a4; --border: rgba(8, 123, 234, .15);
     --color-page: 234 247 255; --color-page2: 234 247 255; --color-card: 255 255 255; --color-on-card: 16 55 102;
+    --color-border: 8 123 234;
     --color-brand: 8 123 234; --color-brand-dark: 6 98 187; --color-accent: 101 214 255; --color-ink: 16 55 102;
     background: radial-gradient(ellipse at 100% 0%, rgba(101, 214, 255, .35), transparent 38%), radial-gradient(ellipse at 0% 100%, rgba(8, 123, 234, .12), transparent 40%), linear-gradient(145deg, #f5fcff, var(--page) 55%, #d7efff);
   }

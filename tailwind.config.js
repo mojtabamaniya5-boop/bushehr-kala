@@ -22,7 +22,7 @@ export default {
         'on-page-muted': 'rgb(var(--color-on-page-muted) / <alpha-value>)',
         'on-card': 'rgb(var(--color-on-card) / <alpha-value>)',
         muted: 'rgb(var(--color-muted) / <alpha-value>)',
-        brown: '#6B4E37', border: '#E9E5D8', danger: '#E53935',
+        brown: '#6B4E37', border: 'rgb(var(--color-border) / <alpha-value>)', danger: '#E53935',
       },
     },
   },
