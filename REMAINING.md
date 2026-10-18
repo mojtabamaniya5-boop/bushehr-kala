@@ -348,3 +348,9 @@ pm2 restart cafetorshi-relay --update-env
 ### باقی‌مانده (مهم)
 - فروش قالب (تسک اصلی 86bckdpag)
 - محاسبه قیمت سمت سرور در Checkout
+
+## v3.21
+### حل‌شده
+- امنیت پرداخت (Server-side calculation)
+### باقی‌مانده
+- ساخت فایل Config مرکزی (shop.js) برای فروش قالب.

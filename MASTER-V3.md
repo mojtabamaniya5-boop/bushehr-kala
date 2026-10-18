@@ -648,3 +648,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 ## v3.20
 - utils/supabase.js: fetch با { cache: 'no-store' }
 - Home.jsx: لود دیتا فقط هنگام visible بودن تب
+
+## v3.21 — محاسبه قیمت سمت سرور
+- Relay (server.js): تابع /zibal/request حالا خودش قیمت سفارش را از دیتابیس می‌خواند.
+- فرانت‌اند (Pay.jsx): دیگر قیمت را ارسال نمی‌کند.
