@@ -10,7 +10,7 @@ export default function EnamadFooter() {
         className="active:scale-95 transition"
       >
         <img
-          src={`${base}enamad-logo.png`}
+          src="https://trustseal.enamad.ir/logo.aspx?id=8106941&Code=YCJdEAaj1dxDgqClJ7NmMK4Lfd8FMNV0"
           alt="نماد اعتماد الکترونیکی"
           className="w-24 h-auto"
         />
