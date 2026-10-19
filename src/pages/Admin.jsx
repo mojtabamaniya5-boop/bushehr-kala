@@ -384,15 +384,27 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
       .from('orders')
       .update(updates)
       .eq('id', orderId)
-      .select('id, status')
+      .select('id, status, customer_phone')
 
     console.log('[STATUS UPDATE]', { orderId, newStatus, updated: data, error })
 
     if (error) { toast.error('خطا: ' + error.message); return false }
-    if (!data) {
+    if (!data || data.length === 0) {
       toast.error('آپدیت نشد — لاگین نیستی یا policy')
       return false
     }
+
+    // ارسال پیامک در صورت تغییر وضعیت به "ارسال شده"
+    if (newStatus === 'sent' && trackingCode && data[0]?.customer_phone) {
+      try {
+        fetch('https://relay.cafetorshi.ir/api/send-tracking-sms', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mobile: data[0].customer_phone, trackingCode })
+        }).catch(e => console.warn('SMS fetch error:', e))
+      } catch (e) { console.warn('SMS catch error:', e) }
+    }
+
     toast.success('وضعیت تغییر کرد')
     load()
     return true
