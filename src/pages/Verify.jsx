@@ -23,6 +23,14 @@ export default function Verify() {
     // اگر trackId وجود داشت یعنی پرداخت انجام شده (حتی اگه پارامتر success نباشه)
     const success = getParam('success') || (trackId ? '1' : null)
 
+    // ===== کد دیباگ =====
+    alert("URL: " + window.location.href + 
+          "\n\norderId: " + orderId + 
+          "\ntrackId: " + trackId +
+          "\nsession_order: " + sessionStorage.getItem('zibal_pending_order'));
+    // ====================
+
+
     if (!trackId) {
       setState('error')
       setResult({ error: 'پارامترهای ناقص - trackId پیدا نشد' })
