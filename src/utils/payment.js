@@ -11,19 +11,21 @@ const fetchWithTimeout = async (url, options, ms = 15000) => {
 }
 
 export async function requestZibalPayment({ orderId, callbackUrl, phone }) {
+  const cleanOrderId = String(orderId).toUpperCase().replace('#', '')
   const res = await fetchWithTimeout(`${RELAY_URL}/zibal/request`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ orderId, callbackUrl, phone }),
+    body: JSON.stringify({ orderId: cleanOrderId, callbackUrl, phone }),
   })
   return await res.json()
 }
 
 export async function verifyZibalPayment({ orderId, trackId }) {
+  const cleanOrderId = String(orderId).toUpperCase().replace('#', '')
   const res = await fetchWithTimeout(`${RELAY_URL}/zibal/verify`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ orderId, trackId }),
+    body: JSON.stringify({ orderId: cleanOrderId, trackId }),
   })
   return await res.json()
 }

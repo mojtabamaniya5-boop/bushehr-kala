@@ -87,8 +87,16 @@ export default function Checkout() {
 
     try {
       const result = await saveOrderToDB(order)
-      if (result.ok) toast.success('سفارش ثبت شد')
-    } catch (e) { console.warn(e) }
+      if (!result.ok) {
+        toast.error('خطا در ثبت سفارش: ' + (result.error || 'مشکل در دیتابیس'))
+        return // توقف: اگر ثبت نشد، به صفحه پرداخت نرو
+      }
+      toast.success('سفارش ثبت شد')
+    } catch (e) {
+      console.warn(e)
+      toast.error('خطای شبکه در ثبت سفارش')
+      return
+    }
 
     setTimeout(() => navigate(`/pay/${order.id}`, { replace: true }), 400)
   }
