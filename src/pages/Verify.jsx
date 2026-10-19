@@ -43,6 +43,7 @@ export default function Verify() {
           sessionStorage.removeItem('zibal_pending_order')
           sessionStorage.removeItem('zibal_return')
           clearCart()
+        localStorage.removeItem('bk-orders')
           setState('success')
           setResult(res)
         } else {
