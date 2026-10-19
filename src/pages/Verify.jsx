@@ -11,15 +11,17 @@ export default function Verify() {
   const [result, setResult] = useState(null)
 
   useEffect(() => {
-    // خواندن پارامترها هم از search و هم از hash (برای HashRouter)
+    // خواندن پارامترها از URL (Hash و Search)
     const searchParams = new URLSearchParams(window.location.search)
     const hashParams = new URLSearchParams(window.location.hash.split('?')[1] || '')
     const getParam = (key) => searchParams.get(key) || hashParams.get(key)
     
-    const fromSession = new URLSearchParams(sessionStorage.getItem('zibal_return') || '')
-    const orderId = getParam('orderId') || fromSession.get('orderId') || sessionStorage.getItem('zibal_pending_order')
-    const trackId = getParam('trackId') || fromSession.get('trackId')
-    const success = getParam('success') || fromSession.get('success')
+    const orderId = getParam('orderId') || sessionStorage.getItem('zibal_pending_order')
+    // اگر trackId توی URL نبود، از sessionStorage بخون (که Pay.jsx ذخیره کرده بود)
+    const trackId = getParam('trackId') || sessionStorage.getItem('zibal_track_' + orderId)
+    
+    // اگر trackId وجود داشت یعنی پرداخت انجام شده (حتی اگه پارامتر success نباشه)
+    const success = getParam('success') || (trackId ? '1' : null)
 
     if (!trackId) {
       setState('error')
