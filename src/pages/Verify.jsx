@@ -11,11 +11,15 @@ export default function Verify() {
   const [result, setResult] = useState(null)
 
   useEffect(() => {
-    const fromUrl = new URLSearchParams(window.location.search)
+    // خواندن پارامترها هم از search و هم از hash (برای HashRouter)
+    const searchParams = new URLSearchParams(window.location.search)
+    const hashParams = new URLSearchParams(window.location.hash.split('?')[1] || '')
+    const getParam = (key) => searchParams.get(key) || hashParams.get(key)
+    
     const fromSession = new URLSearchParams(sessionStorage.getItem('zibal_return') || '')
-    const orderId = fromUrl.get('orderId') || fromSession.get('orderId') || sessionStorage.getItem('zibal_pending_order')
-    const trackId = fromUrl.get('trackId') || fromSession.get('trackId')
-    const success = fromUrl.get('success') || fromSession.get('success')
+    const orderId = getParam('orderId') || fromSession.get('orderId') || sessionStorage.getItem('zibal_pending_order')
+    const trackId = getParam('trackId') || fromSession.get('trackId')
+    const success = getParam('success') || fromSession.get('success')
 
     if (!trackId) {
       setState('error')
