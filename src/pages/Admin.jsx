@@ -320,6 +320,20 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
 
   useEffect(() => { load() }, [])
 
+  
+  const handleRestock = async (productId, currentStock) => {
+    const amountStr = prompt("چند عدد به موجودی اضافه شود؟", "10");
+    if (!amountStr) return;
+    const amount = parseInt(amountStr, 10);
+    if (isNaN(amount) || amount <= 0) return toast.error('عدد نامعتبر');
+
+    const newStock = (currentStock || 0) + amount;
+    const { error } = await supabase.from('products').update({ stock: newStock }).eq('id', productId);
+    if (error) return alert('خطا: ' + error.message);
+    toast.success(`موجودی به ${newStock} تغییر کرد`);
+    load();
+  }
+
   const handleDelete = async () => {
     if (!deleteTarget) return
     const { error, data } = await supabase.from('products').delete().eq('id', deleteTarget).select()
@@ -336,23 +350,19 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
     setSavingSettings(true)
     try {
       const payload = {
-        name: shopSettings.name,
-        tagline: shopSettings.tagline,
-        phone: shopSettings.phone,
-        telegram: shopSettings.telegram,
-        address: shopSettings.address,
-        theme_color: shopSettings.themeColor,
-        card_number: shopSettings.card?.number,
-        card_holder: shopSettings.card?.holder,
-        card_bank: shopSettings.card?.bank,
-        shipping_fast: Number(shopSettings.shippingFast),
-        shipping_normal: Number(shopSettings.shippingNormal),
-        free_shipping_from: Number(shopSettings.freeShippingFrom),
-        free_shipping_cities: shopSettings.freeShippingCities,
-        same_day_cities: shopSettings.sameDayCities,
-        free_postal_prefixes: shopSettings.freePostalPrefixes,
-        updated_at: new Date().toISOString(),
-      }
+      id: form.id || 'p' + Date.now(),
+      title: form.title,
+      category: form.category || 'other',
+      brand: form.brand || '',
+      price: Number(form.price) || 0,
+      old_price: form.old_price ? Number(form.old_price) : null,
+      stock: Number(form.stock) || 0,
+      image: form.image || '',
+      description: form.description || '',
+      features: form.features ? form.features.split(',').map(s => s.trim()).filter(Boolean) : [],
+      best_seller: !!form.best_seller,
+      active: form.active !== false
+    }
       const { error, data } = await supabase
         .from('shop_settings')
         .update(payload)
@@ -481,7 +491,15 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
                   <img src={p.image} alt="" className="w-12 h-12 rounded-xl object-cover bg-cream" />
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-bold truncate">{p.title}</div>
-                    <div className="text-[10px] text-muted mt-0.5">{formatPrice(p.price)} • موجودی: {p.stock}</div>
+                    <div className="text-[10px] text-muted mt-0.5 flex items-center gap-1.5 flex-wrap">
+                    {formatPrice(p.price)} • موجودی: 
+                    <span className={`font-bold px-1.5 py-0.5 rounded-md ${ (p.stock || 0) < 5 ? 'bg-danger/10 text-danger' : 'bg-brand/10 text-brand' }`}>
+                      {p.stock || 0}
+                    </span>
+                    <button onClick={() => handleRestock(p.id, p.stock)} className="bg-blue-50 text-blue-600 font-bold px-2 py-0.5 rounded-md active:scale-95 transition">
+                      + شارژ
+                    </button>
+                  </div>
                   </div>
                   <button onClick={() => setEditing(p)} className="p-2 rounded-xl bg-cream active:scale-95">
                     <Edit2 size={14} />
@@ -768,12 +786,17 @@ function ProductForm({ product, onClose }) {
     setSaving(true)
     const payload = {
       id: form.id || 'p' + Date.now(),
-      title: form.title, category: form.category, brand: form.brand,
-      price: Number(form.price), old_price: form.old_price ? Number(form.old_price) : null,
-      stock: Number(form.stock) || 0, image: form.image || '',
-      description: form.description,
-      features: form.features.split(',').map(s => s.trim()).filter(Boolean),
-      best_seller: form.best_seller, active: form.active,
+      title: form.title,
+      category: form.category || 'other',
+      brand: form.brand || '',
+      price: Number(form.price) || 0,
+      old_price: form.old_price ? Number(form.old_price) : null,
+      stock: Number(form.stock) || 0,
+      image: form.image || '',
+      description: form.description || '',
+      features: form.features ? form.features.split(',').map(s => s.trim()).filter(Boolean) : [],
+      best_seller: !!form.best_seller,
+      active: form.active !== false
     }
     const { error, data } = isNew
       ? await supabase.from('products').insert(payload).select()
