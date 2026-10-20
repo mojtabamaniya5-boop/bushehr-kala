@@ -139,13 +139,13 @@ export default function ProductDetail() {
           <div className="flex items-center justify-between bg-white rounded-2xl p-4 border border-border">
             <span className="text-sm font-bold text-ink">تعداد</span>
             <div className="flex items-center gap-3">
-              <button type="button" onClick={() => setQty(q => Math.max(1, q - 1))}
-                className="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center active:scale-90 text-brand">
+              <button type="button" onClick={isOutOfStock ? undefined : () => setQty(q => Math.max(1, q - 1))}
+                className={`w-9 h-9 rounded-xl flex items-center justify-center transition ${isOutOfStock ? 'bg-muted text-white cursor-not-allowed' : 'bg-brand-light text-brand active:scale-90'}`}>
                 <Minus size={16} strokeWidth={3} />
               </button>
               <span className="font-extrabold w-8 text-center text-lg text-ink">{qty}</span>
-              <button type="button" onClick={() => setQty(q => Math.min((product.stock ?? 99), q + 1))}
-                className="w-9 h-9 rounded-xl bg-brand text-white flex items-center justify-center active:scale-90">
+              <button type="button" onClick={isOutOfStock ? undefined : () => setQty(q => Math.min((product.stock ?? 99), q + 1))}
+                className={`w-9 h-9 rounded-xl flex items-center justify-center transition ${isOutOfStock ? 'bg-muted text-white cursor-not-allowed' : 'bg-brand text-white active:scale-90'}`}>
                 <Plus size={16} strokeWidth={3} />
               </button>
             </div>
