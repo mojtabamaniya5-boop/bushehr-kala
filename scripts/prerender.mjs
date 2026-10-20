@@ -3,16 +3,13 @@ import path from 'path'
 import { createClient } from '@supabase/supabase-js'
 
 // خواندن اطلاعات سوپابیس از فایل کانفیگ
-const configStr = fs.readFileSync('./src/utils/supabase-config.js', 'utf-8')
-const urlMatch = configStr.match(/SUPABASE_URL\s*=\s*['"]([^'"]+)['"]/)
-const keyMatch = configStr.match(/SUPABASE_KEY\s*=\s*['"]([^'"]+)['"]/)
 
-if (!urlMatch || !keyMatch) {
-  console.error("❌ کلیدهای سوپابیس پیدا نشد.")
-  process.exit(1)
-}
 
-const supabase = createClient(urlMatch[1], keyMatch[1])
+
+
+
+
+const supabase = createClient('https://slckuoggdkyljvwgtczf.supabase.co', 'sb_publishable_qoww_ltCmUuxIMzCPyYCTQ_rOIoUcSN')
 const docsDir = './docs'
 const baseHtml = fs.readFileSync(path.join(docsDir, 'index.html'), 'utf-8')
 
