@@ -771,6 +771,8 @@ function ProductForm({ product, onClose }) {
       description: form.description,
       features: form.features.split(',').map(s => s.trim()).filter(Boolean),
       best_seller: form.best_seller, active: form.active,
+      packaging_type: form.packaging_type || '',
+      group_id: form.group_id || null,
     }
     const { error, data } = isNew
       ? await supabase.from('products').insert(payload).select()
@@ -790,6 +792,26 @@ function ProductForm({ product, onClose }) {
           <button onClick={onClose} className="p-2 rounded-xl bg-cream"><X size={16} /></button>
         </div>
         <div className="p-4 space-y-3">
+          <div>
+            <label className="text-[10px] font-bold text-muted block mb-2">نوع بسته‌بندی (مثلاً شیشه‌ای، فله)</label>
+            <input
+              type="text"
+              value={form.packaging_type || ''}
+              onChange={e => setForm({ ...form, packaging_type: e.target.value })}
+              className="w-full bg-cream border border-border rounded-xl px-3 py-2 text-xs focus:border-brand outline-none"
+              placeholder="مثلاً: شیشه‌ای ۵۰۰ گرمی"
+            />
+          </div>
+          <div>
+            <label className="text-[10px] font-bold text-muted block mb-2">کد گروه (اختیاری - برای اتصال تنوع‌ها)</label>
+            <input
+              type="text"
+              value={form.group_id || ''}
+              onChange={e => setForm({ ...form, group_id: e.target.value })}
+              className="w-full bg-cream border border-border rounded-xl px-3 py-2 text-xs focus:border-brand outline-none"
+              placeholder="مثلاً: aloo-bokhara-group-1"
+            />
+          </div>
           <div>
             <label className="text-[10px] font-bold text-muted block mb-2">تصویر محصول</label>
             <div className="flex items-center gap-3">
