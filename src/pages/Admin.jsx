@@ -774,8 +774,6 @@ function ProductForm({ product, onClose }) {
       description: form.description,
       features: form.features.split(',').map(s => s.trim()).filter(Boolean),
       best_seller: form.best_seller, active: form.active,
-      packaging_type: form.packaging_type || '',
-      group_id: form.group_id || null,
     }
     const { error, data } = isNew
       ? await supabase.from('products').insert(payload).select()
