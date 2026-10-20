@@ -2,13 +2,16 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Search, ShoppingBag, Menu, ArrowRight } from 'lucide-react'
 import { cartCount } from '../utils/cart'
 import { useEffect, useState } from 'react'
+import { getShopSettings } from '../api/shop'
 
 export default function Header({ title, back }) {
+  const [logoUrl, setLogoUrl] = useState(null)
   const [count, setCount] = useState(cartCount())
   const navigate = useNavigate()
   const base = import.meta.env.BASE_URL
 
   useEffect(() => {
+    getShopSettings().then(s => s.logoUrl && setLogoUrl(s.logoUrl)).catch(()=>{})
     const update = () => setCount(cartCount())
     window.addEventListener('cart-updated', update)
     return () => window.removeEventListener('cart-updated', update)
@@ -49,7 +52,7 @@ export default function Header({ title, back }) {
 
           <Link to="/" className="flex flex-col items-center">
             <img
-              src={`${base}assets/categories/mixed.png`}
+              src={logoUrl || `${base}assets/categories/mixed.png`}
               alt="کافه ترشی"
               className="w-12 h-12 object-contain"
             />
