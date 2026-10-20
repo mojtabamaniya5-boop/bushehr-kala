@@ -109,7 +109,7 @@ export default function ProductDetail() {
           <div className="flex items-center gap-2 text-xs mb-4">
             <span className={'w-2 h-2 rounded-full ' + (product.stock > 0 ? 'bg-brand' : 'bg-danger')}></span>
             <span className="text-ink font-medium">
-              {product.stock > 0 ? 'موجود در انبار (' + product.stock + ' شیشه)' : 'ناموجود'}
+              {product.stock > 0 ? 'موجود در انبار (' + product.stock + ' عدد)' : 'ناموجود'}
             </span>
           </div>
 
