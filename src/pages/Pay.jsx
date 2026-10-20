@@ -55,7 +55,7 @@ export default function Pay() {
     setPaying(true)
 
     try {
-      const callbackUrl = `https://cafetorshi.ir/#/verify?orderId=${order.id}`
+      const callbackUrl = `https://cafetorshi.ir/#/verify`
 
       const res = await requestZibalPayment({
         orderId: order.id,
