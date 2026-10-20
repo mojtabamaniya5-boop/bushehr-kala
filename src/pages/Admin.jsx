@@ -796,24 +796,33 @@ function ProductForm({ product, onClose }) {
         </div>
         <div className="p-4 space-y-3" dir="rtl">
           <div>
-            <label className="text-[10px] font-bold text-muted block mb-2">نوع بسته‌بندی (مثلاً شیشه‌ای، فله)</label>
-            <input
-              type="text"
+            <label className="text-[10px] font-bold text-muted block mb-2">نوع بسته‌بندی</label>
+            <select
               value={form.packaging_type || ''}
               onChange={e => setForm({ ...form, packaging_type: e.target.value })}
               className="w-full bg-cream border border-border rounded-xl px-3 py-2 text-xs focus:border-brand outline-none"
-              placeholder="مثلاً: شیشه‌ای ۵۰۰ گرمی"
-            />
+            >
+              <option value="">انتخاب نوع بسته...</option>
+              <option value="شیشه‌ای ۵۰۰ گرمی">شیشه‌ای ۵۰۰ گرمی</option>
+              <option value="شیشه‌ای ۱ کیلویی">شیشه‌ای ۱ کیلویی</option>
+              <option value="فله ۱ کیلویی">فله ۱ کیلویی</option>
+              <option value="فله ۵ کیلویی">فله ۵ کیلویی</option>
+              <option value="پاکتی ۲۵۰ گرمی">پاکتی ۲۵۰ گرمی</option>
+              <option value="پاکتی ۵۰۰ گرمی">پاکتی ۵۰۰ گرمی</option>
+            </select>
           </div>
           <div>
-            <label className="text-[10px] font-bold text-muted block mb-2">کد گروه (اختیاری - برای اتصال تنوع‌ها)</label>
-            <input
-              type="text"
+            <label className="text-[10px] font-bold text-muted block mb-2">گروه محصول (اختیاری)</label>
+            <select
               value={form.group_id || ''}
               onChange={e => setForm({ ...form, group_id: e.target.value })}
               className="w-full bg-cream border border-border rounded-xl px-3 py-2 text-xs focus:border-brand outline-none"
-              placeholder="مثلاً: aloo-bokhara-group-1"
-            />
+            >
+              <option value="">بدون گروه (محصول مستقل)</option>
+              {(window.__productGroups || []).map(g => (
+                <option key={g.id} value={g.id}>{g.title}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="text-[10px] font-bold text-muted block mb-2">تصویر محصول</label>
@@ -837,7 +846,24 @@ function ProductForm({ product, onClose }) {
 
           <Field label="نام محصول" value={form.title} onChange={v => setForm({ ...form, title: v })} />
           <Field label="برند" value={form.brand} onChange={v => setForm({ ...form, brand: v })} />
-          <Field label="دسته" value={form.category} onChange={v => setForm({ ...form, category: v })} hint="cucumber / mixed / olive / garlic / vegetables / salads / special / other" />
+          <div>
+            <label className="text-[10px] font-bold text-muted block mb-2">دسته‌بندی</label>
+            <select
+              value={form.category || ''}
+              onChange={e => setForm({ ...form, category: e.target.value })}
+              className="w-full bg-cream border border-border rounded-xl px-3 py-2 text-xs focus:border-brand outline-none"
+            >
+              <option value="">انتخاب دسته...</option>
+              <option value="cucumber">خیارشور</option>
+              <option value="mixed">ترشی مخلوط</option>
+              <option value="olive">زیتون</option>
+              <option value="garlic">سیرترشی</option>
+              <option value="vegetables">سبزیجات</option>
+              <option value="salads">سالادها</option>
+              <option value="special">ترشی ویژه</option>
+              <option value="other">سایر</option>
+            </select>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="قیمت (تومان)" value={form.price} onChange={v => setForm({ ...form, price: v })} type="number" />
             <Field label="قیمت قبل" value={form.old_price} onChange={v => setForm({ ...form, old_price: v })} type="number" />
