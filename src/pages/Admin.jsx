@@ -795,22 +795,7 @@ function ProductForm({ product, onClose }) {
           <button onClick={onClose} className="p-2 rounded-xl bg-cream"><X size={16} /></button>
         </div>
         <div className="p-4 space-y-3" dir="rtl">
-          <div>
-            <label className="text-[10px] font-bold text-muted block mb-2">نوع بسته‌بندی</label>
-            <select
-              value={form.packaging_type || ''}
-              onChange={e => setForm({ ...form, packaging_type: e.target.value })}
-              className="w-full bg-cream border border-border rounded-xl px-3 py-2 text-xs focus:border-brand outline-none"
-            >
-              <option value="">انتخاب نوع بسته...</option>
-              <option value="شیشه‌ای ۵۰۰ گرمی">شیشه‌ای ۵۰۰ گرمی</option>
-              <option value="شیشه‌ای ۱ کیلویی">شیشه‌ای ۱ کیلویی</option>
-              <option value="فله ۱ کیلویی">فله ۱ کیلویی</option>
-              <option value="فله ۵ کیلویی">فله ۵ کیلویی</option>
-              <option value="پاکتی ۲۵۰ گرمی">پاکتی ۲۵۰ گرمی</option>
-              <option value="پاکتی ۵۰۰ گرمی">پاکتی ۵۰۰ گرمی</option>
-            </select>
-          </div>
+          
           <div>
             <label className="text-[10px] font-bold text-muted block mb-2">گروه محصول (اختیاری)</label>
             <select
