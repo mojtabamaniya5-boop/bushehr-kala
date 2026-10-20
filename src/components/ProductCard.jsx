@@ -7,6 +7,7 @@ import { toast } from './Toast'
 import ProductImage from './ProductImage'
 
 export default function ProductCard({ product }) {
+  const isOutOfStock = (product.stock ?? 0) <= 0
   const [fav, setFav] = useState(isFavorite(product.id))
   const [added, setAdded] = useState(false)
 
@@ -19,6 +20,7 @@ export default function ProductCard({ product }) {
 
   const handleAdd = (e) => {
     e.preventDefault(); e.stopPropagation()
+    if (isOutOfStock) return toast.error('این محصول ناموجود است')
     addToCart(product, 1)
     setAdded(true)
     toast.success('به سبد اضافه شد')
@@ -35,6 +37,7 @@ export default function ProductCard({ product }) {
         style={{ boxShadow: '0 2px 14px rgba(0,0,0,0.05)' }}>
         <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-cream to-brand-light">
           <ProductImage product={product} />
+          {isOutOfStock && <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10"><span className="bg-danger text-white px-3 py-1 rounded-full text-xs font-bold">ناموجود</span></div>}
           {discount > 0 && (
             <span className="absolute top-2.5 right-2.5 bg-accent text-on-card text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-sm">
               {discount}٪
@@ -65,8 +68,8 @@ export default function ProductCard({ product }) {
               <span className="text-sm font-extrabold text-brand">{formatPrice(product.price)}</span>
             </div>
             <button onClick={handleAdd}
-              className={`w-8 h-8 rounded-xl text-white flex items-center justify-center active:scale-90 transition ${added ? 'bg-accent' : 'bg-brand'}`}>
-              <Plus size={15} strokeWidth={3} />
+              className={`w-8 h-8 rounded-xl text-white flex items-center justify-center active:scale-90 transition ${isOutOfStock ? 'bg-muted cursor-not-allowed' : added ? 'bg-accent' : 'bg-brand'}`}>
+              {isOutOfStock ? <span className="text-[9px] font-bold">ناموجود</span> : <Plus size={15} strokeWidth={3} />}
             </button>
           </div>
         </div>

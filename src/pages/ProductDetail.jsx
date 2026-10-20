@@ -17,6 +17,7 @@ export default function ProductDetail() {
   const [fav, setFav] = useState(false)
   const [cartBadge, setCartBadge] = useState(cartCount())
   const [justAdded, setJustAdded] = useState(false)
+  const isOutOfStock = !product || (product.stock ?? 0) <= 0
 
   useEffect(() => {
     let mounted = true
@@ -143,7 +144,7 @@ export default function ProductDetail() {
                 <Minus size={16} strokeWidth={3} />
               </button>
               <span className="font-extrabold w-8 text-center text-lg text-ink">{qty}</span>
-              <button type="button" onClick={() => setQty(q => Math.min((product.stock || 99), q + 1))}
+              <button type="button" onClick={() => setQty(q => Math.min((product.stock ?? 99), q + 1))}
                 className="w-9 h-9 rounded-xl bg-brand text-white flex items-center justify-center active:scale-90">
                 <Plus size={16} strokeWidth={3} />
               </button>
@@ -158,14 +159,14 @@ export default function ProductDetail() {
 
       <div className="fixed bottom-20 left-0 right-0 z-50 px-4">
         <div className="max-w-lg mx-auto flex gap-2 bg-white rounded-3xl p-2 shadow-[0_8px_28px_rgba(0,0,0,0.15)]">
-          <button type="button" onClick={handleAdd}
-            className={'flex-1 font-extrabold py-3 rounded-2xl active:scale-[0.98] transition flex items-center justify-center gap-2 text-sm ' +
-              (justAdded ? 'bg-brand text-white' : 'bg-brand-light text-brand')}>
-            {justAdded ? <><Check size={18} /> اضافه شد</> : <><ShoppingCart size={18} /> افزودن</>}
+          <button type="button" onClick={isOutOfStock ? undefined : handleAdd}
+            className={'flex-1 font-extrabold py-3 rounded-2xl transition flex items-center justify-center gap-2 text-sm ' +
+              (isOutOfStock ? 'bg-muted text-white cursor-not-allowed' : justAdded ? 'bg-brand text-white' : 'bg-brand-light text-brand')}>
+            {isOutOfStock ? 'ناموجود' : justAdded ? <><Check size={18} /> اضافه شد</> : <><ShoppingCart size={18} /> افزودن</>}
           </button>
-          <button type="button" onClick={handleBuyNow}
-            className="flex-1 bg-brand text-white font-extrabold py-3 rounded-2xl active:scale-[0.98] transition text-sm">
-            خرید سریع
+          <button type="button" onClick={isOutOfStock ? undefined : handleBuyNow}
+            className={`flex-1 font-extrabold py-3 rounded-2xl transition text-sm ${isOutOfStock ? 'bg-muted text-white cursor-not-allowed' : 'bg-brand text-white active:scale-[0.98]'}`}>
+            {isOutOfStock ? 'ناموجود' : 'خرید سریع'}
           </button>
         </div>
       </div>

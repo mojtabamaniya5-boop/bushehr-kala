@@ -149,7 +149,14 @@ export default function Cart() {
             <span>قابل پرداخت</span>
             <span className="text-brand">{formatPrice(total + shipping)}</span>
           </div>
-          <button onClick={() => navigate('/checkout')}
+          <button onClick={() => {
+            const overStock = items.find(i => i.qty > (i.stock !== null && i.stock !== undefined ? i.stock : 999));
+            if (overStock) {
+              toast.error('موجودی «' + overStock.title + '» کافی نیست. لطفاً تعداد را کم کنید.');
+              return;
+            }
+            navigate('/checkout');
+          }}
             className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl active:scale-[0.98] shadow-md">
             ادامه و پرداخت
           </button>
