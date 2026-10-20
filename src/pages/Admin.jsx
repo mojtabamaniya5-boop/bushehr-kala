@@ -281,6 +281,7 @@ function Login({ onLogin }) {
 
 function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
   const [products, setProducts] = useState([])
+  const [productGroups, setProductGroups] = useState([])
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
@@ -306,11 +307,13 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
 
   const load = async () => {
     setLoading(true)
-    const [{ data: p }, { data: o }] = await Promise.all([
+    const [{ data: p }, { data: o }, { data: g }] = await Promise.all([
       supabase.from('products').select('*').order('created_at', { ascending: false }),
+      supabase.from('product_groups').select('*').order('title'),
       supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(100),
     ])
     setProducts(p || [])
+    setProductGroups(g || [])
     setOrders(o || [])
     setLoading(false)
   }
@@ -791,7 +794,7 @@ function ProductForm({ product, onClose }) {
           <h3 className="font-extrabold text-sm">{isNew ? 'محصول جدید' : 'ویرایش محصول'}</h3>
           <button onClick={onClose} className="p-2 rounded-xl bg-cream"><X size={16} /></button>
         </div>
-        <div className="p-4 space-y-3">
+        <div className="p-4 space-y-3" dir="rtl">
           <div>
             <label className="text-[10px] font-bold text-muted block mb-2">نوع بسته‌بندی (مثلاً شیشه‌ای، فله)</label>
             <input
