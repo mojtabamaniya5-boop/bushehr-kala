@@ -2,18 +2,18 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>در حال انتقال...</title>
+    <title>در حال بارگذاری...</title>
     <script>
-      var pathSegmentsToKeep = 0;
+      // ذخیره آدرس و انتقال به صفحه اصلی با حفظ مسیر
+      sessionStorage.redirect = location.href;
       var l = window.location;
       l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + '/?/' +
         l.pathname.slice(1).split('/').join('&') +
         (l.search ? '&' + l.search.slice(1).split('&').join('&') : '') +
         l.hash
       );
     </script>
   </head>
-  <body>در حال انتقال...</body>
+  <body>در حال بارگذاری...</body>
 </html>
