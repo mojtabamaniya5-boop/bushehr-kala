@@ -46,6 +46,29 @@ async function prerender() {
     for (const url of sitemapUrls) sitemap += `  <url><loc>${url}</loc><priority>0.8</priority></url>\n`
     sitemap += `</urlset>`
     fs.writeFileSync(path.join(docsDir, 'sitemap.xml'), sitemap)
+
+    // ================= ساخت فید ترب =================
+    let torobXml = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n<channel>\n<title>کافه ترشی</title>\n<link>https://cafetorshi.ir</link>\n<description>فروشگاه ترشیجات خانگی</description>\n`
+    if (products) {
+      for (const p of products) {
+        if (p.active !== false) {
+          torobXml += `<item>\n`
+          torobXml += `<title>${p.title}</title>\n`
+          torobXml += `<link>https://cafetorshi.ir/product/${p.id}</link>\n`
+          torobXml += `<description>${p.description || ''}</description>\n`
+          torobXml += `<g:id>${p.id}</g:id>\n`
+          torobXml += `<g:price>${p.price} تومان</g:price>\n`
+          torobXml += `<g:availability>${p.stock > 0 ? 'in stock' : 'out of stock'}</g:availability>\n`
+          torobXml += `<g:image_link>${p.image || 'https://cafetorshi.ir/icon.png'}</g:image_link>\n`
+          torobXml += `<g:condition>new</g:condition>\n`
+          torobXml += `</item>\n`
+        }
+      }
+    }
+    torobXml += `</channel>\n</rss>`
+    fs.writeFileSync(path.join(docsDir, 'torob.xml'), torobXml)
+    console.log('✅ torob.xml ساخته شد.')
+
     console.log('✅ رندر با موفقیت انجام شد.')
   } catch (err) { process.exit(1) }
 }
