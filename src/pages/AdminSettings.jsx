@@ -13,14 +13,76 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
 
   const upd = (key, val) => {
     setSettings({ ...settings, [key]: val })
-    if (key === 'themeColor') applyTheme(val) // پیش‌نمایش زنده
+    if (key === 'themeColor') applyTheme(val)
   }
-  
+
   const updCard = (key, val) => setSettings({ ...settings, card: { ...(settings.card || {}), [key]: val } })
   const updArr = (key, val) => setSettings({ ...settings, [key]: val.split(',').map(s => s.trim()).filter(Boolean) })
 
+  const handleImageUpload = async (file, type) => {
+    const isBanner = type === 'banner'
+    const setLoading = isBanner ? setBannerUploading : setUploading
+
+    try {
+      setLoading(true)
+      const bitmap = await createImageBitmap(file)
+      const canvas = document.createElement('canvas')
+      
+      if (isBanner) {
+        canvas.width = 1200
+        canvas.height = 400
+      } else {
+        canvas.width = 512
+        canvas.height = 512
+      }
+      
+      const ctx = canvas.getContext('2d')
+      ctx.imageSmoothingQuality = 'high'
+      
+      const scale = Math.max(canvas.width / bitmap.width, canvas.height / bitmap.height)
+      const x = (canvas.width / scale - bitmap.width) / 2
+      const y = (canvas.height / scale - bitmap.height) / 2
+      ctx.drawImage(bitmap, x, y, bitmap.width, bitmap.height, 0, 0, canvas.width, canvas.height)
+      
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85))
+      const fileName = `${type}-${Date.now()}.jpg`
+      
+      const { error: uploadError } = await supabase.storage
+        .from('shop-assets')
+        .upload(fileName, blob, { contentType: 'image/jpeg', upsert: true })
+      
+      if (uploadError) throw uploadError
+      
+      const { data: { publicUrl } } = supabase.storage.from('shop-assets').getPublicUrl(fileName)
+      upd(isBanner ? 'bannerUrl' : 'logoUrl', publicUrl)
+      
+      alert(`${isBanner ? 'بنر' : 'لوگو'} با موفقیت آپلود شد. برای اعمال، دکمه ذخیره تنظیمات را بزنید.`)
+    } catch (err) {
+      alert('خطا در آپلود: ' + err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="space-y-3 pb-6">
+      {/* لوگوی سایت */}
+      <div className="bg-white rounded-2xl p-4 border border-border mt-4">
+        <div className="text-xs font-extrabold mb-3">لوگوی سایت</div>
+        <div className="flex items-center gap-4">
+          {settings.logoUrl && (
+            <img src={settings.logoUrl} alt="لوگو" className="w-16 h-16 rounded-xl object-contain border border-border bg-cream" />
+          )}
+          <div className="flex-1">
+            <label className="flex items-center justify-center gap-2 w-full bg-cream border border-border rounded-xl px-3 py-3 text-xs font-bold text-brand cursor-pointer active:scale-[0.98] transition">
+              {uploading ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
+              {uploading ? 'در حال آپلود...' : 'آپلود لوگو (مربع)'}
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && handleImageUpload(e.target.files[0], 'logo')} disabled={uploading} />
+            </label>
+          </div>
+        </div>
+      </div>
+
       {/* اطلاعات فروشگاه */}
       <div className="bg-white rounded-2xl p-4 border border-border">
         <div className="text-xs font-extrabold mb-3">اطلاعات فروشگاه</div>
@@ -39,7 +101,6 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
         <Field label="بانک" value={settings.card?.bank || ''} onChange={v => updCard('bank', v)} />
       </div>
 
-      
       {/* ارسال رایگان برای همه */}
       <div className="bg-white rounded-2xl p-4 border border-border mt-4">
         <div className="flex items-center justify-between">
@@ -47,16 +108,15 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
             <div className="text-xs font-extrabold">ارسال رایگان برای همه</div>
             <div className="text-[10px] text-muted mt-1">اگر روشن باشد، ارسال برای همه سفارش‌ها رایگان است.</div>
           </div>
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             checked={settings.forceFreeShipping || false}
             onChange={e => upd('forceFreeShipping', e.target.checked)}
             className="w-5 h-5 accent-brand"
           />
         </div>
       </div>
-{/* هزینه ارسال */}
-      
+
       {/* بنر تبلیغاتی */}
       <div className="bg-white rounded-2xl p-4 border border-border mt-4">
         <div className="text-xs font-extrabold mb-3">بنر تبلیغاتی (مناسبت‌ها)</div>
@@ -67,11 +127,13 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
           <label className="flex items-center justify-center gap-2 w-full bg-cream border border-border rounded-xl px-3 py-3 text-xs font-bold text-brand cursor-pointer active:scale-[0.98] transition">
             {bannerUploading ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
             {bannerUploading ? 'در حال آپلود...' : 'آپلود بنر جدید (سایز ۱۲۰۰×۴۰۰)'}
-            <input type="file" accept="image/*" className="hidden" onChange={handleBannerUpload} disabled={bannerUploading} />
+            <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && handleImageUpload(e.target.files[0], 'banner')} disabled={bannerUploading} />
           </label>
         </div>
       </div>
-<div className="bg-white rounded-2xl p-4 border border-border">
+
+      {/* هزینه ارسال */}
+      <div className="bg-white rounded-2xl p-4 border border-border">
         <div className="text-xs font-extrabold mb-3">هزینه ارسال</div>
         <Field label="ارسال سریع (تومان)" value={settings.shippingFast ?? 0} onChange={v => upd('shippingFast', v)} type="number" />
         <Field label="ارسال عادی (تومان)" value={settings.shippingNormal ?? 0} onChange={v => upd('shippingNormal', v)} type="number" />
