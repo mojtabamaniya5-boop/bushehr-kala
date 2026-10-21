@@ -466,3 +466,24 @@
 - حذف هدر x-relay-secret از فرانت‌اند برای امنیت بیشتر.
 - اضافه شدن نمایش خطای دقیق در صفحه لاگین.
 - فیکس نهایی کدهای تکراری در پنل ادمین (banner_url).
+
+---
+
+## ۱۴۰۵/۰۷/۳۰ — v4.4 (رفع باگ iOS)
+
+### حل شد
+- iOS Safari «موبایل معتبر نیست» → حل
+- فیکس دو لایه (فرانت + سرور)
+- تست curl ۴ حالت (فارسی/عربی/+98/RLM) — همه ✅
+- تست واقعی iPhone ✅
+
+### فایل‌ها
+- `src/utils/auth.js`
+- `src/pages/Login.jsx`
+- `/root/relay/server.js`
+
+### Commit
+`c301db2` fix(login): normalize persian/arabic digits for iOS Safari
+
+### باگ باقی‌مانده v4.5
+`send-otp` همیشه `{ok:true}` — باید `status` را چک کند

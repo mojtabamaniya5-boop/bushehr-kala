@@ -302,3 +302,18 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON orders TO authenticated;
 - ❌ عبور پول مشتری از درگاه (Zibal) ما ممنوع است.
 - ✅ کلیدهای حساس (Service Role, Zibal, SMS) فقط در Relay و Edge Function.
 - ✅ ریپوی اصلی باید Private باشد. هر کلیدی که در گیت‌هاب پابلیک لو رفته، باید Rotate شود.
+
+---
+
+## 🆕 قوانین v4.4 — نرمال‌سازی ورودی
+
+### ۱) موبایل
+- ❌ `phone.replace(/\D/g,'')` تنها کافی نیست (روی فارسی کار نمی‌کند)
+- ✅ اول `normalizeDigits` (فارسی/عربی/RTL/NBSP) → بعد `normalizePhone` (+98 → 09)
+- ✅ سرور **همیشه** مستقل validate کند (defense in depth)
+- ✅ input شماره: `type=tel, inputMode=numeric, autoComplete=tel, maxLength=11`
+- ✅ `onChange` همیشه با `normalizeDigits` — کاربر نباید رقم فارسی در state ببیند
+
+### ۲) سایر ورودی‌های عددی
+- همین قاعده: اول `normalizeDigits` بعد parse/validate
+- پلاک، کدپستی، کد رهگیری، کد تخفیف — همه مشمول

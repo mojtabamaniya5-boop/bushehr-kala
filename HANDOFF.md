@@ -439,3 +439,34 @@ Supabase REST با کلید sb_secret_ → 403 Forbidden.
 ### 🔴 کارهای فوری بعدی
 ۱. ساخت APK و ثبت در کافه‌بازار.
 ۲. اضافه کردن ۶ قابلیت مهم باقی‌مانده (طبق REMAINING).
+
+---
+
+## 🔄 آپدیت v4.4 (۱۴۰۵/۰۷/۳۰) — رفع باگ لاگین iOS ✅
+
+### حل شد
+iOS Safari وقتی کیبورد فارسی بود، خطای «موبایل معتبر نیست» می‌داد.
+
+### علت ریشه‌ای
+- کیبورد فارسی iOS ارقام **فارسی/عربی** (`۰۱۲` / `٠١٢`) + کاراکتر **RLM** (`U+200F`) تزریق می‌کند
+- `\D` در JavaScript فقط ASCII را پاک می‌کند → `'۰۹۱۲...'.replace(/\D/g,'') = ''` → validation شکست
+
+### فیکس دو لایه
+**فرانت `src/utils/auth.js`:** `normalizeDigits` + `normalizePhone` + `isValidPhone` بازنویسی شد
+
+**فرانت `src/pages/Login.jsx`:** input با `type=tel, inputMode=numeric, autoComplete=tel, pattern, maxLength=11` + `onChange`/`sendOTP`/`verifyOTP` نرمال‌سازی
+
+**سرور `/root/relay/server.js`:** helper `normalizePhone` + validation در `send-otp` و `verify-otp`
+
+### تست curl (همه ✅)
+`۰۹۱۲...` | `+98912...` | `٠٩١٢...` | `0912...\u200F` → همه `{"ok":true}`
+
+### تست واقعی
+✅ iOS Safari (توسط دوست)
+
+### Commit
+`c301db2` fix(login): normalize persian/arabic digits for iOS Safari
+
+### 🔴 باگ کشف‌شده — v4.5
+`send-otp` در relay **همیشه `{ok:true}`** برمی‌گرداند، حتی اگر sms.ir fail کند.
+باید اضافه شود: `if (!r.ok || data.status !== 1) return res.status(500).json(...)`

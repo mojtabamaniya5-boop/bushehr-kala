@@ -735,3 +735,21 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 - سرور وب: Nginx + SSL (Certbot)
 - روتر: BrowserRouter (بدون #)
 - base در Vite: /
+
+---
+
+## 🔄 v4.4 — رفع باگ لاگین iOS (۱۴۰۵/۰۷/۳۰)
+
+### علت
+کیبورد فارسی iOS ارقام فارسی/عربی + RLM تزریق می‌کند. `\D` در JS فقط ASCII می‌پاکد → `'۰۹۱۲...'` خالی → validation رد.
+
+### قوانین جدید (اجباری)
+- هر ورودی موبایل از کاربر → اول `normalizeDigits` سپس `normalizePhone`
+- regex لاتین `\d` روی ورودی فارسی کار نمی‌کند
+- سرور **مستقل** validate کند (defense in depth)
+- `onChange` input شماره: همیشه `normalizeDigits` قبل از `setPhone`
+
+### فایل‌های دخیل
+- `src/utils/auth.js` — `normalizeDigits`, `normalizePhone`
+- `src/pages/Login.jsx` — input + sendOTP + verifyOTP
+- `/root/relay/server.js` — helper + دو endpoint
