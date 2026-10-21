@@ -220,7 +220,11 @@ export default function Checkout() {
               روش ارسال
             </h3>
 
-            {Number(shipInfo.cost) === 0 ? (
+            {shipInfo.cost === null ? (
+              <div className="bg-cream/50 rounded-2xl p-5 text-center border border-border">
+                <p className="text-xs text-muted">برای مشاهده هزینه ارسال، لطفاً کد پستی را وارد کنید.</p>
+              </div>
+            ) : Number(shipInfo.cost) === 0 ? (
               <div className="bg-brand-light/30 border border-brand/20 rounded-2xl p-5 text-center fade-up">
                 <div className="w-12 h-12 rounded-full bg-brand flex items-center justify-center mx-auto mb-3 text-white">
                   <Truck size={24} />

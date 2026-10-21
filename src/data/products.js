@@ -124,19 +124,28 @@ export const searchProducts = (q) => {
 }
 
 export function calculateShipping(postalCode, address, subtotal, shippingType = 'fast', settings = SHOP_INFO) {
-  // ۱. اگر ادمین ارسال رایگان برای همه را روشن کرده باشد
+  // ۱. اگر هنوز تنظیمات لود نشده
+  if (!settings) return { cost: null, sameDay: false };
+
+  // ۲. اگر کد پستی وارد نشده
+  if (!postalCode) return { cost: null, sameDay: false };
+
+  // ۳. اگر ادمین ارسال رایگان برای همه را روشن کرده باشد
   if (settings.forceFreeShipping) return { cost: 0, sameDay: true };
 
-  // ۲. اگر کد پستی با 75 شروع شود (بوشهر و اطراف)
-  if (postalCode && String(postalCode).startsWith('75')) return { cost: 0, sameDay: true };
+  // ۴. اگر کد پستی با پیشوندهای رایگان (مثل 75) شروع شود
+  const prefixes = settings.freePostalPrefixes || [];
+  if (prefixes.some(p => String(postalCode).startsWith(String(p)))) {
+    return { cost: 0, sameDay: true };
+  }
 
-  // ۳. اگر از آستانه ارسال رایگان عبور کرده باشد
+  // ۵. اگر مبلغ سبد از آستانه ارسال رایگان عبور کرده باشد
   if (settings.freeShippingFrom > 0 && subtotal >= settings.freeShippingFrom) {
     return { cost: 0, sameDay: false };
   }
 
-  // ۴. هزینه بر اساس نوع ارسال انتخاب شده
-  const cost = shippingType === 'fast' ? Number(settings.shippingFast || 25000) : Number(settings.shippingNormal || 15000);
+  // ۶. هزینه بر اساس نوع ارسال
+  const cost = shippingType === 'fast' ? Number(settings.shippingFast) : Number(settings.shippingNormal);
   return { cost, sameDay: false };
 }
 
