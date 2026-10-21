@@ -548,3 +548,12 @@
 
 ### SQL
 - `ALTER TABLE orders ADD source, utm_source, utm_medium, utm_campaign`
+
+---
+
+## ۱۴۰۵/۰۷/۳۰ — v4.5.1 (fix send-otp error handling)
+
+### حل شد
+- relay دیگر همیشه `{ok:true}` برنمی‌گرداند.
+- پاسخ sms.ir چک می‌شود (`status === 1`).
+- اگر پیامک ارسال نشود، کاربر خطای واقعی می‌بیند.
