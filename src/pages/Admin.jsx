@@ -8,7 +8,7 @@ import { toast } from '../components/Toast'
 import AdminCustomers from './AdminCustomers'
 import AdminSettings from './AdminSettings'
 import { checkAdminSession, updateSessionTimestamp, clearSession, sendPasswordReset, changePassword, isRecoveryMode } from '../utils/admin-auth'
-import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Settings, Hash, ShieldCheck, Users, Mail, KeyRound } from 'lucide-react'
+import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Settings, Hash, ShieldCheck, Users, Mail, KeyRound, Search } from 'lucide-react'
 
 export default function Admin() {
   const [session, setSession] = useState(null)
@@ -280,6 +280,9 @@ function Login({ onLogin }) {
 }
 
 function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
+  const [orderSearch, setOrderSearch] = useState('')
+  const [orderStatus, setOrderStatus] = useState('all')
+
   const [products, setProducts] = useState([])
   const [productGroups, setProductGroups] = useState([])
   const [orders, setOrders] = useState([])
@@ -508,9 +511,63 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
         )}
 
         {!loading && tab === 'orders' && (
-          <div className="space-y-2">
-            {orders.length === 0 && <div className="text-center text-muted py-10 text-sm">سفارشی نیست</div>}
-            {orders.map(o => (
+          <div className="space-y-3">
+            <div className="relative">
+              <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted" />
+              <input
+                value={orderSearch}
+                onChange={e => setOrderSearch(e.target.value)}
+                placeholder="جستجو با نام، شماره یا کد سفارش..."
+                className="w-full bg-white border border-border rounded-2xl py-3 pr-10 pl-4 text-sm outline-none focus:border-brand transition"
+              />
+            </div>
+
+            <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+              {[
+                { id: 'all', label: 'همه' },
+                { id: 'pending', label: 'در انتظار' },
+                { id: 'paid', label: 'پرداخت شده' },
+                { id: 'sent', label: 'ارسال شده' },
+                { id: 'delivered', label: 'تحویل شده' },
+                { id: 'canceled', label: 'لغو شده' },
+              ].map(s => (
+                <button
+                  key={s.id}
+                  onClick={() => setOrderStatus(s.id)}
+                  className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold border transition ${
+                    orderStatus === s.id ? 'bg-brand text-white border-brand' : 'bg-white text-muted border-border'
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+
+            {orders.filter(o => {
+              if (orderStatus !== 'all' && o.status !== orderStatus) return false;
+              if (orderSearch.trim()) {
+                const q = orderSearch.trim().toLowerCase();
+                const matchName = (o.customer_name || '').toLowerCase().includes(q);
+                const matchPhone = (o.customer_phone || '').includes(q);
+                const matchCode = (o.code || '').toLowerCase().includes(q);
+                if (!matchName && !matchPhone && !matchCode) return false;
+              }
+              return true;
+            }).length === 0 && (
+              <div className="text-center text-muted py-10 text-sm">سفارشی با این مشخصات یافت نشد</div>
+            )}
+
+            {orders.filter(o => {
+              if (orderStatus !== 'all' && o.status !== orderStatus) return false;
+              if (orderSearch.trim()) {
+                const q = orderSearch.trim().toLowerCase();
+                const matchName = (o.customer_name || '').toLowerCase().includes(q);
+                const matchPhone = (o.customer_phone || '').includes(q);
+                const matchCode = (o.code || '').toLowerCase().includes(q);
+                if (!matchName && !matchPhone && !matchCode) return false;
+              }
+              return true;
+            }).map(o => (
               <div key={o.id} className="bg-white rounded-2xl p-4 border border-border">
                 <div className="flex items-start justify-between mb-2">
                   <div>
