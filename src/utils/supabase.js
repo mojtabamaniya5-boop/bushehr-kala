@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { getSource } from './source'
 import { SUPABASE_URL, SUPABASE_KEY } from './supabase-config'
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -54,6 +55,7 @@ export async function searchProductsInDB(q) {
 }
 
 export async function saveOrderToDB(order) {
+  const src = getSource()
   const { error } = await supabase
     .from('orders')
     .insert({
@@ -69,6 +71,10 @@ export async function saveOrderToDB(order) {
       total: order.total,
       payment_method: order.payment,
       status: 'pending',
+      source: src.source || 'direct',
+      utm_source: src.medium ? src.source : null,
+      utm_medium: src.medium || null,
+      utm_campaign: src.campaign || null,
     })
 
   if (error) {

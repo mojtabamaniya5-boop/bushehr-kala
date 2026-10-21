@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { loadSavedTheme } from './utils/theme'
 import ErrorBoundary from './ErrorBoundary.jsx'
 import { setupRealtime } from './utils/realtime'
+import { captureSource } from './utils/source'
 import './index.css'
 
 // ── چک اول: اگه از Zibal برگشتیم ──
@@ -23,6 +24,7 @@ if (zibalParams.has('trackId') || zibalParams.has('success')) {
   document.documentElement.setAttribute('data-theme', 'light')
 
   setupRealtime() // فعال‌سازی Realtime
+  captureSource() // ثبت منبع ورودی
 
   loadSavedTheme()
 

@@ -9,14 +9,10 @@ function withTimeout(promise, ms = TIMEOUT) {
   ])
 }
 
-/**
- * لیست همه مشتریان از روی سفارش‌ها (aggregate)
- * هر مشتری یه رکورد یکتا با شمارش سفارش و مجموع خرید
- */
 export async function fetchAllCustomers() {
   try {
     const { data, error } = await withTimeout(
-      supabase.from('orders').select('customer_name, customer_phone, customer_address, total, status, created_at, items')
+      supabase.from('orders').select('customer_name, customer_phone, customer_address, total, status, created_at, items, source')
     )
 
     if (error || !data) return []
@@ -39,6 +35,8 @@ export async function fetchAllCustomers() {
           firstOrderDate: o.created_at,
           statuses: [],
           items: [],
+          firstSource: o.source || 'direct', // اولین منبع ورودی
+          lastSource: o.source || 'direct',  // آخرین منبع
         })
       }
 
@@ -50,9 +48,11 @@ export async function fetchAllCustomers() {
       }
       if (new Date(o.created_at) > new Date(c.lastOrderDate)) {
         c.lastOrderDate = o.created_at
+        c.lastSource = o.source || 'direct'
       }
       if (new Date(o.created_at) < new Date(c.firstOrderDate)) {
         c.firstOrderDate = o.created_at
+        c.firstSource = o.source || 'direct'
       }
       c.statuses.push(o.status)
       if (o.items) c.items.push(...o.items)

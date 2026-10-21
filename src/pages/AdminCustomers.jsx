@@ -1,14 +1,24 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '../utils/supabase'
 import { formatPrice, formatDate } from '../utils/storage'
 import { fetchAllCustomers } from '../utils/customers'
-import { Loader2, Users, Phone, MapPin, X, Search, TrendingUp, Crown, User } from 'lucide-react'
+import { Loader2, Users, Phone, MapPin, X, Search, Crown, User, Filter } from 'lucide-react'
+
+const SOURCES = {
+  google:    { label: 'گوگل',       icon: '🔍', color: 'bg-blue-100 text-blue-700' },
+  torob:     { label: 'ترب',        icon: '🛒', color: 'bg-orange-100 text-orange-700' },
+  instagram: { label: 'اینستاگرام', icon: '📷', color: 'bg-pink-100 text-pink-700' },
+  telegram:  { label: 'تلگرام',     icon: '✈️', color: 'bg-sky-100 text-sky-700' },
+  whatsapp:  { label: 'واتساپ',     icon: '💬', color: 'bg-green-100 text-green-700' },
+  direct:    { label: 'مستقیم',     icon: '👤', color: 'bg-gray-100 text-gray-700' },
+  other:     { label: 'سایر',       icon: '🔗', color: 'bg-gray-100 text-gray-700' },
+}
 
 export default function AdminCustomers({ onClose }) {
   const [customers, setCustomers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState(null)
+  const [sourceFilter, setSourceFilter] = useState('all')
 
   useEffect(() => {
     fetchAllCustomers().then(data => {
@@ -17,12 +27,14 @@ export default function AdminCustomers({ onClose }) {
     })
   }, [])
 
-  const filtered = search.trim()
-    ? customers.filter(c =>
-        c.phone.includes(search.replace(/\D/g, '')) ||
+  const filtered = customers.filter(c => {
+    const matchSearch = search.trim()
+      ? c.phone.includes(search.replace(/\D/g, '')) ||
         c.name.toLowerCase().includes(search.toLowerCase())
-      )
-    : customers
+      : true
+    const matchSource = sourceFilter === 'all' || c.firstSource === sourceFilter
+    return matchSearch && matchSource
+  })
 
   const stats = {
     total: customers.length,
@@ -35,6 +47,13 @@ export default function AdminCustomers({ onClose }) {
     totalRevenue: customers.reduce((s, c) => s + c.paidTotal, 0),
   }
 
+  // آمار منابع ورودی
+  const sourceStats = customers.reduce((acc, c) => {
+    const src = c.firstSource || 'direct'
+    acc[src] = (acc[src] || 0) + 1
+    return acc
+  }, {})
+
   return (
     <div className="fixed inset-0 z-[150] bg-cream overflow-y-auto">
       <div className="sticky top-0 bg-white border-b border-border p-3 z-10">
@@ -45,7 +64,7 @@ export default function AdminCustomers({ onClose }) {
             </div>
             <div>
               <div className="font-extrabold text-sm">لیست مشتریان</div>
-              <div className="text-[10px] text-muted">CRM سبک</div>
+              <div className="text-[10px] text-muted">CRM + منبع ورودی</div>
             </div>
           </div>
           <button onClick={onClose} className="p-2 rounded-xl bg-cream active:scale-95">
@@ -55,7 +74,7 @@ export default function AdminCustomers({ onClose }) {
       </div>
 
       <div className="max-w-4xl mx-auto p-3 pb-20">
-        {/* آمار */}
+        {/* آمار کلی */}
         <div className="grid grid-cols-4 gap-2 mb-4">
           <div className="bg-white rounded-2xl p-3 border border-border text-center">
             <div className="text-lg font-extrabold text-brand">{stats.total}</div>
@@ -75,6 +94,29 @@ export default function AdminCustomers({ onClose }) {
           </div>
         </div>
 
+        {/* آمار منابع ورودی (فقط اگه مشتری هست) */}
+        {customers.length > 0 && (
+          <div className="bg-white rounded-2xl p-3 border border-border mb-3">
+            <div className="flex items-center gap-2 mb-2 text-[10px] font-bold text-muted">
+              <Filter size={12} className="text-brand" />
+              منبع ورودی مشتریان
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(sourceStats).sort((a,b) => b[1] - a[1]).map(([src, count]) => {
+                const info = SOURCES[src] || SOURCES.other
+                const pct = Math.round((count / customers.length) * 100)
+                return (
+                  <div key={src} className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-bold ${info.color}`}>
+                    <span>{info.icon}</span>
+                    <span>{info.label}</span>
+                    <span className="opacity-70">({pct}%)</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
         {/* جستجو */}
         <div className="relative mb-3">
           <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted" />
@@ -84,6 +126,30 @@ export default function AdminCustomers({ onClose }) {
             placeholder="جستجو با نام یا شماره موبایل..."
             className="w-full bg-white border border-border rounded-2xl py-3 pr-10 pl-4 text-sm outline-none focus:border-brand transition"
           />
+        </div>
+
+        {/* فیلتر منبع */}
+        <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1">
+          <button
+            onClick={() => setSourceFilter('all')}
+            className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold border ${
+              sourceFilter === 'all' ? 'bg-brand text-white border-brand' : 'bg-white text-muted border-border'
+            }`}
+          >
+            همه
+          </button>
+          {Object.entries(SOURCES).map(([key, info]) => (
+            <button
+              key={key}
+              onClick={() => setSourceFilter(key)}
+              className={`flex-shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-bold border ${
+                sourceFilter === key ? 'bg-brand text-white border-brand' : 'bg-white text-muted border-border'
+              }`}
+            >
+              <span>{info.icon}</span>
+              <span>{info.label}</span>
+            </button>
+          ))}
         </div>
 
         {loading && (
@@ -103,6 +169,7 @@ export default function AdminCustomers({ onClose }) {
           <div className="space-y-2">
             {filtered.map(c => {
               const isVip = c.paidTotal >= 1000000
+              const srcInfo = SOURCES[c.firstSource] || SOURCES.other
               return (
                 <button key={c.phone}
                   onClick={() => setSelected(c)}
@@ -114,6 +181,9 @@ export default function AdminCustomers({ onClose }) {
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs font-extrabold truncate">{c.name}</span>
                       {isVip && <span className="text-[8px] bg-accent text-white px-1.5 py-0.5 rounded-full font-bold">VIP</span>}
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${srcInfo.color}`}>
+                        {srcInfo.icon} {srcInfo.label}
+                      </span>
                     </div>
                     <div className="text-[10px] text-muted font-mono mt-0.5" style={{ direction: 'ltr', textAlign: 'right' }}>
                       {c.phone}
@@ -154,6 +224,22 @@ export default function AdminCustomers({ onClose }) {
             </div>
 
             <div className="p-4 space-y-3">
+              {/* منبع ورودی */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="bg-white border border-border rounded-2xl p-3">
+                  <div className="text-[10px] text-muted mb-1">اولین منبع ورودی</div>
+                  <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold ${(SOURCES[selected.firstSource] || SOURCES.other).color}`}>
+                    {(SOURCES[selected.firstSource] || SOURCES.other).icon} {(SOURCES[selected.firstSource] || SOURCES.other).label}
+                  </div>
+                </div>
+                <div className="bg-white border border-border rounded-2xl p-3">
+                  <div className="text-[10px] text-muted mb-1">آخرین منبع ورودی</div>
+                  <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold ${(SOURCES[selected.lastSource] || SOURCES.other).color}`}>
+                    {(SOURCES[selected.lastSource] || SOURCES.other).icon} {(SOURCES[selected.lastSource] || SOURCES.other).label}
+                  </div>
+                </div>
+              </div>
+
               {/* آمار مشتری */}
               <div className="grid grid-cols-3 gap-2">
                 <div className="bg-cream rounded-2xl p-3 text-center">

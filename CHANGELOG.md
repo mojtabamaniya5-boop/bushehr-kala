@@ -524,3 +524,27 @@
 
 ### نتیجه
 - سایت بعد از ۳ دقیقه پایدار: 200 + hash یکسان
+
+---
+
+## ۱۴۰۵/۰۷/۳۰ — v4.5.0 (CRM + Source Tracking)
+
+### افزوده شد
+- **CRM کامل** در `AdminCustomers.jsx`:
+  - فیلتر منابع ورودی (گوگل، ترب، اینستاگرام، تلگرام، واتساپ، مستقیم)
+  - نمایش درصد هر منبع
+  - جزئیات مشتری با اولین و آخرین منبع
+- **منبع ورودی (Source Tracking)**:
+  - `src/utils/source.js` — capture UTM + Referrer
+  - ذخیره در `localStorage` هنگام ورود
+  - ارسال به Supabase در `saveOrderToDB`
+
+### فایل‌ها
+- `src/utils/source.js` (جدید)
+- `src/utils/customers.js` (aggregate source)
+- `src/utils/supabase.js` (insert source)
+- `src/pages/AdminCustomers.jsx` (UI جدید)
+- `src/main.jsx` (captureSource)
+
+### SQL
+- `ALTER TABLE orders ADD source, utm_source, utm_medium, utm_campaign`
