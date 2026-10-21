@@ -52,6 +52,7 @@ export default function Login() {
       toast.success('کد تأیید پیامک شد')
     } catch (err) {
       const msg = err.name === 'AbortError' ? 'سرور پاسخ نداد' : err.message
+      alert('خطای دقیق: ' + err.name + ' | ' + err.message + ' | وضعیت: ' + (err.status || 'نامشخص'))
       toast.error(msg)
     } finally {
       sending.current = false
