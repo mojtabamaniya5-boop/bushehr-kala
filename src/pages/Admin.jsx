@@ -307,15 +307,24 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
 
   const load = async () => {
     setLoading(true)
-    const [{ data: p }, { data: o }, { data: g }] = await Promise.all([
-      supabase.from('products').select('*').order('created_at', { ascending: false }),
-      supabase.from('product_groups').select('*').order('title'),
-      supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(100),
-    ])
-    setProducts(p || [])
-    setProductGroups(g || [])
-    setOrders(o || [])
-    setLoading(false)
+    try {
+      // ۱. دریافت محصولات
+      const { data: p, error: pErr } = await supabase.from('products').select('*').order('created_at', { ascending: false })
+      if (pErr) console.warn('خطای محصولات:', pErr)
+      setProducts(p || [])
+
+      // ۲. دریافت سفارش‌ها (مستقل از بقیه)
+      const { data: o, error: oErr } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(100)
+      if (oErr) {
+        console.warn('خطای سفارشات:', oErr)
+        alert('خطا در خواندن سفارشات: ' + oErr.message)
+      }
+      setOrders(o || [])
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { load() }, [])
