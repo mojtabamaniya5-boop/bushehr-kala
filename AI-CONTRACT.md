@@ -345,3 +345,12 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON orders TO authenticated;
 - cron هر ۱۰ دقیقه
 - git hang یا fail -> 403
 - باید همیشه ownership fix شود
+
+---
+
+## قوانین v4.5.0 — Source Tracking
+
+- اجباری: هر تغییر در ساختار `orders` (مثل اضافه شدن ستون جدید) باید در `fetchAllCustomers` و `AdminCustomers.jsx` هم لحاظ شود.
+- هر لینک تبلیغاتی (اینستاگرام/تلگرام/واتساپ) باید حتماً پارامتر UTM داشته باشد.
+- لینک ترب نیازی به UTM ندارد (Referrer خودکار تشخیص داده می‌شود).
+- `captureSource` فقط در `main.jsx` فراخوانی شود تا از دوباره‌نویسی جلوگیری شود.

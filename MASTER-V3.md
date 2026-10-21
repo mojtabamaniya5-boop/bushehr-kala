@@ -791,3 +791,20 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 - chown/chmod همیشه (حتی اگر git fail)
 - timeout روی هر فرمان شبکه
 - set -e یا fallback
+
+---
+
+## v4.5.0 — CRM + Source Tracking (۱۴۰۵/۰۷/۳۰)
+
+### معماری Source Tracking
+- `src/utils/source.js` — توابع `captureSource` و `getSource`
+- در `main.jsx` هنگام لود اپ فراخوانی می‌شود (فقط یک‌بار UTM یا Referrer را در localStorage ذخیره می‌کند).
+- در `saveOrderToDB` منبع خوانده شده و در ستون‌های `source`, `utm_source` و... ذخیره می‌شود.
+
+### ستون‌های جدید orders
+- `source` (مقدار پیش‌فرض: 'direct') — مقادیر: google, torob, instagram, telegram, whatsapp, direct, other
+- `utm_source`, `utm_medium`, `utm_campaign`
+
+### CRM (AdminCustomers.jsx)
+- داده‌ها از aggregate جدول `orders` خوانده می‌شوند (`fetchAllCustomers`).
+- فیلتر منبع (Source Filter)، آمار درصدی منابع، و نمایش «اولین منبع» و «آخرین منبع» در جزئیات مشتری.
