@@ -41,6 +41,8 @@ export async function getShopSettings() {
       phone: data.phone,
       telegram: data.telegram,
       address: data.address,
+      logoUrl: data.logo_url,
+      bannerUrl: data.banner_url,
       card: {
         number: data.card_number,
         holder: data.card_holder,
