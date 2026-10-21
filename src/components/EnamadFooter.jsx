@@ -1,21 +1,24 @@
 export default function EnamadFooter() {
-  const base = import.meta.env.BASE_URL
+  // کد رسمی اینماد برای کافه ترشی
+  const enamadCode = "YCJdEAaj1dxDgqClJ7NmMK4Lfd8FMNV0";
+  const enamadId = "8106941";
+  
   return (
-    <div className="flex flex-col items-center py-5 mt-5 border-t border-border">
-      <a
-        referrerPolicy="origin"
-        target="_blank"
-        rel="noreferrer"
-        href="https://trustseal.enamad.ir/?id=8106941&Code=YCJdEAaj1dxDgqClJ7NmMK4Lfd8FMNV0"
-        className="active:scale-95 transition"
+    <div className="flex flex-col items-center justify-center py-6 mt-4 border-t border-border">
+      <a 
+        referrerPolicy="origin" 
+        target="_blank" 
+        href={`https://trustseal.enamad.ir/?id=${enamadId}&Code=${enamadCode}`}
+        className="block"
       >
-        <img
-          src="https://trustseal.enamad.ir/logo.aspx?id=8106941&Code=YCJdEAaj1dxDgqClJ7NmMK4Lfd8FMNV0"
-          alt="نماد اعتماد الکترونیکی"
-          className="w-24 h-auto"
+        <img 
+          referrerPolicy="origin" 
+          src={`https://trustseal.enamad.ir/logo.aspx?id=${enamadId}&Code=${enamadCode}`} 
+          alt="نماد اعتماد الکترونیکی" 
+          style={{ cursor: 'pointer', width: '100px', height: 'auto' }} 
         />
       </a>
-      <p className="text-[9px] text-muted mt-2">نماد اعتماد الکترونیکی</p>
+      <span className="text-[10px] text-muted mt-2">نماد اعتماد الکترونیکی</span>
     </div>
   )
 }
