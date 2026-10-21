@@ -484,3 +484,17 @@ pm2 restart cafetorshi-relay --update-env
 ### 🟠 v4.5
 - `send-otp` همیشه `{ok:true}` — باید status چک شود
 - اگر revert مرموز تکرار شد، log firewall/backup check شود
+
+---
+
+## v4.4.2 (۱۴۰۵/۰۷/۳۰) — cron fix
+
+### حل شد
+- cron update-site.sh — set -e + timeout + fallback + همیشه chown
+- سایت پایدار
+
+### اولویت بعدی
+- شروع CRM / لیست مشتریان
+
+### v4.5
+- send-otp همیشه ok:true — باید status چک شود

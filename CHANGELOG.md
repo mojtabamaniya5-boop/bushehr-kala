@@ -506,3 +506,21 @@
 - بین ۱۸:۰۳ و ۱۸:۱۰ فایل‌ها به نسخه قدیمی برگشتند (علت نامشخص)
 - با rsync دوباره fix شد
 - deploy.sh حالا verify دارد
+
+---
+
+## ۱۴۰۵/۰۷/۳۰ — v4.4.2 (cron race condition)
+
+### کشف
+- /root/update-site.sh هر ۱۰ دقیقه از cron اجرا می‌شد
+- git fetch از سرور ایران گاهی ۱۳۰s hang می‌کرد
+- بدون set -e با کد قدیمی build می‌کرد → hash قدیمی → 403
+
+### حل
+- set -e + timeout 25 روی git fetch
+- Fallback: اگر GitHub unreachable → perms fix only
+- chown www-data + chmod همیشه
+- pnpm install --frozen-lockfile
+
+### نتیجه
+- سایت بعد از ۳ دقیقه پایدار: 200 + hash یکسان

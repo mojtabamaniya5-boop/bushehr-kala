@@ -330,3 +330,18 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON orders TO authenticated;
 ### Nginx cache
 - index.html no-cache، assets ۱ سال، sw.js no-store
 - open_file_cache فعال
+
+---
+
+## قوانین v4.4.2 — cron / auto-deploy
+
+### اسکریپت cron
+- ممنوع: بدون set -e یا fallback
+- ممنوع: git fetch بدون timeout
+- اجباری: chown www-data:www-data docs + chmod همیشه
+- اجباری: pnpm install --frozen-lockfile
+
+### چرا
+- cron هر ۱۰ دقیقه
+- git hang یا fail -> 403
+- باید همیشه ownership fix شود

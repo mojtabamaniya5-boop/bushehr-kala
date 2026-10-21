@@ -769,3 +769,25 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 - از این به بعد: `./deploy.sh`
 - `--chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r --chown=www-data:www-data`
 - verify بعد از deploy (hash match + HTTP 200)
+
+---
+
+## v4.4.2 — Deploy پایدار (۱۴۰۵/۰۷/۳۰)
+
+### مشکل
+- cron هر ۱۰ دقیقه: git fetch -> build -> reload
+- شبکه ایران -> گاهی github.com:443 timeout 130s
+- بدون set -e -> build با کد قدیمی -> hash قدیمی
+
+### اسکریپت جدید update-site.sh
+1. cd /var/www/cafetorshi || exit 1
+2. timeout 25 git fetch origin و timeout 15 git reset --hard
+3. اگر موفق: pnpm install --frozen-lockfile + pnpm build
+4. اگر ناموفق: پیام github unreachable + skip build
+5. همیشه: chown www-data + chmod 755/644 روی docs
+6. systemctl reload nginx
+
+### قوانین
+- chown/chmod همیشه (حتی اگر git fail)
+- timeout روی هر فرمان شبکه
+- set -e یا fallback
