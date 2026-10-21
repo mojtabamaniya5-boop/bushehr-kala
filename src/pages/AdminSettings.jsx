@@ -4,6 +4,9 @@ import { supabase } from '../utils/supabase'
 import { applyTheme } from '../utils/theme'
 
 export default function AdminSettings({ settings, setSettings, onSave, saving }) {
+  const [uploading, setUploading] = useState(false)
+  const [bannerUploading, setBannerUploading] = useState(false)
+
   if (!settings) {
     return <div className="text-center text-muted py-10 text-sm">در حال بارگذاری تنظیمات...</div>
   }
@@ -62,15 +65,9 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
             <img src={settings.bannerUrl} alt="بنر" className="w-full h-32 rounded-xl object-cover border border-border bg-cream" />
           )}
           <label className="flex items-center justify-center gap-2 w-full bg-cream border border-border rounded-xl px-3 py-3 text-xs font-bold text-brand cursor-pointer active:scale-[0.98] transition">
-            {uploading ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
-            {uploading ? 'در حال آپلود...' : 'آپلود بنر جدید (سایز ۱۲۰۰×۴۰۰)'}
-            <input type="file" accept="image/*" className="hidden" onChange={(e) => {
-              // منطق آپلود مشابه لوگو
-              const file = e.target.files[0];
-              if (!file) return;
-              // فرض میکنیم تابع handleBannerUpload رو پایین‌تر اضافه می‌کنیم
-              window.handleBannerUpload(file);
-            }} disabled={uploading} />
+            {bannerUploading ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
+            {bannerUploading ? 'در حال آپلود...' : 'آپلود بنر جدید (سایز ۱۲۰۰×۴۰۰)'}
+            <input type="file" accept="image/*" className="hidden" onChange={handleBannerUpload} disabled={bannerUploading} />
           </label>
         </div>
       </div>
