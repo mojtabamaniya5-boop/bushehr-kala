@@ -50,7 +50,7 @@ export default defineConfig({
       },
     }),
   ],
-  base: '/',
+  base: './',
   build: {
     outDir: 'docs',
     emptyOutDir: true,
