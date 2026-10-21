@@ -7,13 +7,16 @@ import CategoryChip from '../components/CategoryChip'
 import EnamadFooter from '../components/EnamadFooter'
 import { CATEGORIES } from '../data/products'
 import { getProducts } from '../api/products'
+import { getShopSettings } from '../api/shop'
 import { Leaf, ShieldCheck, Truck, Loader2 } from 'lucide-react'
 
 export default function Home() {
   const [products, setProducts] = useState([])
+  const [bannerUrl, setBannerUrl] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    getShopSettings().then(s => { if(s.bannerUrl) setBannerUrl(s.bannerUrl) })
     let alive = true
     const load = async () => {
       const items = await getProducts(true)
@@ -46,6 +49,15 @@ export default function Home() {
       <Header />
       <main className="max-w-lg mx-auto px-4 pb-32 pt-1 fade-up">
         <BannerSlider />
+
+        {bannerUrl && (
+          <div className="mb-6 mt-2 fade-up">
+            <a href="/category" className="block rounded-2xl overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.08)] active:scale-[0.99] transition">
+              <img src={bannerUrl} alt="پیشنهاد ویژه" className="w-full h-auto object-cover" />
+            </a>
+          </div>
+        )}
+
 
         <div className="flex items-center justify-between mb-3 mt-1">
           <h3 className="font-extrabold text-sm text-ink">دسته‌بندی‌ها</h3>

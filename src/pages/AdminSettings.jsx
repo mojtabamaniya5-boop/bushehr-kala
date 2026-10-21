@@ -53,7 +53,28 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
         </div>
       </div>
 {/* هزینه ارسال */}
-      <div className="bg-white rounded-2xl p-4 border border-border">
+      
+      {/* بنر تبلیغاتی */}
+      <div className="bg-white rounded-2xl p-4 border border-border mt-4">
+        <div className="text-xs font-extrabold mb-3">بنر تبلیغاتی (مناسبت‌ها)</div>
+        <div className="flex flex-col gap-3">
+          {settings.bannerUrl && (
+            <img src={settings.bannerUrl} alt="بنر" className="w-full h-32 rounded-xl object-cover border border-border bg-cream" />
+          )}
+          <label className="flex items-center justify-center gap-2 w-full bg-cream border border-border rounded-xl px-3 py-3 text-xs font-bold text-brand cursor-pointer active:scale-[0.98] transition">
+            {uploading ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
+            {uploading ? 'در حال آپلود...' : 'آپلود بنر جدید (سایز ۱۲۰۰×۴۰۰)'}
+            <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+              // منطق آپلود مشابه لوگو
+              const file = e.target.files[0];
+              if (!file) return;
+              // فرض میکنیم تابع handleBannerUpload رو پایین‌تر اضافه می‌کنیم
+              window.handleBannerUpload(file);
+            }} disabled={uploading} />
+          </label>
+        </div>
+      </div>
+<div className="bg-white rounded-2xl p-4 border border-border">
         <div className="text-xs font-extrabold mb-3">هزینه ارسال</div>
         <Field label="ارسال سریع (تومان)" value={settings.shippingFast ?? 0} onChange={v => upd('shippingFast', v)} type="number" />
         <Field label="ارسال عادی (تومان)" value={settings.shippingNormal ?? 0} onChange={v => upd('shippingNormal', v)} type="number" />
