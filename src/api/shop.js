@@ -48,6 +48,7 @@ export async function getShopSettings() {
       },
       shippingFast: data.shipping_fast,
       shippingNormal: data.shipping_normal,
+      forceFreeShipping: data.force_free_shipping,
       freeShippingFrom: data.free_shipping_from,
       freeShippingCities: data.free_shipping_cities || [],
       sameDayCities: data.same_day_cities || [],

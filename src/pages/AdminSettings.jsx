@@ -36,7 +36,23 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
         <Field label="بانک" value={settings.card?.bank || ''} onChange={v => updCard('bank', v)} />
       </div>
 
-      {/* هزینه ارسال */}
+      
+      {/* ارسال رایگان برای همه */}
+      <div className="bg-white rounded-2xl p-4 border border-border mt-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-xs font-extrabold">ارسال رایگان برای همه</div>
+            <div className="text-[10px] text-muted mt-1">اگر روشن باشد، ارسال برای همه سفارش‌ها رایگان است.</div>
+          </div>
+          <input 
+            type="checkbox" 
+            checked={settings.forceFreeShipping || false}
+            onChange={e => upd('forceFreeShipping', e.target.checked)}
+            className="w-5 h-5 accent-brand"
+          />
+        </div>
+      </div>
+{/* هزینه ارسال */}
       <div className="bg-white rounded-2xl p-4 border border-border">
         <div className="text-xs font-extrabold mb-3">هزینه ارسال</div>
         <Field label="ارسال سریع (تومان)" value={settings.shippingFast ?? 0} onChange={v => upd('shippingFast', v)} type="number" />
