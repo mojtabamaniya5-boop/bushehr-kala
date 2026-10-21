@@ -728,3 +728,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 ### ۴) نکات قرارداد
 - بکاپ اختصاصی برای هر مشتری از طریق دکمه خروجی JSON در پنل.
 - تغییرات بصری (محصول، رنگ، متن) از پنل رایگان است. بیلد جدید اپ (آیکون، نسخه) سهمیه سالانه دارد.
+
+## آپدیت v4.0 (مهاجرت به آروان)
+- هاست: سرور آروان (IP: 85.198.55.141)
+- مسیر پروژه: /var/www/cafetorshi
+- سرور وب: Nginx + SSL (Certbot)
+- روتر: BrowserRouter (بدون #)
+- base در Vite: /
