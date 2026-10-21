@@ -357,7 +357,6 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
         card_holder: shopSettings.card?.holder,
         card_bank: shopSettings.card?.bank,
         force_free_shipping: shopSettings.forceFreeShipping,
-        banner_url: shopSettings.bannerUrl,
         shipping_fast: Number(shopSettings.shippingFast),
         shipping_normal: Number(shopSettings.shippingNormal),
         free_shipping_from: Number(shopSettings.freeShippingFrom),

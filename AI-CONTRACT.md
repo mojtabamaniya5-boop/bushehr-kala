@@ -317,3 +317,16 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON orders TO authenticated;
 ### ۲) سایر ورودی‌های عددی
 - همین قاعده: اول `normalizeDigits` بعد parse/validate
 - پلاک، کدپستی، کد رهگیری، کد تخفیف — همه مشمول
+
+---
+
+## 🆕 قوانین v4.4.1
+
+### Deploy
+- ❌ rsync دستی ممنوع
+- ✅ همیشه `./deploy.sh`
+- verify خودکار بعد از deploy
+
+### Nginx cache
+- index.html no-cache، assets ۱ سال، sw.js no-store
+- open_file_cache فعال

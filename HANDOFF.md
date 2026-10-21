@@ -470,3 +470,22 @@ iOS Safari وقتی کیبورد فارسی بود، خطای «موبایل م�
 ### 🔴 باگ کشف‌شده — v4.5
 `send-otp` در relay **همیشه `{ok:true}`** برمی‌گرداند، حتی اگر sms.ir fail کند.
 باید اضافه شود: `if (!r.ok || data.status !== 1) return res.status(500).json(...)`
+
+---
+
+## 🔄 آپدیت v4.4.1 (۱۴۰۵/۰۷/۳۰)
+
+### حل شد
+- nginx cache + gzip (848KB → 239KB)
+- حذف recharts
+- lockfile
+- deploy.sh + permission fix + verify
+
+### 🔴 اولویت بعدی
+**شروع CRM** — لیست مشتریان
+
+### 🟠 v4.5
+- `send-otp` همیشه `{ok:true}` — باید status چک شود
+
+### 🔧 deploy
+`cd ~/bushehr-kala && ./deploy.sh`

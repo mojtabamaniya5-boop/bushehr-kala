@@ -753,3 +753,19 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 - `src/utils/auth.js` — `normalizeDigits`, `normalizePhone`
 - `src/pages/Login.jsx` — input + sendOTP + verifyOTP
 - `/root/relay/server.js` — helper + دو endpoint
+
+---
+
+## 🔄 v4.4.1 — Performance + Deploy
+
+### Nginx
+- `/assets/*` → ۱ سال immutable
+- `/index.html` → no-cache
+- `/sw.js`, `/registerSW.js` → no-store
+- gzip comp_level 6
+- open_file_cache فعال
+
+### Deploy
+- از این به بعد: `./deploy.sh`
+- `--chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r --chown=www-data:www-data`
+- verify بعد از deploy (hash match + HTTP 200)

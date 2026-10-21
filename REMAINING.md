@@ -467,3 +467,20 @@ pm2 restart cafetorshi-relay --update-env
 
 ### 🟠 فیکس باقی‌مانده (v4.5)
 - `send-otp` در relay همیشه `{ok:true}` حتی اگر sms.ir fail کند
+
+---
+
+## 🆕 v4.4.1 (۱۴۰۵/۰۷/۳۰)
+
+### ✅ حل شد
+- nginx cache + gzip
+- حذف recharts + @types/*
+- lockfile + deploy.sh
+- duplicate banner_url
+
+### 🔴 اولویت بعدی
+**۶ قابلیت** — شروع با CRM.
+
+### 🟠 v4.5
+- `send-otp` همیشه `{ok:true}` — باید status چک شود
+- اگر revert مرموز تکرار شد، log firewall/backup check شود

@@ -487,3 +487,22 @@
 
 ### باگ باقی‌مانده v4.5
 `send-otp` همیشه `{ok:true}` — باید `status` را چک کند
+
+---
+
+## ۱۴۰۵/۰۷/۳۰ — v4.4.1 (performance + deploy pipeline)
+
+### حل شد
+- Nginx cache: assets ۱ ساله immutable، index no-cache
+- **gzip فعال:** JS 848KB → **239KB** (-۷۲٪)
+- حذف recharts (dead code) + @types/react
+- lockfile ساخته شد
+- فیکس duplicate `banner_url` در Admin.jsx
+- **deploy.sh** با rsync + chmod/chown + verify خودکار
+- باگ 403 بعد از deploy: mode 0600 → fix
+- open_file_cache برای nginx
+
+### حادثه مشکوک
+- بین ۱۸:۰۳ و ۱۸:۱۰ فایل‌ها به نسخه قدیمی برگشتند (علت نامشخص)
+- با rsync دوباره fix شد
+- deploy.sh حالا verify دارد
