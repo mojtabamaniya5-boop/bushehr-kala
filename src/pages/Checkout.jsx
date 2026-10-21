@@ -220,32 +220,37 @@ export default function Checkout() {
               روش ارسال
             </h3>
 
-            <div className="space-y-2">
-              {[
-                { id: 'fast',   label: 'ارسال سریع',  time: '۲-۳ روز کاری', price: shopSettings.shippingFast,   icon: Zap },
-                { id: 'normal', label: 'ارسال عادی',  time: '۳-۵ روز کاری', price: shopSettings.shippingNormal, icon: Truck },
-              ].map(({ id, label, time, price, icon: Icon }) => (
-                <button key={id} type="button" onClick={() => setShippingType(id)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition text-right ${
-                    shippingType === id ? 'border-brand bg-brand-light/40' : 'border-border'
-                  }`}>
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
-                    shippingType === id ? 'bg-brand text-white' : 'bg-cream text-muted'
-                  }`}>
-                    <Icon size={16} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-xs font-extrabold text-ink">{label} ({time})</div>
-                    <div className="text-[10px] text-muted mt-0.5">{formatPrice(price)}</div>
-                  </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    shippingType === id ? 'border-brand' : 'border-border'
-                  }`}>
-                    {shippingType === id && <div className="w-2.5 h-2.5 rounded-full bg-brand"></div>}
-                  </div>
-                </button>
-              ))}
-            </div>
+            {Number(shipInfo.cost) === 0 ? (
+              <div className="bg-brand-light/30 border border-brand/20 rounded-2xl p-5 text-center fade-up">
+                <div className="w-12 h-12 rounded-full bg-brand flex items-center justify-center mx-auto mb-3 text-white">
+                  <Truck size={24} />
+                </div>
+                <p className="text-sm font-extrabold text-brand mb-1">🎉 ارسال این سفارش رایگان است</p>
+                <p className="text-[10px] text-muted">سفارش شما با پست عادی (۳ تا ۵ روز کاری) ارسال خواهد شد.</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {[
+                  { id: 'fast',   label: 'ارسال سریع',  time: '۲-۳ روز کاری', price: shopSettings.shippingFast,   icon: Zap },
+                  { id: 'normal', label: 'ارسال عادی',  time: '۳-۵ روز کاری', price: shopSettings.shippingNormal, icon: Truck },
+                ].map(({ id, label, time, price, icon: Icon }) => (
+                  <button key={id} type="button" onClick={() => setShippingType(id)}
+                    className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition text-right ${
+                      shippingType === id ? 'border-brand bg-brand-light/40' : 'border-border'
+                    }`}>
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                      shippingType === id ? 'bg-brand text-white' : 'bg-cream text-muted'
+                    }`}>
+                      <Icon size={16} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-xs font-extrabold text-ink">{label} ({time})</div>
+                      <div className="text-[10px] text-muted mt-0.5">{formatPrice(price)}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </section>
         )}
 
