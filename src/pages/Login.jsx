@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
-import { isValidPhone, loginUser } from '../utils/auth'
+import { isValidPhone, loginUser, normalizePhone, normalizeDigits } from '../utils/auth'
 import { toast } from '../components/Toast'
 import { Phone, ArrowRight, Check, RefreshCw, ShieldCheck } from 'lucide-react'
 
@@ -36,7 +36,7 @@ export default function Login() {
 
   const sendOTP = async () => {
     if (sending.current) return
-    const clean = phone.replace(/\D/g, '')
+    const clean = normalizePhone(phone)
     if (!isValidPhone(clean)) {
       toast.error('شماره موبایل معتبر وارد کنید')
       return
@@ -52,7 +52,6 @@ export default function Login() {
       toast.success('کد تأیید پیامک شد')
     } catch (err) {
       const msg = err.name === 'AbortError' ? 'سرور پاسخ نداد' : err.message
-      alert('خطای دقیق: ' + err.name + ' | ' + err.message + ' | وضعیت: ' + (err.status || 'نامشخص'))
       toast.error(msg)
     } finally {
       sending.current = false
@@ -67,7 +66,7 @@ export default function Login() {
     }
     setLoading(true)
     try {
-      const data = await invokeRelay('/api/verify-otp', { mobile: phone, code: otpInput })
+      const data = await invokeRelay('/api/verify-otp', { mobile: normalizePhone(phone), code: normalizeDigits(otpInput) })
       if (!data?.ok) throw new Error(data?.error || 'کد اشتباه است')
       loginUser(phone, name, data.token)
       toast.success('خوش آمدید 🌿')
@@ -120,10 +119,14 @@ export default function Login() {
               <label className="text-[10px] font-bold text-muted block mb-1.5 mr-1">شماره موبایل</label>
               <input
                 value={phone}
-                onChange={e => setPhone(e.target.value)}
+                onChange={e => setPhone(normalizeDigits(e.target.value))}
                 onKeyDown={e => e.key === 'Enter' && sendOTP()}
                 placeholder="09123456789"
-                inputMode="tel"
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                pattern="[0-9]*"
+                maxLength={11}
                 autoFocus
                 className="w-full bg-white border border-border rounded-2xl px-4 py-3.5 text-base font-bold tracking-wider outline-none focus:border-brand transition text-center"
                 style={{ direction: 'ltr' }}

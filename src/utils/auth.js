@@ -46,4 +46,16 @@ export const updateUserName = (name) => {
 }
 
 export const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString()
-export const isValidPhone = (phone) => /^09\d{9}$/.test(phone.replace(/\D/g, ''))
+export const normalizeDigits = (s) => String(s || '')
+  .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+  .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+  .replace(/[\u200c-\u200f\u202a-\u202e\u00a0\s-]/g, '')
+
+export const normalizePhone = (s) => {
+  let x = normalizeDigits(s).replace(/\D/g, '')
+  if (x.length === 12 && x.startsWith('98')) x = '0' + x.slice(2)
+  if (x.length === 10 && x.startsWith('9')) x = '0' + x
+  return x
+}
+
+export const isValidPhone = (phone) => /^09\d{9}$/.test(normalizePhone(phone))
