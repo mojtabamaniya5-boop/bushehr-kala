@@ -21,7 +21,7 @@ export default function Header({ title, back }) {
 
   if (title) {
     return (
-      <header className="sticky top-0 z-50 bg-white border-b border-border shadow-sm">
+      <header className="sticky top-0 z-50 bg-[#FFF8E8] border-b border-border">
         <div className="flex items-center gap-3 px-4 h-14 max-w-lg mx-auto">
           {back ? (
             <button onClick={() => navigate(-1)} className="p-1 -mr-1 active:scale-95 text-on-page">
