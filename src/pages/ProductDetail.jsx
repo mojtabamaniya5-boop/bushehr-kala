@@ -119,7 +119,7 @@ export default function ProductDetail() {
             <div className="bg-white rounded-2xl p-4 mb-3 border border-border shadow-sm">
               <h3 className="font-extrabold text-sm mb-3 text-ink">توضیحات محصول</h3>
               <div className="relative">
-                <div className={`text-[12px] text-ink/80 transition-all duration-300 ${!showFullDesc ? 'line-clamp-2 leading-6' : 'leading-7'}`}>
+                <div className={`text-[12px] text-ink/80 transition-all duration-300 whitespace-pre-line ${!showFullDesc ? 'line-clamp-2 leading-6' : 'leading-7'}`}>
                   {product.description}
                 </div>
                 {!showFullDesc && product.description.length > 100 && (
