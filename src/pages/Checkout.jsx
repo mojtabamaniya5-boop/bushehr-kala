@@ -4,6 +4,7 @@ import Header from '../components/Header'
 import { getCart, cartTotal } from '../utils/cart'
 import { storage, formatPrice, uid } from '../utils/storage'
 import { calculateShipping } from '../data/products'
+import { toEnDigits } from '../utils/digits'
 import { SHOP_CONFIG } from '../config/shop'
 import { saveOrderToDB } from '../utils/supabase'
 import { getCurrentUser } from '../utils/auth'
@@ -44,6 +45,9 @@ export default function Checkout() {
   const total = subtotal + shipping
 
   const set = (k, v) => {
+    if (k === 'postalCode' || k === 'phone') {
+      v = toEnDigits(v);
+    }
     setForm(f => ({ ...f, [k]: v }))
     if (errors[k]) setErrors(e => ({ ...e, [k]: '' }))
   }

@@ -1,3 +1,4 @@
+import { toEnDigits } from '../utils/digits'
 export const SHOP_INFO = {
   name: 'کافه ترشی',
   tagline: 'طعم اصیل، با ارسال سریع',
@@ -127,16 +128,17 @@ export function calculateShipping(postalCode, address, subtotal, shippingType = 
   // ۱. اگر هنوز تنظیمات لود نشده
   if (!settings) return { cost: null, sameDay: false };
 
-  // ۲. اگر کد پستی وارد نشده
-  if (!postalCode) return { cost: null, sameDay: false };
+  // ۲. نرمال‌سازی کد پستی (تبدیل ارقام فارسی به انگلیسی)
+  const pc = toEnDigits(postalCode);
+  if (!pc) return { cost: null, sameDay: false };
 
   // ۳. اگر ادمین ارسال رایگان برای همه را روشن کرده باشد
   if (settings.forceFreeShipping) return { cost: 0, sameDay: true };
 
   // ۴. اگر کد پستی با پیشوندهای رایگان (مثل 75) شروع شود
   const prefixes = settings.freePostalPrefixes || [];
-  if (prefixes.some(p => String(postalCode).startsWith(String(p)))) {
-    return { cost: 0, sameDay: true };
+  if (prefixes.some(p => pc.startsWith(String(p)))) {
+    return { cost: 0, sameDay: false }; // sameDay: false تا برای شهرهای دور استان تعهد نادرست ندهیم
   }
 
   // ۵. اگر مبلغ سبد از آستانه ارسال رایگان عبور کرده باشد
