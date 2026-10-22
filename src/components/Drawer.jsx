@@ -19,10 +19,7 @@ const pagesMenu = [
   { path: '/contact', label: 'تماس با ما',       icon: Phone,    emoji: '📞' },
 ]
 
-const roadmap = [
-  { emoji: '💳', label: 'پرداخت آنلاین (زیبال)',    color: '#2E7D32' },
-  { emoji: '👥', label: 'پنل مشتری با ورود موبایل', color: '#185C28' },
-]
+const roadmap = []
 
 export default function Drawer({ open, onClose }) {
   return (
@@ -100,18 +97,6 @@ export default function Drawer({ open, onClose }) {
               {/* تماس سریع */}
               <p className="text-[9px] font-extrabold text-muted px-2 mb-2 tracking-wider">ارتباط سریع</p>
               <div className="space-y-0.5 mb-4">
-                <a href={`tel:${SHOP_CONFIG.phone}`}
-                  className="flex items-center gap-3 px-2.5 py-2.5 rounded-2xl text-ink active:scale-[0.98] transition hover:bg-white">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: '#F8C02D30' }}>
-                    <Phone size={16} style={{ color: '#B8860B' }} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-bold">تماس تلفنی</div>
-                    <div className="text-[10px] text-muted" style={{ direction: 'ltr', textAlign: 'right' }}>{SHOP_CONFIG.phone}</div>
-                  </div>
-                  <span className="text-base">📞</span>
-                </a>
 
                 <a href={`https://ble.ir/${SHOP_CONFIG.telegram}`} target="_blank" rel="noreferrer"
                   className="flex items-center gap-3 px-2.5 py-2.5 rounded-2xl text-ink active:scale-[0.98] transition hover:bg-white">
