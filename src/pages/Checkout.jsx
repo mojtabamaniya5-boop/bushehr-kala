@@ -228,28 +228,19 @@ export default function Checkout() {
               <div className="bg-cream/50 rounded-2xl p-5 text-center border border-border">
                 <p className="text-xs text-muted">برای مشاهده هزینه ارسال، لطفاً کد پستی را وارد کنید.</p>
               </div>
-            ) : shipInfo.postPaid ? (
-              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 text-center fade-up">
-                <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center mx-auto mb-3 text-white">
-                  <Truck size={24} />
-                </div>
-                <p className="text-sm font-extrabold text-blue-700 mb-1">ارسال با تیپاکس (پس‌کرایه)</p>
-                <p className="text-[10px] text-blue-600 leading-5">هزینه پست رایگان نیست و هنگام تحویل مرسوله، نقدی به پیک تیپاکس پرداخت می‌شود.</p>
-              </div>
-            ) : Number(shipInfo.cost) === 0 ? (
+            ) : Number(shipInfo.cost) === 0 && !shipInfo.postPaid ? (
               <div className="bg-brand-light/30 border border-brand/20 rounded-2xl p-5 text-center fade-up">
                 <div className="w-12 h-12 rounded-full bg-brand flex items-center justify-center mx-auto mb-3 text-white">
                   <Truck size={24} />
                 </div>
                 <p className="text-sm font-extrabold text-brand mb-1">🎉 ارسال این سفارش رایگان است</p>
-                <p className="text-[10px] text-muted">سفارش شما با پست عادی (۳ تا ۵ روز کاری) ارسال خواهد شد.</p>
+                <p className="text-[10px] text-muted">سفارش شما با پست ارسال خواهد شد.</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {[
-                  { id: 'fast',   label: 'ارسال سریع',  time: '۲-۳ روز کاری', price: shopSettings.shippingFast,   icon: Zap },
-                  { id: 'normal', label: 'ارسال عادی',  time: '۳-۵ روز کاری', price: shopSettings.shippingNormal, icon: Truck },
-                  { id: 'postpaid', label: 'تیپاکس (پس‌کرایه)', time: 'هزینه پست پرداخت در محل', price: 0, icon: Truck },
+                  { id: 'fast',   label: 'پست پیشتاز',  time: '۲-۳ روز کاری (پرداخت آنلاین)', price: shopSettings.shippingFast,   icon: Zap },
+                  { id: 'postpaid', label: 'تیپاکس (پس‌کرایه)', time: 'پرداخت هزینه پست در محل', price: 0, icon: Truck },
                 ].map(({ id, label, time, price, icon: Icon }) => (
                   <button key={id} type="button" onClick={() => setShippingType(id)}
                     className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition text-right ${
@@ -261,14 +252,24 @@ export default function Checkout() {
                       <Icon size={16} />
                     </div>
                     <div className="flex-1">
-                      <div className="text-xs font-extrabold text-ink">{label} ({time})</div>
-                      <div className="text-[10px] text-muted mt-0.5">{formatPrice(price)}</div>
+                      <div className="text-xs font-extrabold text-ink">{label}</div>
+                      <div className="text-[10px] text-muted mt-0.5">{time}</div>
+                    </div>
+                    <div className={`text-xs font-extrabold ${id === 'postpaid' ? 'text-blue-600' : 'text-brand'}`}>
+                      {id === 'postpaid' ? 'دریافت در محل' : formatPrice(price)}
                     </div>
                   </button>
                 ))}
+
+                {shipInfo.postPaid && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-center mt-2 fade-up">
+                    <p className="text-[11px] text-blue-700 leading-5">
+                      <b>توجه:</b> هزینه پست رایگان نیست و هنگام تحویل مرسوله، نقدی به پیک تیپاکس پرداخت می‌شود.
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-          </section>
+            )}</section>
         )}
 
         <section className="bg-accent/10 border border-accent/30 rounded-2xl p-4 flex items-start gap-3">
