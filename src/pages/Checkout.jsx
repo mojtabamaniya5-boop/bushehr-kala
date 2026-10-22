@@ -123,7 +123,7 @@ export default function Checkout() {
   return (
     <>
       <Header title="تسویه حساب" back />
-      <main className="max-w-lg mx-auto px-4 pb-44 pt-3 fade-up space-y-3">
+      <main className="max-w-lg mx-auto px-4 pb-64 pt-3 fade-up space-y-3">
 
         {!loggedUser && (
           <Link to="/login"
@@ -138,6 +138,33 @@ export default function Checkout() {
             <span className="text-muted">←</span>
           </Link>
         )}
+
+        {/* خلاصه سفارش (Collapsible) */}
+        <div className="bg-white rounded-2xl border border-border shadow-sm">
+          <button type="button" onClick={() => setShowMiniSummary(!showMiniSummary)} className="w-full flex items-center justify-between p-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center text-brand">
+                <ShoppingBag size={16} />
+              </div>
+              <span className="font-bold text-xs text-ink">مشاهده اقلام سفارش ({items.length} محصول)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold text-brand text-sm">{formatPrice(subtotal)}</span>
+              <ChevronDown size={16} className={`text-muted transition-transform duration-300 ${showMiniSummary ? 'rotate-180' : ''}`} />
+            </div>
+          </button>
+          
+          {showMiniSummary && (
+            <div className="p-4 pt-0 border-t border-border mt-2 space-y-3 fade-up">
+              {items.map(item => (
+                <div key={item.id} className="flex justify-between items-center text-xs">
+                  <span className="text-ink line-clamp-1 flex-1">{item.title} <span className="text-muted">× {item.qty}</span></span>
+                  <span className="font-bold text-ink mr-3 whitespace-nowrap">{formatPrice(item.price * item.qty)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <section className="bg-white rounded-2xl p-4 border border-border">
           <h3 className="font-extrabold text-sm mb-4 flex items-center gap-2 text-ink">
