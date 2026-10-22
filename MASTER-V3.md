@@ -823,3 +823,23 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 
 ### Relay (server.js)
 - فیکس `send-otp`: حالا پاسخ `sms.ir` را چک می‌کند (`data.status === 1`)، در غیر این صورت خطای 500 با پیام واقعی برمی‌گرداند.
+
+---
+
+## 🔄 v4.5.0 تا v4.6.7 (تغییرات معماری و UI)
+
+### Source Tracking (منبع ورودی)
+- `src/utils/source.js` — توابع captureSource و getSource (در main.jsx فراخوانی می‌شود).
+- ستون‌های جدید `orders`: source, utm_source, utm_medium, utm_campaign.
+
+### CRM (AdminCustomers.jsx)
+- داده‌ها از aggregate جدول orders خوانده می‌شوند.
+- فیلتر منبع، آمار درصدی، و نمایش "اولین/آخرین منبع" در جزئیات مشتری.
+
+### فیلتر سفارشات (Admin.jsx)
+- جستجو با نام/شماره/کد و فیلتر وضعیت در تب سفارشات.
+
+### UI/UX صفحه محصول (ProductDetail.jsx)
+- ارتفاع عکس 300px، توضیحات با قابلیت باز/بسته شدن.
+- فیکس باگ اسکرول با window.scrollTo(0, 0) در useEffect.
+- هدر (Header.jsx) به رنگ کرم سایت (#FFF8E8) تغییر کرد.
