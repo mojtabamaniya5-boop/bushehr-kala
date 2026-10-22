@@ -21,6 +21,7 @@ export default function ProductDetail() {
   const isOutOfStock = !product || (product.stock ?? 0) <= 0
 
   useEffect(() => {
+    window.scrollTo(0, 0) // فیکس باگ حفظ موقعیت اسکرول مرورگر
     let mounted = true
     getProductById(id).then(p => {
       if (mounted) {
