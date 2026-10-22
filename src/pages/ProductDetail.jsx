@@ -17,6 +17,7 @@ export default function ProductDetail() {
   const [fav, setFav] = useState(false)
   const [cartBadge, setCartBadge] = useState(cartCount())
   const [justAdded, setJustAdded] = useState(false)
+  const [showFullDesc, setShowFullDesc] = useState(false)
   const isOutOfStock = !product || (product.stock ?? 0) <= 0
 
   useEffect(() => {
@@ -71,7 +72,7 @@ export default function ProductDetail() {
     <>
       <Header title={product.brand || 'محصول'} back search />
       <main className="max-w-lg mx-auto pb-48 fade-up">
-        <div className="relative aspect-square bg-gradient-to-br from-cream to-brand-light">
+        <div className="relative w-full h-[300px] bg-gradient-to-br from-cream to-brand-light">
           <ProductImage product={product} />
           {discount > 0 && (
             <span className="absolute top-3 right-3 bg-accent text-ink text-xs font-extrabold px-3 py-1 rounded-full shadow-md">
@@ -116,7 +117,14 @@ export default function ProductDetail() {
           {product.description && (
             <div className="bg-white rounded-2xl p-4 mb-3 border border-border">
               <h3 className="font-extrabold text-sm mb-2 text-ink">توضیحات</h3>
-              <p className="text-xs leading-6 text-muted">{product.description}</p>
+              <p className={`text-xs leading-6 text-muted ${!showFullDesc ? 'line-clamp-3' : ''}`}>
+                {product.description}
+              </p>
+              {product.description.length > 120 && (
+                <button type="button" onClick={() => setShowFullDesc(!showFullDesc)} className="text-brand text-xs font-bold mt-2 block text-left">
+                  {showFullDesc ? 'بستن توضیحات' : 'مشاهده بیشتر...'}
+                </button>
+              )}
             </div>
           )}
 
