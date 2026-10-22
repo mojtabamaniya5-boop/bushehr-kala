@@ -115,14 +115,19 @@ export default function ProductDetail() {
           </div>
 
           {product.description && (
-            <div className="bg-white rounded-2xl p-4 mb-3 border border-border">
-              <h3 className="font-extrabold text-sm mb-2 text-ink">توضیحات</h3>
-              <p className={`text-xs leading-6 text-muted ${!showFullDesc ? 'line-clamp-3' : ''}`}>
-                {product.description}
-              </p>
-              {product.description.length > 120 && (
-                <button type="button" onClick={() => setShowFullDesc(!showFullDesc)} className="text-brand text-xs font-bold mt-2 block text-left">
-                  {showFullDesc ? 'بستن توضیحات' : 'مشاهده بیشتر...'}
+            <div className="bg-white rounded-2xl p-4 mb-3 border border-border shadow-sm">
+              <h3 className="font-extrabold text-sm mb-3 text-ink">توضیحات محصول</h3>
+              <div className="relative">
+                <p className={`text-[13px] text-ink/80 transition-all duration-300 ${!showFullDesc ? 'line-clamp-3 leading-7' : 'leading-8'}`}>
+                  {product.description}
+                </p>
+                {!showFullDesc && product.description.length > 100 && (
+                  <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white to-transparent"></div>
+                )}
+              </div>
+              {product.description.length > 100 && (
+                <button type="button" onClick={() => setShowFullDesc(!showFullDesc)} className="mt-3 w-full flex items-center justify-center gap-1 py-2.5 text-xs font-bold text-brand bg-brand-light/40 rounded-xl active:scale-95 transition">
+                  {showFullDesc ? 'بستن توضیحات' : 'مشاهده کامل توضیحات'}
                 </button>
               )}
             </div>
