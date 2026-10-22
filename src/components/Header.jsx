@@ -21,7 +21,7 @@ export default function Header({ title, back }) {
 
   if (title) {
     return (
-      <header className="sticky top-0 z-30 bg-white border-b border-border shadow-sm">
+      <header className="sticky top-0 z-50 bg-white border-b border-border shadow-sm">
         <div className="flex items-center gap-3 px-4 h-14 max-w-lg mx-auto">
           {back ? (
             <button onClick={() => navigate(-1)} className="p-1 -mr-1 active:scale-95 text-on-page">
@@ -43,7 +43,7 @@ export default function Header({ title, back }) {
   }
 
   return (
-    <header className="sticky top-0 z-30 bg-page/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 bg-page/90 backdrop-blur-md">
       <div className="max-w-lg mx-auto px-4 pt-2 pb-3">
         <div className="flex items-start justify-between mb-2">
           <button onClick={openDrawer} className="p-1.5 mt-1 active:scale-95 text-on-page">

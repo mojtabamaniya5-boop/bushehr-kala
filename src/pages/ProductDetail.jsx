@@ -71,7 +71,7 @@ export default function ProductDetail() {
   return (
     <>
       <Header title={product.brand || 'محصول'} back search />
-      <main className="max-w-lg mx-auto pb-48 fade-up">
+      <main className="max-w-lg mx-auto pb-48 pt-2 fade-up">
         <div className="relative w-full h-[300px] bg-gradient-to-br from-cream to-brand-light">
           <ProductImage product={product} />
           {discount > 0 && (
