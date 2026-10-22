@@ -118,9 +118,9 @@ export default function ProductDetail() {
             <div className="bg-white rounded-2xl p-4 mb-3 border border-border shadow-sm">
               <h3 className="font-extrabold text-sm mb-3 text-ink">توضیحات محصول</h3>
               <div className="relative">
-                <p className={`text-[13px] text-ink/80 transition-all duration-300 ${!showFullDesc ? 'line-clamp-3 leading-7' : 'leading-8'}`}>
+                <div className={`text-[12px] text-ink/80 transition-all duration-300 ${!showFullDesc ? 'line-clamp-2 leading-6' : 'leading-7'}`}>
                   {product.description}
-                </p>
+                </div>
                 {!showFullDesc && product.description.length > 100 && (
                   <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white to-transparent"></div>
                 )}
