@@ -29,6 +29,7 @@ export default function Checkout() {
     name: loggedUser?.name || savedUser.name || '',
     phone: loggedUser?.phone || savedUser.phone || '',
     address: loggedUser ? storage.get('last-address', '') : '',
+    city: loggedUser ? storage.get('last-city', '') : '',
     postalCode: loggedUser ? storage.get('last-postal', '') : '',
     note: '',
   })
@@ -39,7 +40,7 @@ export default function Checkout() {
     if (items.length === 0) navigate('/cart', { replace: true })
   }, [items.length, navigate])
 
-  const shipInfo = calculateShipping(form.postalCode, form.address, subtotal, shippingType, shopSettings)
+  const shipInfo = calculateShipping(form.city, form.postalCode, form.address, subtotal, shippingType, shopSettings)
   const shipping = items.length ? shipInfo.cost : 0
   const isBushehr = shipInfo.sameDay
   const total = subtotal + shipping
@@ -56,6 +57,7 @@ export default function Checkout() {
     const e = {}
     if (!form.name.trim() || form.name.trim().length < 3) e.name = 'نام را کامل وارد کن'
     if (!/^09\d{9}$/.test(form.phone.trim())) e.phone = 'شماره موبایل معتبر وارد کن (۰۹...)'
+    if (!form.city.trim()) e.city = 'شهر را وارد کنید'
     if (!form.address.trim() || form.address.trim().length < 10) e.address = 'آدرس را کامل وارد کن'
     if (!form.postalCode.trim() || !/^\d{10}$/.test(form.postalCode.trim())) e.postalCode = 'کد پستی ۱۰ رقمی وارد کن'
     setErrors(e)
@@ -84,6 +86,7 @@ export default function Checkout() {
     storage.set('orders', orders)
     storage.set('user', { name: form.name, phone: form.phone })
     storage.set('last-address', form.address)
+      storage.set('last-city', form.city)
     storage.set('last-postal', form.postalCode)
 
     // ⚠️ نکته: سبد اینجا پاک نمیشه!
@@ -163,6 +166,19 @@ export default function Checkout() {
                 }`}
                 style={{ direction: 'ltr', textAlign: 'right' }} />
               {errors.phone && <p className="text-[10px] text-danger mt-1">{errors.phone}</p>}
+            </div>
+
+            {/* شهر */}
+            <div>
+              <label className="text-[10px] font-bold text-muted block mb-1.5 mr-1">شهر</label>
+              <input
+                value={form.city}
+                onChange={e => set('city', e.target.value)}
+                placeholder="مثلاً: بوشهر"
+                className={`w-full bg-cream border rounded-2xl px-3.5 py-3 text-sm outline-none transition ${
+                  errors.city ? 'border-danger' : 'border-border focus:border-brand'
+                }`} />
+              {errors.city && <p className="text-[10px] text-danger mt-1">{errors.city}</p>}
             </div>
 
             {/* کد پستی */}
