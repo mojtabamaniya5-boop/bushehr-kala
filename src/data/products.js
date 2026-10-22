@@ -124,34 +124,34 @@ export const searchProducts = (q) => {
   )
 }
 
-export function calculateShipping(postalCode, address, subtotal, shippingType = 'fast', settings = SHOP_INFO) {
-  // ۱. اگر هنوز تنظیمات لود نشده
+export function calculateShipping(city, postalCode, address, subtotal, shippingType = 'fast', settings = SHOP_INFO) {
   if (!settings) return { cost: null, sameDay: false };
 
-  // ۲. نرمال‌سازی کد پستی (تبدیل ارقام فارسی به انگلیسی)
   const pc = toEnDigits(postalCode);
-  if (!pc) return { cost: null, sameDay: false };
-
-  // ۳. اگر ادمین ارسال رایگان برای همه را روشن کرده باشد
+  
+  // ۱. اگر ادمین ارسال رایگان برای همه را روشن کرده باشد
   if (settings.forceFreeShipping) return { cost: 0, sameDay: true };
 
-  // ۴. اگر کد پستی با پیشوندهای رایگان (مثل 75) شروع شود
+  // ۲. بررسی شهر رایگان از پنل ادمین یا پیشوند کد پستی
+  const freeCities = settings.freeShippingCities || [];
+  const isFreeCity = city && (String(city).trim().includes('بوشهر') || freeCities.some(c => String(city).trim().includes(c)));
   const prefixes = settings.freePostalPrefixes || [];
-  if (prefixes.some(p => pc.startsWith(String(p)))) {
-    return { cost: 0, sameDay: false }; // sameDay: false تا برای شهرهای دور استان تعهد نادرست ندهیم
+  
+  if (isFreeCity || (pc && prefixes.some(p => pc.startsWith(String(p))))) {
+    return { cost: 0, sameDay: false, postPaid: false };
   }
 
-  // ۵. اگر مبلغ سبد از آستانه ارسال رایگان عبور کرده باشد
+  // ۳. اگر مبلغ سبد از آستانه ارسال رایگان عبور کرده باشد
   if (settings.freeShippingFrom > 0 && subtotal >= settings.freeShippingFrom) {
     return { cost: 0, sameDay: false };
   }
 
-  // ۶. اگر نوع ارسال پس‌کرایه (تیپاکس) باشد
+  // ۴. اگر نوع ارسال پس‌کرایه (تیپاکس) باشد
   if (shippingType === 'postpaid') {
     return { cost: 0, sameDay: false, postPaid: true };
   }
 
-  // ۷. هزینه بر اساس نوع ارسال عادی یا سریع
+  // ۵. هزینه بر اساس نوع ارسال عادی یا سریع
   const cost = shippingType === 'fast' ? Number(settings.shippingFast) : Number(settings.shippingNormal);
   return { cost, sameDay: false, postPaid: false };
 }

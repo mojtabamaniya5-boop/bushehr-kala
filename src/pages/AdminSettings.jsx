@@ -135,8 +135,7 @@ export default function AdminSettings({ settings, setSettings, onSave, saving })
       {/* هزینه ارسال */}
       <div className="bg-white rounded-2xl p-4 border border-border">
         <div className="text-xs font-extrabold mb-3">هزینه ارسال</div>
-        <Field label="ارسال سریع (تومان)" value={settings.shippingFast ?? 0} onChange={v => upd('shippingFast', v)} type="number" />
-        <Field label="ارسال عادی (تومان)" value={settings.shippingNormal ?? 0} onChange={v => upd('shippingNormal', v)} type="number" />
+        <Field label="هزینه پست پیشتاز (تومان)" value={settings.shippingFast ?? 0} onChange={v => upd('shippingFast', v)} type="number" />
         <Field label="آستانه ارسال رایگان (۰=غیرفعال)" value={settings.freeShippingFrom ?? 0} onChange={v => upd('freeShippingFrom', v)} type="number" />
         <Field label="پیش‌شماره کدپستی رایگان (با کاما)" value={(settings.freePostalPrefixes || []).join(', ')} onChange={v => updArr('freePostalPrefixes', v)} />
         <Field label="شهرهای رایگان (با کاما)" value={(settings.freeShippingCities || []).join(', ')} onChange={v => updArr('freeShippingCities', v)} />
