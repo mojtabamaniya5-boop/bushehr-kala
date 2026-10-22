@@ -146,8 +146,13 @@ export function calculateShipping(postalCode, address, subtotal, shippingType = 
     return { cost: 0, sameDay: false };
   }
 
-  // ۶. هزینه بر اساس نوع ارسال
+  // ۶. اگر نوع ارسال پس‌کرایه (تیپاکس) باشد
+  if (shippingType === 'postpaid') {
+    return { cost: 0, sameDay: false, postPaid: true };
+  }
+
+  // ۷. هزینه بر اساس نوع ارسال عادی یا سریع
   const cost = shippingType === 'fast' ? Number(settings.shippingFast) : Number(settings.shippingNormal);
-  return { cost, sameDay: false };
+  return { cost, sameDay: false, postPaid: false };
 }
 
