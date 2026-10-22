@@ -843,3 +843,22 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 - ارتفاع عکس 300px، توضیحات با قابلیت باز/بسته شدن.
 - فیکس باگ اسکرول با window.scrollTo(0, 0) در useEffect.
 - هدر (Header.jsx) به رنگ کرم سایت (#FFF8E8) تغییر کرد.
+
+---
+
+## 🔄 v4.7.7 — سیستم ارسال و نرمال‌سازی داده‌ها
+
+### نرمال‌سازی ارقام (`src/utils/digits.js`)
+- تابع `toEnDigits` برای تبدیل ارقام فارسی/عربی به انگلیسی.
+- در `Checkout` و `products.js` برای جلوگیری از باگ عدم تشخیص کد پستی/موبایل استفاده می‌شود.
+
+### منطق ارسال (`calculateShipping`)
+- پارامترها: `(city, postalCode, address, subtotal, shippingType, settings)`
+- اگر `shippingType === 'postpaid'` باشد: `{ cost: 0, postPaid: true }` برمی‌گردد.
+- اگر شهر در `freeShippingCities` باشد یا کد پستی با `freePostalPrefixes` شروع شود: `{ cost: 0 }` برمی‌گردد.
+- در غیر این صورت هزینه پست پیشتاز (`shippingFast`) اعمال می‌شود.
+
+### فرم Checkout
+- فیلد `city` اضافه شد.
+- باکس آبی برای توضیح پس‌کرایه (تیپاکس) اضافه شد.
+- گزینه‌ها: پست پیشتاز (آنلاین) و تیپاکس (پس‌کرایه).
