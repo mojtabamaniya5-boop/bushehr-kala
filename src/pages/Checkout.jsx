@@ -9,7 +9,7 @@ import { SHOP_CONFIG } from '../config/shop'
 import { saveOrderToDB } from '../utils/supabase'
 import { getCurrentUser } from '../utils/auth'
 import { getShopSettings } from '../api/shop'
-import { User, Phone, MapPin, Wallet, Truck, Zap, LogIn, Hash } from 'lucide-react'
+import { User, Phone, MapPin, Wallet, Truck, Zap, LogIn, Hash, ChevronDown, ShoppingBag } from 'lucide-react'
 import { toast } from '../components/Toast'
 
 export default function Checkout() {
@@ -34,6 +34,7 @@ export default function Checkout() {
     note: '',
   })
   const [submitting, setSubmitting] = useState(false)
+  const [showMiniSummary, setShowMiniSummary] = useState(false)
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
