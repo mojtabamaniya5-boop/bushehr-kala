@@ -4,7 +4,7 @@ import Header from '../components/Header'
 import { formatPrice } from '../utils/storage'
 import { addToCart, isFavorite, toggleFavorite, cartCount } from '../utils/cart'
 import { getProductById } from '../api/products'
-import { Heart, ShoppingCart, Star, Check, Minus, Plus, Loader2, Grid3x3 } from 'lucide-react'
+import { Heart, ShoppingCart, Star, Check, Minus, Plus, Loader2, Grid3x3, CheckCircle2, ShieldCheck, XCircle } from 'lucide-react'
 import { toast } from '../components/Toast'
 import ProductImage from '../components/ProductImage'
 
@@ -65,6 +65,8 @@ export default function ProductDetail() {
     )
   }
 
+  const todayJalali = new Intl.DateTimeFormat('fa-IR', { dateStyle: 'long' }).format(new Date());
+
   const discount = product.oldPrice
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0
@@ -108,11 +110,23 @@ export default function ProductDetail() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-xs mb-4">
-            <span className={'w-2 h-2 rounded-full ' + (product.stock > 0 ? 'bg-brand' : 'bg-danger')}></span>
-            <span className="text-ink font-medium">
-              {product.stock > 0 ? 'موجود در انبار (' + product.stock + ' عدد)' : 'ناموجود'}
-            </span>
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            {product.stock > 0 ? (
+              <div className="flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-2 rounded-xl border border-green-200 text-xs font-bold shadow-sm">
+                <CheckCircle2 size={16} className="text-green-600" />
+                موجود در انبار ({product.stock} عدد)
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 bg-red-50 text-red-700 px-3 py-2 rounded-xl border border-red-200 text-xs font-bold shadow-sm">
+                <XCircle size={16} className="text-red-600" />
+                ناموجود
+              </div>
+            )}
+
+            <div className="flex items-center gap-1.5 bg-brand-light/40 text-brand px-3 py-2 rounded-xl border border-brand/20 text-[11px] font-bold">
+              <ShieldCheck size={15} />
+              قیمت و موجودی به‌روز شده در {todayJalali}
+            </div>
           </div>
 
           {product.description && (
