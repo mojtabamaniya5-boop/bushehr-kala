@@ -1,10 +1,10 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import { formatPrice } from '../utils/storage'
 import { addToCart, isFavorite, toggleFavorite, cartCount } from '../utils/cart'
 import { getProductById } from '../api/products'
-import { Heart, ShoppingCart, Star, Check, Minus, Plus, Loader2 } from 'lucide-react'
+import { Heart, ShoppingCart, Star, Check, Minus, Plus, Loader2, Grid3x3 } from 'lucide-react'
 import { toast } from '../components/Toast'
 import ProductImage from '../components/ProductImage'
 
@@ -148,6 +148,13 @@ export default function ProductDetail() {
                 ))}
               </ul>
             </div>
+          )}
+
+          {product.category && (
+            <Link to={`/category/${product.category}`} className="flex items-center justify-center gap-2 w-full bg-white border border-border rounded-2xl p-4 mb-3 text-brand font-extrabold text-sm active:scale-[0.98] transition shadow-sm hover:bg-cream">
+              <Grid3x3 size={18} />
+              مشاهده سایر محصولات در این دسته
+            </Link>
           )}
 
           <div className="flex items-center justify-between bg-white rounded-2xl p-4 border border-border">

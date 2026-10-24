@@ -41,8 +41,11 @@ export default function Home() {
   }, [])
 
 
-  const bestSellers = products.filter(p => p.bestSeller)
-  const newArrivals = products.slice(0, 4)
+  // مرتب‌سازی بر اساس جدیدترین‌ها (فرض بر این است که ID با p شروع شده و زمان ساخت است)
+  const sortedProducts = [...products].sort((a, b) => String(b.id).localeCompare(String(a.id)))
+  
+  const bestSellers = products.filter(p => p.bestSeller).slice(0, 6)
+  const newArrivals = sortedProducts.slice(0, 6)
 
   return (
     <>
@@ -90,7 +93,7 @@ export default function Home() {
                   <Link to="/category" className="text-[11px] text-brand font-bold">همه</Link>
                 </div>
                 <div className="grid grid-cols-2 gap-3 mb-6">
-                  {bestSellers.slice(0, 4).map(p => <ProductCard key={p.id} product={p} />)}
+                  {bestSellers.map(p => <ProductCard key={p.id} product={p} />)}
                 </div>
               </>
             )}
