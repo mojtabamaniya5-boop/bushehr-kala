@@ -54,7 +54,7 @@ async function prerender() {
         if (p.active !== false) {
           torobXml += `<item>\n`
           torobXml += `<title>${p.title}</title>\n`
-          torobXml += `<link>https://cafetorshi.ir/product/${p.id}</link>\n`
+          torobXml += `<link>https://cafetorshi.ir/product/${p.id}?utm_source=torob</link>\n`
           torobXml += `<description>${p.description || ''}</description>\n`
           torobXml += `<g:id>${p.id}</g:id>\n`
           torobXml += `<g:price>${p.price} تومان</g:price>\n`
