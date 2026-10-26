@@ -225,12 +225,7 @@ export default function AdminBlog() {
           <input type="file" accept="image/*" className="hidden" onChange={handleContentImageUpload} disabled={uploadingContent} />
         </label>
 
-        <select onChange={handleInsertProduct} className="w-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold rounded-xl p-3 mb-3 outline-none cursor-pointer active:scale-[0.99] transition">
-          <option value="">🛒 درج باکس محصول در این قسمت از متن...</option>
-          {products.map(p => (
-            <option key={p.id} value={p.id}>{p.title}</option>
-          ))}
-        </select>
+        
 
         
         {/* آپلود عکس شاخص */}
@@ -248,6 +243,23 @@ export default function AdminBlog() {
               <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
             </label>
           </div>
+        </div>
+
+        
+        {/* محصول مرتبط */}
+        <div className="bg-cream/50 border border-border rounded-xl p-3 space-y-2 mt-2">
+          <label className="text-xs font-bold text-gray-700">محصول مرتبط با این مقاله (اختیاری)</label>
+          <p className="text-[10px] text-gray-500 mb-2">اگر محصولی انتخاب کنید، کارت خرید آن به صورت خودکار و بسیار زیبا در انتهای مقاله نمایش داده می‌شود.</p>
+          <select 
+            value={editing.product_id || ''} 
+            onChange={e => setEditing({...editing, product_id: e.target.value})}
+            className="w-full bg-white border border-border rounded-xl p-3 text-xs outline-none cursor-pointer"
+          >
+            <option value="">-- بدون محصول مرتبط --</option>
+            {products.map(p => (
+              <option key={p.id} value={p.id}>{p.title}</option>
+            ))}
+          </select>
         </div>
 
         {/* بخش سئو */}
