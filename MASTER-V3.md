@@ -875,3 +875,20 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 - فایل پایتون `/root/update-torob.py` روی سرور ساخته شد.
 - این اسکریپت مستقیماً از Supabase دیتا می‌خواند و فایل `torob.xml` را در سرور آپدیت می‌کند.
 - در `crontab` سرور تنظیم شد که هر ۱ ساعت اجرا شود (بدون نیاز به بیلد مجدد سایت).
+
+---
+
+## 🔄 v4.9.3 — معماری بلاگ و سئو
+
+### ساختار دیتابیس (articles)
+- فیلدها: id, title, slug, content, image, meta_title, meta_description, focus_keyword, canonical_url, no_index, faq (JSONB), article_type, author_name, author_bio, reviewed_by, published.
+
+### سیستم پریرندر (prerender.mjs)
+- برای هر مقاله یک پوشه با `index.html` می‌سازد.
+- تگ‌های `og:title` و `og:image` را تزریق می‌کند.
+- اسکیمای `Article` و `FAQPage` (JSON-LD) را برای گوگل تولید می‌کند.
+- صفحه اصلی بلاگ هم به صورت استاتیک ساخته می‌شود.
+
+### نکات کلیدی
+- هر مقاله باید حداقل یک عکس با تگ `alt` داشته باشد.
+- عکس‌ها قبل از آپلود در مرورگر فشرده می‌شوند.
