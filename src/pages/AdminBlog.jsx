@@ -37,6 +37,7 @@ const compressImage = (file, maxWidth = 1200, quality = 0.7) => {
 
 export default function AdminBlog() {
   const [articles, setArticles] = useState([])
+  const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -51,7 +52,12 @@ export default function AdminBlog() {
     setLoading(false)
   }
 
-  useEffect(() => { fetchArticles() }, [])
+  useEffect(() => { 
+    fetchArticles() 
+    supabase.from('products').select('id, title, image').eq('active', true).then(({data}) => {
+      if(data) setProducts(data)
+    })
+  }, [])
 
   const handleSave = async () => {
     if (!editing.title || !editing.slug || !editing.content) return toast.error('عنوان، اسلاگ و متن الزامی است')
@@ -153,6 +159,40 @@ export default function AdminBlog() {
     toast.success('فیلدهای سئو پر شد!')
   }
 
+
+  const handleInsertProduct = (e) => {
+    const productId = e.target.value;
+    if (!productId) return;
+    const product = products.find(p => p.id.toString() === productId.toString());
+    if (!product) return;
+
+    const utm = editing.slug ? `&utm_campaign=${editing.slug}` : '';
+    const html = `
+<div class="my-8 p-4 bg-[#FFF8E8] border border-brand/20 rounded-2xl flex flex-col items-center gap-3 text-center shadow-sm">
+  <img src="${product.image}" alt="${product.title}" class="w-full max-w-[200px] h-auto rounded-xl object-cover shadow-sm" />
+  <h3 class="text-lg font-bold text-gray-800">${product.title}</h3>
+  <p class="text-sm text-gray-600">طعم اصیل و خانگی، بدون مواد نگهدارنده. همین حالا سفارش دهید!</p>
+  <a href="https://cafetorshi.ir/product/${product.id}?utm_source=blog&utm_medium=article${utm}" target="_blank" class="mt-2 bg-brand text-white font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
+    🛒 مشاهده و خرید محصول
+  </a>
+</div>
+`;
+
+    const textarea = textareaRef.current;
+    if (textarea) {
+      const startPos = textarea.selectionStart;
+      const endPos = textarea.selectionEnd;
+      const currentContent = editing.content || '';
+      const newContent = currentContent.substring(0, startPos) + '\n' + html + '\n' + currentContent.substring(endPos);
+      setEditing({ ...editing, content: newContent });
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(startPos + html.length + 2, startPos + html.length + 2);
+      }, 100);
+    }
+    e.target.value = '';
+  }
+
   const addFaq = () => setEditing({ ...editing, faq: [...(editing.faq || []), { q: '', a: '' }] })
   const updateFaq = (index, field, value) => {
     const newFaq = [...(editing.faq || [])]
@@ -191,6 +231,14 @@ export default function AdminBlog() {
           {uploadingContent ? 'در حال آپلود عکس...' : 'افزودن عکس به این قسمت از متن'}
           <input type="file" accept="image/*" className="hidden" onChange={handleContentImageUpload} disabled={uploadingContent} />
         </label>
+
+        <select onChange={handleInsertProduct} className="w-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold rounded-xl p-3 mb-3 outline-none cursor-pointer active:scale-[0.99] transition">
+          <option value="">🛒 درج باکس محصول در این قسمت از متن...</option>
+          {products.map(p => (
+            <option key={p.id} value={p.id}>{p.title}</option>
+          ))}
+        </select>
+
         
         {/* آپلود عکس شاخص */}
         <div className="bg-cream/50 border border-border rounded-xl p-3">
