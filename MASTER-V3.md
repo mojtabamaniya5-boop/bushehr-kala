@@ -899,3 +899,6 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 - اتصال کامل `Blog.jsx` و `Article.jsx` به مسیرهای `App.jsx`.
 - اضافه شدن تب `blog` به `Admin.jsx` (دکمه 📝 مقالات).
 - اضافه شدن لیبل‌های راهنما برای فیلدهای Slug, Meta Title, Meta Description, Focus Keyword در `AdminBlog.jsx`.
+
+## 🔄 v4.9.6 — متاتگ‌های ترب
+- تزریق متاتگ‌های ترب در فایل `scripts/prerender.mjs` برای صفحات محصول.
