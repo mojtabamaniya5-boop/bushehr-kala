@@ -168,14 +168,17 @@ export default function AdminBlog() {
 
     const utm = editing.slug ? `&utm_campaign=${editing.slug}` : '';
     const html = `
-<div class="my-6 p-3 md:p-4 bg-[#FFF8E8] border border-[#2E7D32]/20 rounded-2xl flex items-center gap-3 md:gap-4 shadow-sm">
-      <img src="${product.image || 'https://cafetorshi.ir/icon.png'}" alt="${product.title}" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-xl border border-gray-200 shrink-0" />
-      <div class="flex-1 text-right overflow-hidden">
-        <h3 class="text-sm md:text-base font-bold text-gray-800 truncate">${product.title}</h3>
-        <p class="text-[11px] md:text-xs text-gray-500 mt-1 mb-2 line-clamp-2">طعم اصیل و خانگی، بدون مواد نگهدارنده. همین حالا سفارش دهید!</p>
-        <a href="https://cafetorshi.ir/product/${product.id}?utm_source=blog&utm_medium=article${utm}" target="_blank" class="inline-block bg-[#2E7D32] text-white text-[11px] md:text-xs font-bold py-1.5 md:py-2 px-4 md:px-5 rounded-lg active:scale-95 transition">🛒 خرید محصول</a>
-      </div>
-    </div>
+<div class="not-prose my-8 p-4 bg-white border border-gray-100 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4 text-right" dir="rtl">
+  <img src="${product.image || 'https://cafetorshi.ir/icon.png'}" alt="${product.title}" class="w-24 h-24 md:w-28 md:h-28 object-cover rounded-xl shrink-0 border border-gray-100" />
+  <div class="flex-1 w-full text-center sm:text-right">
+    <h3 class="text-base font-bold text-gray-800 mb-1 leading-snug">${product.title}</h3>
+    <p class="text-xs text-gray-500 mb-3 line-clamp-2 leading-relaxed">طعم اصیل و خانگی، بدون مواد نگهدارنده. همین حالا سفارش دهید!</p>
+    <a href="https://cafetorshi.ir/product/${product.id}?utm_source=blog&utm_medium=article${utm}" target="_blank" class="inline-flex items-center justify-center gap-2 bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md hover:bg-green-800 active:scale-95 transition-all w-full sm:w-auto">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+      خرید محصول
+    </a>
+  </div>
+</div>
 `;
 
     const textarea = textareaRef.current;
