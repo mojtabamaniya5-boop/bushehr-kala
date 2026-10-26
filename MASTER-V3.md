@@ -902,3 +902,6 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 
 ## 🔄 v4.9.6 — متاتگ‌های ترب
 - تزریق متاتگ‌های ترب در فایل `scripts/prerender.mjs` برای صفحات محصول.
+
+## 🔄 v4.9.7 — کانفیگ Nginx
+- Nginx: `try_files $uri $uri/index.html $uri/ /index.html;` برای پشتیبانی از لینک‌های بدون اسلش ترب.
