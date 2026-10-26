@@ -1,13 +1,47 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../utils/supabase'
 import { toast } from '../components/Toast'
 import { Edit2, Trash2, Plus, Loader2, Save, X, Wand2, Upload, Image as ImageIcon } from 'lucide-react'
+
+
+const compressImage = (file, maxWidth = 1200, quality = 0.7) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => {
+          const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+            type: 'image/jpeg',
+            lastModified: Date.now(),
+          });
+          resolve(compressedFile);
+        }, 'image/jpeg', quality);
+      };
+    };
+  });
+};
 
 export default function AdminBlog() {
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
   const [uploading, setUploading] = useState(false)
+  const [uploadingContent, setUploadingContent] = useState(false)
+  const textareaRef = useRef(null)
 
   const fetchArticles = async () => {
     setLoading(true)
@@ -23,7 +57,7 @@ export default function AdminBlog() {
     if (!editing.title || !editing.slug || !editing.content) return toast.error('عنوان، اسلاگ و متن الزامی است')
     const isNew = !editing.id
     
-    // پاکسازی آرایه سوالات (اگر کاربر به اشتباه دوبار براکت زده بود)
+    // پاکسازی آرایه سوالات
     let cleanFaq = editing.faq || []
     if (cleanFaq.length === 1 && Array.isArray(cleanFaq[0])) {
       cleanFaq = cleanFaq[0]
@@ -48,26 +82,64 @@ export default function AdminBlog() {
     if (!window.confirm('آیا از حذف این مقاله مطمئن هستید؟')) return;
     const { data, error } = await supabase.from('articles').delete().eq('id', id).select();
     if (error) toast.error('خطا در حذف: ' + error.message);
-    else if (data.length === 0) toast.error('شما دسترسی حذف ندارید یا مقاله پیدا نشد');
+    else if (data.length === 0) toast.error('شما دسترسی حذف ندارید');
     else {
-      toast.success('مقاله با موفقیت حذف شد');
+      toast.success('حذف شد');
       fetchArticles();
     }
   }
 
+  // آپلود عکس شاخص (کاور)
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
     setUploading(true)
-    const fileName = `blog-${Date.now()}.${file.name.split('.').pop()}`
-    const { error } = await supabase.storage.from('product-images').upload(fileName, file)
+    toast.info('در حال فشرده‌سازی و آپلود...')
+    const compressedFile = await compressImage(file)
+    const fileName = `blog-${Date.now()}.jpg`
+    const { error } = await supabase.storage.from('product-images').upload(fileName, compressedFile)
     if (error) toast.error('خطا در آپلود: ' + error.message)
     else {
       const { data } = supabase.storage.from('product-images').getPublicUrl(fileName)
       setEditing({ ...editing, image: data.publicUrl })
-      toast.success('عکس آپلود شد')
+      toast.success('عکس شاخص آپلود شد')
     }
     setUploading(false)
+  }
+
+  // آپلود عکس داخل متن مقاله
+  const handleContentImageUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setUploadingContent(true)
+    toast.info('در حال فشرده‌سازی و آپلود...')
+    const compressedFile = await compressImage(file)
+    const fileName = `blog-content-${Date.now()}.jpg`
+    
+    const { error } = await supabase.storage.from('product-images').upload(fileName, compressedFile)
+    if (error) {
+      toast.error('خطا در آپلود عکس: ' + error.message)
+    } else {
+      const { data } = supabase.storage.from('product-images').getPublicUrl(fileName)
+      // تولید ALT خودکار از عنوان یا کلمه کلیدی
+      const safeAlt = (editing.focus_keyword || editing.title || 'مقاله کافه ترشی').replace(/"/g, '')
+      const imgTag = `\n<img src="${data.publicUrl}" alt="${safeAlt}" class="w-full rounded-2xl my-4 shadow-sm object-cover" />\n`
+      const textarea = textareaRef.current
+      
+      if (textarea) {
+        const startPos = textarea.selectionStart
+        const endPos = textarea.selectionEnd
+        const currentContent = editing.content || ''
+        const newContent = currentContent.substring(0, startPos) + imgTag + currentContent.substring(endPos)
+        setEditing({ ...editing, content: newContent })
+        setTimeout(() => {
+          textarea.focus()
+          textarea.setSelectionRange(startPos + imgTag.length, startPos + imgTag.length)
+        }, 100)
+      }
+      toast.success('عکس به متن اضافه شد')
+    }
+    setUploadingContent(false)
   }
 
   const autoGenerateSEO = () => {
@@ -104,11 +176,25 @@ export default function AdminBlog() {
         </div>
         
         <input placeholder="عنوان اصلی (H1)" value={editing.title || ''} onChange={e => setEditing({...editing, title: e.target.value})} className="w-full bg-cream border border-border rounded-xl p-3 text-xs outline-none" />
-        <textarea placeholder="محتوای اصلی مقاله" rows={8} value={editing.content || ''} onChange={e => setEditing({...editing, content: e.target.value})} className="w-full bg-cream border border-border rounded-xl p-3 text-xs outline-none" />
         
-        {/* آپلود عکس */}
+        {/* متن مقاله و آپلود عکس داخل متن */}
+        <textarea 
+          ref={textareaRef}
+          placeholder="محتوای اصلی مقاله (برای درج عکس، نشانگر را در متن قرار دهید و روی دکمه زیر بزنید)" 
+          rows={10} 
+          value={editing.content || ''} 
+          onChange={e => setEditing({...editing, content: e.target.value})} 
+          className="w-full bg-cream border border-border rounded-xl p-3 text-xs outline-none leading-6" 
+        />
+        <label className={`flex justify-center items-center gap-2 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition mt-1 mb-3 ${uploadingContent ? 'bg-gray-300' : 'bg-brand-light/50 text-brand border border-brand/20 active:scale-95'}`}>
+          {uploadingContent ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
+          {uploadingContent ? 'در حال آپلود عکس...' : 'افزودن عکس به این قسمت از متن'}
+          <input type="file" accept="image/*" className="hidden" onChange={handleContentImageUpload} disabled={uploadingContent} />
+        </label>
+        
+        {/* آپلود عکس شاخص */}
         <div className="bg-cream/50 border border-border rounded-xl p-3">
-          <label className="text-[10px] font-bold text-muted block mb-2">تصویر شاخص مقاله</label>
+          <label className="text-[10px] font-bold text-muted block mb-2">تصویر شاخص مقاله (کاور بالای صفحه)</label>
           <div className="flex items-center gap-3">
             {editing.image ? (
               <img src={editing.image} alt="عکس" className="w-16 h-16 rounded-xl object-cover border border-border" />

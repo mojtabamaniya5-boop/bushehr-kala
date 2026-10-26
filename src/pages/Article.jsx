@@ -55,9 +55,8 @@ export default function Article() {
         </div>
 
         {/* محتوای مقاله با پشتیبانی از خطوط جدید و HTML */}
-        <div className="prose prose-sm max-w-none text-ink leading-8 text-justify whitespace-pre-line">
-          {article.content}
-        </div>
+        <div className="prose prose-sm max-w-none text-ink leading-8 text-justify text-[13px] whitespace-pre-wrap" 
+             dangerouslySetInnerHTML={{ __html: (article.content || '').replace(/\n/g, '<br/>') }} />
 
         {/* سوالات متداول */}
         {article.faq && article.faq.length > 0 && (

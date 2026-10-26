@@ -42,6 +42,14 @@ async function prerender() {
       }
     }
     
+    // ساخت صفحه اصلی بلاگ
+    const blogDir = path.join(docsDir, 'blog')
+    fs.mkdirSync(blogDir, { recursive: true })
+    let blogIndexHtml = baseHtml.replace(/<title>.*?<\/title>/, `<title>مجله کافه ترشی | مقالات و دستور پخت</title>`)
+    blogIndexHtml = blogIndexHtml.replace('</head>', `<meta name="description" content="جدیدترین مقالات، دستور پخت‌ها و نکات تغذیه‌ای در مجله کافه ترشی">\n</head>`)
+    fs.writeFileSync(path.join(blogDir, 'index.html'), blogIndexHtml)
+    sitemapUrls.push('https://cafetorshi.ir/blog')
+
     const articlesRaw = await fetchFromSupabase('articles')
     const articles = articlesRaw ? articlesRaw.filter(a => a.published) : null
     if (articles) {
