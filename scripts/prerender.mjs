@@ -26,7 +26,7 @@ async function prerender() {
     const baseHtml = fs.readFileSync(path.join(docsDir, 'index.html'), 'utf-8')
     let sitemapUrls = []
 
-    // ۱. ساخت صفحات محصولات
+    // ۱. محصولات
     const products = await fetchFromSupabase('products')
     if (products) {
       for (const p of products) {
@@ -44,7 +44,7 @@ async function prerender() {
       }
     }
 
-    // ۲. ساخت صفحات مقالات
+    // ۲. مقالات
     const articlesRaw = await fetchFromSupabase('articles')
     const articles = articlesRaw ? articlesRaw.filter(a => a.published) : null
     const blogDir = path.join(docsDir, 'blog')
@@ -99,41 +99,30 @@ async function prerender() {
       }
     }
 
-    // ۳. ساخت صفحه اصلی بلاگ (باید همیشه آخر باشد تا با مقالات تداخل نکند)
+    // ۳. صفحه اصلی بلاگ (بدون تداخل)
     const blogIndexHtml = baseHtml.replace(/<title>.*?<\/title>/, `<title>مجله کافه ترشی | مقالات و دستور پخت</title>`)
     const blogIndexWithMeta = blogIndexHtml.replace('</head>', `<meta name="description" content="جدیدترین مقالات، دستور پخت‌ها و نکات تغذیه‌ای در مجله کافه ترشی">\n</head>`)
     fs.writeFileSync(path.join(blogDir, 'index.html'), blogIndexWithMeta)
     sitemapUrls.push('https://cafetorshi.ir/blog')
 
-    // ۴. ساخت سایت‌مپ
+    // ۴. سایت‌مپ و ترب
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`
     sitemap += `  <url><loc>https://cafetorshi.ir/</loc><priority>1.0</priority></url>\n`
     for (const url of sitemapUrls) sitemap += `  <url><loc>${url}</loc><priority>0.8</priority></url>\n`
     sitemap += `</urlset>`
     fs.writeFileSync(path.join(docsDir, 'sitemap.xml'), sitemap)
 
-    // ۵. ساخت فید ترب
     let torobXml = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n<channel>\n<title>کافه ترشی</title>\n<link>https://cafetorshi.ir</link>\n<description>فروشگاه ترشیجات خانگی</description>\n`
     if (products) {
       for (const p of products) {
         if (p.active !== false) {
-          torobXml += `<item>\n`
-          torobXml += `<title>${p.title}</title>\n`
-          torobXml += `<link>https://cafetorshi.ir/product/${p.id}?utm_source=torob</link>\n`
-          torobXml += `<description>${p.description || ''}</description>\n`
-          torobXml += `<g:id>${p.id}</g:id>\n`
-          torobXml += `<g:price>${p.price} تومان</g:price>\n`
-          torobXml += `<g:availability>${p.stock > 0 ? 'in stock' : 'out of stock'}</g:availability>\n`
-          torobXml += `<g:image_link>${p.image || 'https://cafetorshi.ir/icon.png'}</g:image_link>\n`
-          torobXml += `<g:condition>new</g:condition>\n`
-          torobXml += `</item>\n`
+          torobXml += `<item>\n<title>${p.title}</title>\n<link>https://cafetorshi.ir/product/${p.id}?utm_source=torob</link>\n<description>${p.description || ''}</description>\n<g:id>${p.id}</g:id>\n<g:price>${p.price} تومان</g:price>\n<g:availability>${p.stock > 0 ? 'in stock' : 'out of stock'}</g:availability>\n<g:image_link>${p.image || 'https://cafetorshi.ir/icon.png'}</g:image_link>\n<g:condition>new</g:condition>\n</item>\n`
         }
       }
     }
     torobXml += `</channel>\n</rss>`
     fs.writeFileSync(path.join(docsDir, 'torob.xml'), torobXml)
     console.log('✅ torob.xml ساخته شد.')
-
     console.log('✅ رندر با موفقیت انجام شد.')
   } catch (err) { 
     console.error(err);
