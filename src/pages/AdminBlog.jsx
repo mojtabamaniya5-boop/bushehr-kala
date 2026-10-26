@@ -169,17 +169,7 @@ export default function AdminBlog() {
     const utm = editing.slug ? `&utm_campaign=${editing.slug}` : '';
         // اسکیپ کردن دابل کوتیشن در عنوان برای جلوگیری از شکستن تگ
     const safeTitle = (product.title || '').replace(/"/g, '&quot;');
-
-    const html = `
-<div style="white-space: normal; display: flex; flex-direction: row; align-items: center; gap: 12px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 12px; margin: 24px 0; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);" dir="rtl">
-  <img src="${product.image || 'https://cafetorshi.ir/icon.png'}" alt="${safeTitle}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 12px; flex-shrink: 0;" />
-  <div style="flex: 1; text-align: right;">
-    <h3 style="margin: 0 0 4px 0; font-size: 14px; font-weight: bold; color: #1f2937; line-height: 1.4;">${product.title}</h3>
-    <p style="margin: 0 0 8px 0; font-size: 11px; color: #6b7280; line-height: 1.6;">طعم اصیل و خانگی، بدون مواد نگهدارنده. همین حالا سفارش دهید!</p>
-    <a href="https://cafetorshi.ir/product/${product.id}?utm_source=blog&utm_medium=article${utm}" target="_blank" style="display: inline-block; background-color: #2E7D32; color: #ffffff; font-size: 12px; font-weight: bold; padding: 8px 16px; border-radius: 8px; text-decoration: none;">🛒 خرید محصول</a>
-  </div>
-</div>
-`;
+    const html = `<div style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 12px !important; background: #ffffff !important; border: 1px solid #e5e7eb !important; border-radius: 16px !important; padding: 12px !important; margin: 24px 0 !important; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05) !important; white-space: normal !important; direction: rtl !important;" dir="rtl"><img src="${product.image || 'https://cafetorshi.ir/icon.png'}" alt="${safeTitle}" style="width: 80px !important; height: 80px !important; min-width: 80px !important; object-fit: cover !important; border-radius: 12px !important; margin: 0 !important; padding: 0 !important; display: inline-block !important;" /><div style="flex: 1 !important; text-align: right !important; display: flex !important; flex-direction: column !important; align-items: flex-start !important; white-space: normal !important;"><h3 style="margin: 0 0 4px 0 !important; font-size: 14px !important; font-weight: bold !important; color: #1f2937 !important; line-height: 1.4 !important;">${product.title}</h3><p style="margin: 0 0 8px 0 !important; font-size: 11px !important; color: #6b7280 !important; line-height: 1.6 !important; white-space: normal !important;">طعم اصیل و خانگی. همین حالا سفارش دهید!</p><a href="https://cafetorshi.ir/product/${product.id}?utm_source=blog&utm_medium=article${utm}" target="_blank" style="display: inline-block !important; background-color: #2E7D32 !important; color: #ffffff !important; font-size: 12px !important; font-weight: bold !important; padding: 6px 16px !important; border-radius: 8px !important; text-decoration: none !important; margin: 0 !important;">🛒 خرید محصول</a></div></div>`;
 
     const textarea = textareaRef.current;
     if (textarea) {
