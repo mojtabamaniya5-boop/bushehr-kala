@@ -834,3 +834,8 @@
 - بازنویسی کامل کامپوننت `Article.jsx` برای رندر یک کارت محصولِ واقعی (React Component) به جای HTML string.
 ### درس طلایی
 - هرگز از `dangerouslySetInnerHTML` برای کامپوننت‌های تعاملی (مثل دکمه خرید) استفاده نکنید. همیشه از کامپوننت‌های React استفاده کنید.
+
+---
+
+## ۱۴۰۵/۰۸/۰۴ — ثبت موفق اولین مقاله در Search Console
+- مقاله «ترشی انبه» با اسلاگ \`torshi-anbe-khaneghi\` با موفقیت در Google Search Console ثبت شد و درخواست ایندکس (Request Indexing) برای آن ارسال گردید.
