@@ -892,3 +892,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 ### نکات کلیدی
 - هر مقاله باید حداقل یک عکس با تگ `alt` داشته باشد.
 - عکس‌ها قبل از آپلود در مرورگر فشرده می‌شوند.
+
+---
+
+## 🔄 v4.9.4 — تکمیل بلاگ و سئو
+- اتصال کامل `Blog.jsx` و `Article.jsx` به مسیرهای `App.jsx`.
+- اضافه شدن تب `blog` به `Admin.jsx` (دکمه 📝 مقالات).
+- اضافه شدن لیبل‌های راهنما برای فیلدهای Slug, Meta Title, Meta Description, Focus Keyword در `AdminBlog.jsx`.
