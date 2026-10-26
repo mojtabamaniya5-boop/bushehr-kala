@@ -56,7 +56,7 @@ export default function Article() {
 
         {/* محتوای مقاله با پشتیبانی از خطوط جدید و HTML */}
         <div className="prose prose-sm max-w-none text-ink leading-8 text-justify text-[13px] whitespace-pre-wrap" 
-             dangerouslySetInnerHTML={{ __html: (article.content || '').replace(/\n/g, '<br/>') }} />
+             dangerouslySetInnerHTML={{ __html: (article.content || '').replace(/\n/g, '<br/>') ? (article.content || '').replace(/\n/g, '<br/>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }} />
 
         {/* سوالات متداول */}
         {article.faq && article.faq.length > 0 && (

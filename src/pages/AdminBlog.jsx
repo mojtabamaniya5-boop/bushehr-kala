@@ -168,14 +168,14 @@ export default function AdminBlog() {
 
     const utm = editing.slug ? `&utm_campaign=${editing.slug}` : '';
     const html = `
-<div class="my-8 p-4 bg-[#FFF8E8] border border-brand/20 rounded-2xl flex flex-col items-center gap-3 text-center shadow-sm">
-  <img src="${product.image}" alt="${product.title}" class="w-full max-w-[200px] h-auto rounded-xl object-cover shadow-sm" />
-  <h3 class="text-lg font-bold text-gray-800">${product.title}</h3>
-  <p class="text-sm text-gray-600">طعم اصیل و خانگی، بدون مواد نگهدارنده. همین حالا سفارش دهید!</p>
-  <a href="https://cafetorshi.ir/product/${product.id}?utm_source=blog&utm_medium=article${utm}" target="_blank" class="mt-2 bg-brand text-white font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-    🛒 مشاهده و خرید محصول
-  </a>
-</div>
+<div class="my-6 p-3 md:p-4 bg-[#FFF8E8] border border-[#2E7D32]/20 rounded-2xl flex items-center gap-3 md:gap-4 shadow-sm">
+      <img src="${product.image || 'https://cafetorshi.ir/icon.png'}" alt="${product.title}" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-xl border border-gray-200 shrink-0" />
+      <div class="flex-1 text-right overflow-hidden">
+        <h3 class="text-sm md:text-base font-bold text-gray-800 truncate">${product.title}</h3>
+        <p class="text-[11px] md:text-xs text-gray-500 mt-1 mb-2 line-clamp-2">طعم اصیل و خانگی، بدون مواد نگهدارنده. همین حالا سفارش دهید!</p>
+        <a href="https://cafetorshi.ir/product/${product.id}?utm_source=blog&utm_medium=article${utm}" target="_blank" class="inline-block bg-[#2E7D32] text-white text-[11px] md:text-xs font-bold py-1.5 md:py-2 px-4 md:px-5 rounded-lg active:scale-95 transition">🛒 خرید محصول</a>
+      </div>
+    </div>
 `;
 
     const textarea = textareaRef.current;
