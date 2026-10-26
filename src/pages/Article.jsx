@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../utils/supabase'
 import Header from '../components/Header'
-import { Loader2, ArrowRight, User, CheckCircle2 } from 'lucide-react'
+import { Loader2, ArrowRight, User, CheckCircle2, ShoppingCart } from 'lucide-react'
 
 export default function Article() {
   const { slug } = useParams()
@@ -18,43 +18,22 @@ export default function Article() {
       })
   }, [slug])
 
-  if (loading) return (<><Header title="مقاله" back /><div className="flex justify-center pt-20"><Loader2 className="animate-spin text-brand" size={32} />
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
-        </div>
-      )}
-    
-</div></>)
-  
+  if (loading) return (
+    <>
+      <Header title="مقاله" back />
+      <div className="flex justify-center pt-20"><Loader2 className="animate-spin text-brand" size={32} /></div>
+    </>
+  )
+
   if (!article) return (
-    <><Header title="یافت نشد" back />
-    <div className="text-center pt-20">
-      <p className="text-4xl mb-3">📄</p>
-      <p className="font-bold mb-4">مقاله پیدا نشد</p>
-      <Link to="/blog" className="text-brand font-bold text-sm">بازگشت به لیست مقالات</Link>
-    
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
-        </div>
-      )}
-    
-</div></>
+    <>
+      <Header title="یافت نشد" back />
+      <div className="text-center pt-20">
+        <p className="text-4xl mb-3">📄</p>
+        <p className="font-bold mb-4">مقاله پیدا نشد</p>
+        <Link to="/blog" className="text-brand font-bold text-sm">بازگشت به لیست مقالات</Link>
+      </div>
+    </>
   )
 
   return (
@@ -64,125 +43,42 @@ export default function Article() {
         {article.image && (
           <img src={article.image} alt={article.title} className="w-full h-56 object-cover rounded-3xl mb-5 shadow-sm" />
         )}
-        
+
         <h1 className="font-extrabold text-xl leading-8 text-ink mb-4">{article.title}</h1>
-        
+
         <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center text-brand"><User size={16} />
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
-        </div>
-      )}
-    
-</div>
+            <div className="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center text-brand">
+              <User size={16} />
+            </div>
             <div>
-              <div className="text-xs font-bold text-ink">{article.author_name}
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
+              <div className="text-xs font-bold text-ink">{article.author_name || 'کافه ترشی'}</div>
+              <div className="text-[10px] text-muted">نویسنده</div>
+            </div>
           </div>
-        </div>
-      )}
-    
-</div>
-              <div className="text-[10px] text-muted">نویسنده
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
-        </div>
-      )}
-    
-</div>
-            
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
-        </div>
-      )}
-    
-</div>
-          
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
-        </div>
-      )}
-    
-</div>
           {article.reviewed_by && (
             <div className="flex items-center gap-1 text-[10px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded-lg">
               <CheckCircle2 size={12} /> تایید شده توسط {article.reviewed_by}
-            
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
-        </div>
-      )}
-    
-</div>
+            </div>
           )}
-        
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
         </div>
-      )}
-    
-</div>
 
         {/* محتوای مقاله با پشتیبانی از خطوط جدید و HTML */}
-        <div className="prose prose-sm max-w-none text-ink leading-8 text-justify text-[13px] whitespace-pre-wrap" 
+        <div className="prose prose-sm max-w-none text-ink leading-8 text-justify text-[13px] whitespace-pre-wrap"
              dangerouslySetInnerHTML={{ __html: (article.content || '').replace(/\n/g, '<br/>') ? (article.content || '').replace(/\n/g, '<br/>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }} />
+
+        {/* 🛒 کارت محصول مرتبط (معماری جدید و تمیز) */}
+        {article.product_id && (
+          <div className="mt-10 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex items-center gap-4" dir="rtl">
+            <div className="flex-1 text-right">
+              <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
+              <p className="text-xs text-gray-500 mb-3">این محصول دقیقا همان چیزی است که در این مقاله درباره آن صحبت کردیم.</p>
+              <Link to={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-flex items-center gap-2 bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
+                <ShoppingCart size={16} /> مشاهده و خرید محصول
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* سوالات متداول */}
         {article.faq && article.faq.length > 0 && (
@@ -191,82 +87,12 @@ export default function Article() {
             <div className="space-y-3">
               {(Array.isArray(article.faq[0]) ? article.faq[0] : article.faq).filter(f => f.q?.trim() && f.a?.trim()).map((f, i) => (
                 <div key={i} className="bg-white rounded-xl p-3 shadow-sm border border-border/50">
-                  <div className="font-bold text-xs text-brand mb-1.5">{f.q}
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
-        </div>
-      )}
-    
-</div>
-                  <div className="text-[11px] text-muted leading-6">{f.a}
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
-        </div>
-      )}
-    
-</div>
-                
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
-        </div>
-      )}
-    
-</div>
+                  <div className="font-bold text-xs text-brand mb-1.5">{f.q}</div>
+                  <div className="text-[11px] text-muted leading-6">{f.a}</div>
+                </div>
               ))}
-            
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
+            </div>
           </div>
-        </div>
-      )}
-    
-</div>
-          
-      {/* کامپوننت محصول مرتبط */}
-      {article.product_id && (
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-          <div className="flex-1 text-center sm:text-right">
-            <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-            <p className="text-xs text-gray-500 mb-3">برای خرید این محصول کلیک کنید</p>
-            <a href={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-              🛒 مشاهده و خرید محصول
-            </a>
-          </div>
-        </div>
-      )}
-    
-</div>
         )}
 
         <Link to="/blog" className="mt-8 flex items-center justify-center gap-2 text-brand font-bold text-sm bg-brand-light/30 py-3 rounded-2xl active:scale-95 transition">
