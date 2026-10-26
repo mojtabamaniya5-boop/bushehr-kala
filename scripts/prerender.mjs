@@ -33,12 +33,24 @@ async function prerender() {
         const dir = path.join(docsDir, 'product', p.id)
         fs.mkdirSync(dir, { recursive: true })
         let html = baseHtml.replace(/<title>.*?<\/title>/, `<title>${p.title} | کافه ترشی</title>`)
+        const torobMeta = `
+    <meta name="product_id" content="${p.id}">
+    <meta name="product_name" content="${p.title}">
+    <meta property="og:image" content="${p.image || 'https://cafetorshi.ir/icon.png'}">
+    <meta name="product_price" content="${p.price * 10}">
+    <meta name="availability" content="${p.stock > 0 ? 'instock' : 'outofstock'}">
+    <meta name="guarantee" content="اصالت کالا">
+    <meta property="og:title" content="${p.title} | کافه ترشی">
+    <meta property="og:description" content="${p.description || 'خرید ' + p.title + ' از کافه ترشی'}">
+    <meta property="og:url" content="https://cafetorshi.ir/product/${p.id}">
+    <meta property="og:type" content="product">
+    `
         const jsonLd = {
           "@context": "https://schema.org/", "@type": "Product",
           "name": p.title, "image": p.image || '', "description": p.description || '',
           "offers": { "@type": "Offer", "priceCurrency": "IRR", "price": p.price * 10 }
         }
-        html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n</head>`)
+        html = html.replace('</head>', torobMeta + `\n<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n</head>`)
         fs.writeFileSync(path.join(dir, 'index.html'), html)
         sitemapUrls.push(`https://cafetorshi.ir/product/${p.id}`)
       }
