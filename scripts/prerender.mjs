@@ -41,7 +41,62 @@ async function prerender() {
         sitemapUrls.push(`https://cafetorshi.ir/product/${p.id}`)
       }
     }
+    
+    const articlesRaw = await fetchFromSupabase('articles')
+    const articles = articlesRaw ? articlesRaw.filter(a => a.published) : null
+    if (articles) {
+      for (const a of articles) {
+        const dir = path.join(docsDir, 'blog', a.slug)
+        fs.mkdirSync(dir, { recursive: true })
+        
+        let html = baseHtml.replace(/<title>.*?<\/title>/, `<title>${a.meta_title || a.title} | کافه ترشی</title>`)
+        
+        // ۱. تزریق تگ‌های متا و Open Graph (برای شبکه‌های اجتماعی و گوگل)
+        const metaTags = `
+    <meta name="description" content="${a.meta_description || ''}">
+    <meta property="og:title" content="${a.meta_title || a.title}">
+    <meta property="og:description" content="${a.meta_description || ''}">
+    <meta property="og:image" content="${a.image || ''}">
+    <meta property="og:url" content="https://cafetorshi.ir/blog/${a.slug}">
+    <meta property="og:type" content="article">
+    ${a.no_index ? '<meta name="robots" content="noindex, nofollow">' : '<meta name="robots" content="index, follow">'}
+    `
+        html = html.replace('</head>', metaTags + '\n</head>')
+
+        // ۲. ساخت اسکیمای JSON-LD (برای نمایش ستاره‌دار در گوگل)
+        let jsonLd = {
+          "@context": "https://schema.org/",
+          "@type": a.article_type || "Article",
+          "headline": a.title,
+          "image": a.image || '',
+          "author": { "@type": "Person", "name": a.author_name || "کافه ترشی" },
+          "publisher": { "@type": "Organization", "name": "کافه ترشی", "logo": { "@type": "ImageObject", "url": "https://cafetorshi.ir/icon.png" } },
+          "datePublished": a.created_at,
+          "dateModified": a.updated_at || a.created_at,
+          "description": a.meta_description || ""
+        };
+
+        // اضافه کردن اسکیمای سوالات متداول
+        if (a.faq) {
+          let faqList = Array.isArray(a.faq[0]) ? a.faq[0] : a.faq;
+          const cleanFaq = faqList.filter(f => f.q && f.a);
+          if (cleanFaq.length > 0) {
+            jsonLd.mainEntity = cleanFaq.map(f => ({
+              "@type": "Question", "name": f.q, "acceptedAnswer": { "@type": "Answer", "text": f.a }
+            }));
+            if (jsonLd["@type"] === "Article") jsonLd["@type"] = ["Article", "FAQPage"];
+            else jsonLd["@type"] = "FAQPage";
+          }
+        }
+
+        html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n</head>`)
+        fs.writeFileSync(path.join(dir, 'index.html'), html)
+        sitemapUrls.push(`https://cafetorshi.ir/blog/${a.slug}`)
+      }
+    }
+
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`
+    
     sitemap += `  <url><loc>https://cafetorshi.ir/</loc><priority>1.0</priority></url>\n`
     for (const url of sitemapUrls) sitemap += `  <url><loc>${url}</loc><priority>0.8</priority></url>\n`
     sitemap += `</urlset>`

@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
-import { X, Home, Grid3x3, Heart, ShoppingCart, Package, User, Phone, Info, FileText, Send, Sparkles } from 'lucide-react'
+import { X, Home, Grid3x3, Heart, ShoppingCart, Package, User, Phone, Info, FileText, Send, Sparkles, BookOpen } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SHOP_CONFIG } from '../config/shop'
 
 const mainMenu = [
   { path: '/',          label: 'خانه',            icon: Home,         emoji: '🏠' },
   { path: '/category',  label: 'دسته‌بندی‌ها',     icon: Grid3x3,      emoji: '🫙' },
+  { path: '/blog',      label: 'مقالات و دستور پخت', icon: BookOpen, emoji: '📚' },
   { path: '/favorites', label: 'علاقه‌مندی‌ها',    icon: Heart,        emoji: '❤️' },
   { path: '/cart',      label: 'سبد خرید',         icon: ShoppingCart, emoji: '🛒' },
   { path: '/orders',    label: 'پیگیری سفارشات',  icon: Package,      emoji: '📦' },
