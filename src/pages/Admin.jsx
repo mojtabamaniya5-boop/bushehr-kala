@@ -7,8 +7,9 @@ import { formatPrice } from '../utils/storage'
 import { toast } from '../components/Toast'
 import AdminCustomers from './AdminCustomers'
 import AdminSettings from './AdminSettings'
+import AdminBlog from './AdminBlog'
 import { checkAdminSession, updateSessionTimestamp, clearSession, sendPasswordReset, changePassword, isRecoveryMode } from '../utils/admin-auth'
-import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Settings, Hash, ShieldCheck, Users, Mail, KeyRound, Search } from 'lucide-react'
+import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Settings, Hash, ShieldCheck, Users, Mail, KeyRound, Search, FileText } from 'lucide-react'
 
 export default function Admin() {
   const [session, setSession] = useState(null)
@@ -481,6 +482,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
           <TabBtn active={tab === 'orders'} onClick={() => setTab('orders')} icon={ShoppingBag} label="سفارش‌ها" />
           <TabBtn active={tab === 'stats'} onClick={() => setTab('stats')} icon={BarChart3} label="آمار" />
           <TabBtn active={tab === 'settings'} onClick={() => setTab('settings')} icon={Settings} label="تنظیمات" />
+          <TabBtn active={tab === 'blog'} onClick={() => setTab('blog')} icon={FileText} label="مقالات" />
         </div>
 
         {loading && <div className="flex justify-center py-10"><Loader2 className="animate-spin text-brand" size={24} /></div>}
@@ -633,6 +635,8 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
             </div>
           </div>
         )}
+        {!loading && tab === 'blog' && <AdminBlog />}
+
         {!loading && tab === 'settings' && (
           <AdminSettings
             settings={shopSettings}

@@ -7,6 +7,8 @@ import Drawer from './components/Drawer'
 import { storage } from './utils/storage'
 
 import Home from './pages/Home'
+import Blog from './pages/Blog'
+import Article from './pages/Article'
 import NotFound from './pages/NotFound'
 import Categories from './pages/Categories'
 import Cart from './pages/Cart'
@@ -69,6 +71,8 @@ export default function App() {
         <Route path="/category/:catId" element={<Categories />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<Article />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/success/:id" element={<Success />} />

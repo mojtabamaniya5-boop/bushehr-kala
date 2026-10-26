@@ -1,33 +1,35 @@
-#!/bin/bash
-cd ~/bushehr-kala
+#!/data/data/com.termux/files/usr/bin/bash
+clear
 echo "=========================================="
-echo "📦 برای چت جدید، این رو کپی کن:"
+echo "📦 برای چت جدید، این متن رو کپی کن:"
 echo "=========================================="
 echo ""
-echo "سلام. من مجتبی، صاحب کافه ترشی (cafetorshi.ir)."
-echo ""
-echo "وظیفه:"
-echo "1. اسناد رو کامل بخون"
-echo "2. خلاصه ۵ خطی بده"
-echo "3. مشکل فعلی رو از REMAINING + HANDOFF استخراج کن"
-echo "4. منتظر «شروع کن» بمون"
-echo ""
-echo "قوانین:"
-echo "- فارسی"
-echo "- کد کوتاه و کامل"
-echo "- هر دستور، بگو کجا اجرا شه"
-echo "- هر تغییر → آپدیت اسناد → git push"
-echo "- کلیدهای حساس تو اسناد نباشن"
-echo ""
-echo "محدودیت:"
-echo "- Termux فقط، بدون کامپیوتر"
-echo "- JavaScript نه TypeScript"
-echo ""
-echo "منتظر ۵ فایل هستم."
-echo ""
-echo "=========================================="
-echo "=== START.md ==="
-cat START.md 2>/dev/null
+cat << 'INTRO'
+سلام. من مجتبی، صاحب کافه ترشی (cafetorshi.ir).
+
+وظیفه:
+1. اسناد رو کامل بخون
+2. خلاصه ۵ خطی بده
+3. مشکل فعلی رو از REMAINING + HANDOFF استخراج کن
+4. منتظر «شروع کن» بمون
+
+قوانین:
+- فارسی
+- کد کوتاه و کامل
+- هر دستور، بگو کجا اجرا شه
+- هر تغییر → آپدیت اسناد → git push
+- کلیدهای حساس تو اسناد نباشن
+
+محدودیت:
+- Termux فقط، بدون کامپیوتر
+- JavaScript نه TypeScript
+
+منتظر ۵ فایل هستم.
+
+==========================================
+=== START.md ===
+INTRO
+cat START.md
 echo ""
 echo "=== MASTER-V3.md ==="
 cat MASTER-V3.md
@@ -43,3 +45,5 @@ cat CHANGELOG.md
 echo ""
 echo "=== REMAINING.md ==="
 cat REMAINING.md
+echo ""
+echo "=========================================="
