@@ -25,6 +25,8 @@ async function prerender() {
   try {
     const baseHtml = fs.readFileSync(path.join(docsDir, 'index.html'), 'utf-8')
     let sitemapUrls = []
+
+    // ۱. ساخت صفحات محصولات
     const products = await fetchFromSupabase('products')
     if (products) {
       for (const p of products) {
@@ -41,25 +43,21 @@ async function prerender() {
         sitemapUrls.push(`https://cafetorshi.ir/product/${p.id}`)
       }
     }
-    
-    // ساخت صفحه اصلی بلاگ
-    const blogDir = path.join(docsDir, 'blog')
-    fs.mkdirSync(blogDir, { recursive: true })
-    let blogIndexHtml = baseHtml.replace(/<title>.*?<\/title>/, `<title>مجله کافه ترشی | مقالات و دستور پخت</title>`)
-    blogIndexHtml = blogIndexHtml.replace('</head>', `<meta name="description" content="جدیدترین مقالات، دستور پخت‌ها و نکات تغذیه‌ای در مجله کافه ترشی">\n</head>`)
-    fs.writeFileSync(path.join(blogDir, 'index.html'), blogIndexHtml)
-    sitemapUrls.push('https://cafetorshi.ir/blog')
 
+    // ۲. ساخت صفحات مقالات
     const articlesRaw = await fetchFromSupabase('articles')
     const articles = articlesRaw ? articlesRaw.filter(a => a.published) : null
+    const blogDir = path.join(docsDir, 'blog')
+    fs.mkdirSync(blogDir, { recursive: true })
+
     if (articles) {
       for (const a of articles) {
-        const dir = path.join(docsDir, 'blog', a.slug)
+        if (!a.slug) continue;
+        const dir = path.join(blogDir, a.slug)
         fs.mkdirSync(dir, { recursive: true })
         
         let html = baseHtml.replace(/<title>.*?<\/title>/, `<title>${a.meta_title || a.title} | کافه ترشی</title>`)
         
-        // ۱. تزریق تگ‌های متا و Open Graph (برای شبکه‌های اجتماعی و گوگل)
         const metaTags = `
     <meta name="description" content="${a.meta_description || ''}">
     <meta property="og:title" content="${a.meta_title || a.title}">
@@ -71,7 +69,6 @@ async function prerender() {
     `
         html = html.replace('</head>', metaTags + '\n</head>')
 
-        // ۲. ساخت اسکیمای JSON-LD (برای نمایش ستاره‌دار در گوگل)
         let jsonLd = {
           "@context": "https://schema.org/",
           "@type": a.article_type || "Article",
@@ -84,7 +81,6 @@ async function prerender() {
           "description": a.meta_description || ""
         };
 
-        // اضافه کردن اسکیمای سوالات متداول
         if (a.faq) {
           let faqList = Array.isArray(a.faq[0]) ? a.faq[0] : a.faq;
           const cleanFaq = faqList.filter(f => f.q && f.a);
@@ -103,14 +99,20 @@ async function prerender() {
       }
     }
 
+    // ۳. ساخت صفحه اصلی بلاگ (باید همیشه آخر باشد تا با مقالات تداخل نکند)
+    const blogIndexHtml = baseHtml.replace(/<title>.*?<\/title>/, `<title>مجله کافه ترشی | مقالات و دستور پخت</title>`)
+    const blogIndexWithMeta = blogIndexHtml.replace('</head>', `<meta name="description" content="جدیدترین مقالات، دستور پخت‌ها و نکات تغذیه‌ای در مجله کافه ترشی">\n</head>`)
+    fs.writeFileSync(path.join(blogDir, 'index.html'), blogIndexWithMeta)
+    sitemapUrls.push('https://cafetorshi.ir/blog')
+
+    // ۴. ساخت سایت‌مپ
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`
-    
     sitemap += `  <url><loc>https://cafetorshi.ir/</loc><priority>1.0</priority></url>\n`
     for (const url of sitemapUrls) sitemap += `  <url><loc>${url}</loc><priority>0.8</priority></url>\n`
     sitemap += `</urlset>`
     fs.writeFileSync(path.join(docsDir, 'sitemap.xml'), sitemap)
 
-    // ================= ساخت فید ترب =================
+    // ۵. ساخت فید ترب
     let torobXml = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n<channel>\n<title>کافه ترشی</title>\n<link>https://cafetorshi.ir</link>\n<description>فروشگاه ترشیجات خانگی</description>\n`
     if (products) {
       for (const p of products) {
@@ -133,6 +135,9 @@ async function prerender() {
     console.log('✅ torob.xml ساخته شد.')
 
     console.log('✅ رندر با موفقیت انجام شد.')
-  } catch (err) { process.exit(1) }
+  } catch (err) { 
+    console.error(err);
+    process.exit(1) 
+  }
 }
 prerender()
