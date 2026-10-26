@@ -905,3 +905,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 
 ## 🔄 v4.9.7 — کانفیگ Nginx
 - Nginx: `try_files $uri $uri/index.html $uri/ /index.html;` برای پشتیبانی از لینک‌های بدون اسلش ترب.
+
+---
+
+## 🔄 v5.0.0 — معماری محصول مرتبط (Related Product)
+- جداول: `articles` حالا ستون `product_id` دارد.
+- پنل ادمین: انتخاب محصول از طریق Dropdown.
+- فرانت: کارت محصول در `Article.jsx` با استفاده از کامپوننت `<Link>` رندر می‌شود.
