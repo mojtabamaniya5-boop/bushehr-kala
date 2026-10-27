@@ -926,6 +926,7 @@ function ProductForm({ product, onClose }) {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="موجودی" value={form.stock} onChange={v => setForm({ ...form, stock: v })} type="number" />
+            <Field label="وزن محصول (مثلاً ۵۰۰ گرم)" value={form.weight || ''} onChange={v => setForm({ ...form, weight: v })} />
             <div className="flex items-end gap-3 pb-2">
               <label className="flex items-center gap-1.5 text-xs">
                 <input type="checkbox" checked={form.best_seller} onChange={e => setForm({ ...form, best_seller: e.target.checked })} />
