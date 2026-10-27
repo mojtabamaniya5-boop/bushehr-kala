@@ -349,6 +349,8 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
     setSavingSettings(true)
     try {
       const payload = {
+        weight: form.weight,
+        rating: form.rating ? Number(form.rating) : 0,
         name: shopSettings.name,
         tagline: shopSettings.tagline,
         phone: shopSettings.phone,
@@ -840,6 +842,8 @@ function ProductForm({ product, onClose }) {
     if (!form.title || !form.price) { toast.error('نام و قیمت الزامی است'); return }
     setSaving(true)
     const payload = {
+        weight: form.weight,
+        rating: form.rating ? Number(form.rating) : 0,
       id: form.id || 'p' + Date.now(),
       title: form.title, category: form.category, brand: form.brand,
       price: Number(form.price), old_price: form.old_price ? Number(form.old_price) : null,
@@ -927,6 +931,7 @@ function ProductForm({ product, onClose }) {
           <div className="grid grid-cols-2 gap-3">
             <Field label="موجودی" value={form.stock} onChange={v => setForm({ ...form, stock: v })} type="number" />
             <Field label="وزن محصول (مثلاً ۵۰۰ گرم)" value={form.weight || ''} onChange={v => setForm({ ...form, weight: v })} />
+            <Field label="امتیاز (۱ تا ۵)" value={form.rating || ''} onChange={v => setForm({ ...form, rating: v })} type="number" />
             <div className="flex items-end gap-3 pb-2">
               <label className="flex items-center gap-1.5 text-xs">
                 <input type="checkbox" checked={form.best_seller} onChange={e => setForm({ ...form, best_seller: e.target.checked })} />
