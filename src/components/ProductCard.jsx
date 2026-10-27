@@ -58,7 +58,7 @@ export default function ProductCard({ product }) {
           <div className="flex items-center gap-1 mb-2.5">
             <Star size={11} className="fill-accent text-accent" />
             <span className="text-[10px] font-bold text-on-card">{product.rating}</span>
-            <span className="text-[10px] text-muted mr-auto">{product.weight}</span>
+            <span className="text-[10px] text-muted mr-auto">{product.weight ? (String(product.weight).includes('گرم') || String(product.weight).includes('کیلو') ? product.weight : product.weight + ' گرم') : ''}</span>
           </div>
           <div className="flex items-end justify-between gap-2">
             <div className="flex flex-col">

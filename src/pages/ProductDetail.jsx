@@ -100,7 +100,7 @@ export default function ProductDetail() {
             </div>
             <span className="text-[11px] font-bold text-ink">{product.rating}</span>
             <span className="text-[10px] text-muted">({product.reviews || 0} نظر)</span>
-            <span className="text-[10px] text-muted mr-auto">{product.weight}</span>
+            <span className="text-[10px] text-muted mr-auto">{product.weight ? (String(product.weight).includes('گرم') || String(product.weight).includes('کیلو') ? product.weight : product.weight + ' گرم') : ''}</span>
           </div>
 
           <div className="flex items-center gap-3 mb-4 bg-brand-light/50 rounded-2xl p-3">
