@@ -36,7 +36,7 @@ function normalizeProduct(p) {
     description: p.description,
     features: p.features || [],
     specs: p.specs || {},
-    weight: p.weight || '۵۰۰ گرم',
+    weight: p.weight || '',
     bestSeller: p.best_seller,
     active: p.active !== false,
   }
