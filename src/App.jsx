@@ -65,7 +65,8 @@ export default function App() {
       <ToastHost />
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
-      <Routes>
+      <Suspense fallback={<div className="flex h-screen items-center justify-center"><div className="w-8 h-8 border-4 border-brand border-t-transparent rounded-full animate-spin"></div></div>}>
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/category" element={<Categories />} />
         <Route path="/category/:catId" element={<Categories />} />
@@ -91,6 +92,7 @@ export default function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </Suspense>
 
       {!hideBottomNav && <BottomNav />}
     </div>
