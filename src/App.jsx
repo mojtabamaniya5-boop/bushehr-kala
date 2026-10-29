@@ -1,3 +1,4 @@
+import ErrorBoundary from './ErrorBoundary'
 import { useEffect, useState } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import BottomNav from './components/BottomNav'
@@ -7,26 +8,26 @@ import Drawer from './components/Drawer'
 import { storage } from './utils/storage'
 
 import Home from './pages/Home'
-const Blog = lazy(() => import('./pages/Blog'))
-const Article = lazy(() => import('./pages/Article'))
+import Blog from './pages/Blog'
+import Article from './pages/Article'
 import NotFound from './pages/NotFound'
 import Categories from './pages/Categories'
-const Cart = lazy(() => import('./pages/Cart'))
+import Cart from './pages/Cart'
 import Orders from './pages/Orders'
-const Profile = lazy(() => import('./pages/Profile'))
-const ProductDetail = lazy(() => import('./pages/ProductDetail'))
+import Profile from './pages/Profile'
+import ProductDetail from './pages/ProductDetail'
 import Search from './pages/Search'
-const Checkout = lazy(() => import('./pages/Checkout'))
+import Checkout from './pages/Checkout'
 import Success from './pages/Success'
-const Admin = lazy(() => import('./pages/Admin'))
+import Admin from './pages/Admin'
 import Favorites from './pages/Favorites'
 import About from './pages/About'
 import Terms from './pages/Terms'
 import Contact from './pages/Contact'
-const Login = lazy(() => import('./pages/Login'))
-const MyOrders = lazy(() => import('./pages/MyOrders'))
-const Pay = lazy(() => import('./pages/Pay'))
-const Verify = lazy(() => import('./pages/Verify'))
+import Login from './pages/Login'
+import MyOrders from './pages/MyOrders'
+import Pay from './pages/Pay'
+import Verify from './pages/Verify'
 import Track from './pages/Track'
 
 export default function App() {
@@ -65,8 +66,9 @@ export default function App() {
       <ToastHost />
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
-      <Suspense fallback={<div className="flex h-screen items-center justify-center"><div className="w-8 h-8 border-4 border-brand border-t-transparent rounded-full animate-spin"></div></div>}>
-        <Routes>
+      
+        <ErrorBoundary>
+      <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/category" element={<Categories />} />
         <Route path="/category/:catId" element={<Categories />} />
@@ -92,7 +94,8 @@ export default function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      </Suspense>
+      </ErrorBoundary>
+      
 
       {!hideBottomNav && <BottomNav />}
     </div>
