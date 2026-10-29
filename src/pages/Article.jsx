@@ -41,8 +41,18 @@ export default function Article() {
       <Header title="مطالعه مقاله" back />
       <main className="max-w-lg mx-auto px-4 pb-32 pt-4 fade-up">
         {article.image && (
-          <img src={article.image} alt={article.title} className="w-full h-56 object-cover rounded-3xl mb-5 shadow-sm" />
+          <img src={article.image} alt={article.title} width="800" height="400" className="w-full h-56 object-cover rounded-3xl mb-5 shadow-sm" />
         )}
+
+        
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-1 text-[10px] text-gray-500 mb-3">
+          <Link to="/" className="hover:text-brand">خانه</Link>
+          <span>/</span>
+          <Link to="/blog" className="hover:text-brand">مجله</Link>
+          <span>/</span>
+          <span className="text-brand font-bold">{article.title}</span>
+        </div>
 
         <h1 className="font-extrabold text-xl leading-8 text-ink mb-4">{article.title}</h1>
 
@@ -69,7 +79,7 @@ export default function Article() {
 
         {/* 🛒 کارت محصول مرتبط (معماری جدید و تمیز) */}
         {article.product_id && (
-          <div className="mt-10 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex items-center gap-4" dir="rtl">
+          <div className="mt-10 p-5 bg-gradient-to-l from-green-50 to-white border border-green-100 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
             <div className="flex-1 text-right">
               <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
               <p className="text-xs text-gray-500 mb-3">این محصول دقیقا همان چیزی است که در این مقاله درباره آن صحبت کردیم.</p>

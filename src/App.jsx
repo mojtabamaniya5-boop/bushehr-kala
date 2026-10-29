@@ -14,11 +14,11 @@ import Categories from './pages/Categories'
 import Cart from './pages/Cart'
 import Orders from './pages/Orders'
 import Profile from './pages/Profile'
-import ProductDetail from './pages/ProductDetail'
+const ProductDetail = lazy(() => import('./pages/ProductDetail'))
 import Search from './pages/Search'
 import Checkout from './pages/Checkout'
 import Success from './pages/Success'
-import Admin from './pages/Admin'
+const Admin = lazy(() => import('./pages/Admin'))
 import Favorites from './pages/Favorites'
 import About from './pages/About'
 import Terms from './pages/Terms'

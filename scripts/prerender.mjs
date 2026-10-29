@@ -52,7 +52,7 @@ async function prerender() {
         }
         html = html.replace('</head>', torobMeta + `\n<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n</head>`)
         fs.writeFileSync(path.join(dir, 'index.html'), html)
-        sitemapUrls.push(`https://cafetorshi.ir/product/${p.id}`)
+        sitemapUrls.push({ url: `https://cafetorshi.ir/product/${p.id}`, lastmod: new Date().toISOString() })
       }
     }
 
@@ -69,6 +69,8 @@ async function prerender() {
         fs.mkdirSync(dir, { recursive: true })
         
         let html = baseHtml.replace(/<title>.*?<\/title>/, `<title>${a.meta_title || a.title} | کافه ترشی</title>`)
+        // inject-content: تزریق متن برای خزنده‌ها
+        html = html.replace('<div id="root"></div>', `<div id="root"><h1>${a.title}</h1><div>${a.content || ''}</div></div>`)
         
         const metaTags = `
     <meta name="description" content="${a.meta_description || ''}">
@@ -107,7 +109,7 @@ async function prerender() {
 
         html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n</head>`)
         fs.writeFileSync(path.join(dir, 'index.html'), html)
-        sitemapUrls.push(`https://cafetorshi.ir/blog/${a.slug}`)
+        sitemapUrls.push({ url: `https://cafetorshi.ir/blog/${a.slug}`, lastmod: a.updated_at || a.created_at })
       }
     }
 
@@ -120,7 +122,7 @@ async function prerender() {
     // ۴. سایت‌مپ و ترب
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`
     sitemap += `  <url><loc>https://cafetorshi.ir/</loc><priority>1.0</priority></url>\n`
-    for (const url of sitemapUrls) sitemap += `  <url><loc>${url}</loc><priority>0.8</priority></url>\n`
+    for (const item of sitemapUrls) { const u = item.url || item; const lm = item.lastmod ? `<lastmod>${new Date(item.lastmod).toISOString().split('T')[0]}</lastmod>` : ''; sitemap += `  <url><loc>${u}</loc>${lm}<priority>0.8</priority></url>\n` }
     sitemap += `</urlset>`
     fs.writeFileSync(path.join(docsDir, 'sitemap.xml'), sitemap)
 
