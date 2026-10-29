@@ -7,6 +7,8 @@ import { Loader2, ArrowRight, User, CheckCircle2, ShoppingCart } from 'lucide-re
 export default function Article() {
   const { slug } = useParams()
   const [article, setArticle] = useState(null)
+  const [product, setProduct] = useState(null)
+  const [related, setRelated] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -14,6 +16,10 @@ export default function Article() {
     supabase.from('articles').select('*').eq('slug', slug).eq('published', true).single()
       .then(({ data }) => {
         setArticle(data)
+        if (data?.product_id) {
+          supabase.from('products').select('*').eq('id', data.product_id).single().then(({data: p}) => setProduct(p))
+        }
+        supabase.from('articles').select('*').eq('published', true).neq('id', data.id).limit(3).then(({data: r}) => setRelated(r || []))
         setLoading(false)
       })
   }, [slug])
@@ -78,14 +84,13 @@ export default function Article() {
              dangerouslySetInnerHTML={{ __html: (article.content || '').replace(/\n/g, '<br/>') ? (article.content || '').replace(/\n/g, '<br/>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }} />
 
         {/* 🛒 کارت محصول مرتبط (معماری جدید و تمیز) */}
-        {article.product_id && (
-          <div className="mt-10 p-5 bg-gradient-to-l from-green-50 to-white border border-green-100 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
-            <div className="flex-1 text-right">
-              <h3 className="text-sm font-bold text-gray-800 mb-1">محصول مرتبط با این مقاله</h3>
-              <p className="text-xs text-gray-500 mb-3">این محصول دقیقا همان چیزی است که در این مقاله درباره آن صحبت کردیم.</p>
-              <Link to={`/product/${article.product_id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-flex items-center gap-2 bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">
-                <ShoppingCart size={16} /> مشاهده و خرید محصول
-              </Link>
+        {product && (
+          <div className="mt-10 p-4 bg-white border border-gray-100 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-4" dir="rtl">
+            <img src={product.image} alt={product.title} width="100" height="100" loading="lazy" className="w-24 h-24 object-cover rounded-xl border border-gray-100" />
+            <div className="flex-1 text-center sm:text-right">
+              <h3 className="text-sm font-bold text-gray-800 mb-1">{product.title}</h3>
+              <p className="text-xs text-brand font-bold mb-3">{new Intl.NumberFormat('fa-IR').format(product.price)} تومان</p>
+              <Link to={`/product/${product.id}?utm_source=blog&utm_medium=article&utm_campaign=${article.slug}`} className="inline-block bg-[#2E7D32] text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-md active:scale-95 transition">🛒 مشاهده و خرید محصول</Link>
             </div>
           </div>
         )}
@@ -100,6 +105,20 @@ export default function Article() {
                   <div className="font-bold text-xs text-brand mb-1.5">{f.q}</div>
                   <div className="text-[11px] text-muted leading-6">{f.a}</div>
                 </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        
+        {related.length > 0 && (
+          <div className="mt-8 pt-6 border-t border-border">
+            <h3 className="font-extrabold text-sm mb-4">مقاله‌های مرتبط</h3>
+            <div className="grid gap-3">
+              {related.map(r => (
+                <Link key={r.id} to={`/blog/${r.slug}`} className="block bg-white border border-border rounded-xl p-3 shadow-sm hover:shadow-md transition">
+                  <div className="text-xs font-bold text-ink">{r.title}</div>
+                </Link>
               ))}
             </div>
           </div>

@@ -44,6 +44,7 @@ async function prerender() {
     <meta property="og:description" content="${p.description || 'خرید ' + p.title + ' از کافه ترشی'}">
     <meta property="og:url" content="https://cafetorshi.ir/product/${p.id}">
     <meta property="og:type" content="product">
+    <link rel="canonical" href="https://cafetorshi.ir/product/${p.id}">
     `
         const jsonLd = {
           "@context": "https://schema.org/", "@type": "Product",
@@ -79,6 +80,11 @@ async function prerender() {
     <meta property="og:image" content="${a.image || ''}">
     <meta property="og:url" content="https://cafetorshi.ir/blog/${a.slug}">
     <meta property="og:type" content="article">
+    <link rel="canonical" href="https://cafetorshi.ir/blog/${a.slug}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${a.meta_title || a.title}">
+    <meta name="twitter:description" content="${a.meta_description || ''}">
+    <meta name="twitter:image" content="${a.image || ''}">
     ${a.no_index ? '<meta name="robots" content="noindex, nofollow">' : '<meta name="robots" content="index, follow">'}
     `
         html = html.replace('</head>', metaTags + '\n</head>')
@@ -113,6 +119,10 @@ async function prerender() {
       }
     }
 
+    // ۳. صفحه اصلی (Home) و لیست بلاگ
+    const homeHtml = baseHtml.replace(/<title>.*?<\/title>/, `<title>کافه ترشی | فروشگاه آنلاین ترشیجات خانگی</title>`)
+    fs.writeFileSync(path.join(docsDir, 'index.html'), homeHtml)
+    
     // ۳. صفحه اصلی بلاگ (بدون تداخل)
     const blogIndexHtml = baseHtml.replace(/<title>.*?<\/title>/, `<title>مجله کافه ترشی | مقالات و دستور پخت</title>`)
     const blogIndexWithMeta = blogIndexHtml.replace('</head>', `<meta name="description" content="جدیدترین مقالات، دستور پخت‌ها و نکات تغذیه‌ای در مجله کافه ترشی">\n</head>`)
