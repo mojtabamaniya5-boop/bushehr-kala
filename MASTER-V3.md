@@ -912,3 +912,6 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 - جداول: `articles` حالا ستون `product_id` دارد.
 - پنل ادمین: انتخاب محصول از طریق Dropdown.
 - فرانت: کارت محصول در `Article.jsx` با استفاده از کامپوننت `<Link>` رندر می‌شود.
+
+## 🔄 v6.0.2 — کانفیگ Nginx
+- Nginx: استفاده از بلاک‌های `location` مجزا برای `/blog/`، `/product/` و مسیرهای اصلی SPA جهت مدیریت صحیح 404.
