@@ -919,3 +919,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 ## 🔄 v6.0.4 — تنظیمات Nginx و Lazy Load
 - Lazy Load به دلیل نیاز به تنظیمات پیچیده‌تر Nginx موقتاً غیرفعال شد (کدها یکپارچه لود می‌شوند).
 - Nginx: افزودن بلاک `location = /index.html` با هدر `no-cache`.
+
+## 🔄 v6.1.0 — پایداری و Gzip
+- Lazy Load غیرفعال شد. کدها یکپارچه لود می‌شوند.
+- Nginx: فشرده‌سازی Gzip برای JS/CSS فعال است.
