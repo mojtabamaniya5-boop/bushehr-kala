@@ -16,11 +16,16 @@ export default function Article() {
     supabase.from('articles').select('*').eq('slug', slug).eq('published', true).single()
       .then(({ data }) => {
         setArticle(data)
-        if (data?.product_id) {
-          supabase.from('products').select('*').eq('id', data.product_id).single().then(({data: p}) => setProduct(p))
+        if (data) {
+          if (data.product_id) {
+            supabase.from('products').select('*').eq('id', data.product_id).single().then(({data: p}) => setProduct(p))
+          }
+          supabase.from('articles').select('*').eq('published', true).neq('id', data.id).limit(3).then(({data: r}) => setRelated(r || []))
         }
-        supabase.from('articles').select('*').eq('published', true).neq('id', data.id).limit(3).then(({data: r}) => setRelated(r || []))
         setLoading(false)
+      }).catch((err) => {
+        console.error(err);
+        setLoading(false);
       })
   }, [slug])
 
