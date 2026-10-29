@@ -915,3 +915,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 
 ## 🔄 v6.0.2 — کانفیگ Nginx
 - Nginx: استفاده از بلاک‌های `location` مجزا برای `/blog/`، `/product/` و مسیرهای اصلی SPA جهت مدیریت صحیح 404.
+
+## 🔄 v6.0.4 — تنظیمات Nginx و Lazy Load
+- Lazy Load به دلیل نیاز به تنظیمات پیچیده‌تر Nginx موقتاً غیرفعال شد (کدها یکپارچه لود می‌شوند).
+- Nginx: افزودن بلاک `location = /index.html` با هدر `no-cache`.
