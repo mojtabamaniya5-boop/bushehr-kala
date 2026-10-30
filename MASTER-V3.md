@@ -923,3 +923,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 ## 🔄 v6.1.0 — پایداری و Gzip
 - Lazy Load غیرفعال شد. کدها یکپارچه لود می‌شوند.
 - Nginx: فشرده‌سازی Gzip برای JS/CSS فعال است.
+
+## 🔄 v6.3.0 — تغییرات بحرانی سرور
+- **هشدار:** `update-site.sh` غیرفعال است. تا زمان ساخت توکن جدید گیت‌هاب، دیپلوی باید دستی با `./deploy-all.sh` انجام شود.
+- **Service Worker:** استراتژی خودتخریبی برای رفع کش‌های خراب اعمال شد.
