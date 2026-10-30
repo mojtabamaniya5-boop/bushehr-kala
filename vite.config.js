@@ -3,7 +3,18 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  plugins: [
+  
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+              'vendor-icons': ['lucide-react']
+            }
+          }
+        }
+      },
+      plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
