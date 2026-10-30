@@ -8,6 +8,7 @@ import { toast } from '../components/Toast'
 import AdminCustomers from './AdminCustomers'
 import AdminSettings from './AdminSettings'
 import AdminBlog from './AdminBlog'
+import AdminStats from './AdminStats'
 import { checkAdminSession, updateSessionTimestamp, clearSession, sendPasswordReset, changePassword, isRecoveryMode } from '../utils/admin-auth'
 import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Settings, Hash, ShieldCheck, Users, Mail, KeyRound, Search, FileText } from 'lucide-react'
 
