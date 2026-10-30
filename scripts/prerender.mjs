@@ -40,7 +40,7 @@ async function prerender() {
     <meta property="og:image:width" content="800">
     <meta property="og:image:height" content="800">
     <meta property="og:image:type" content="image/png">
-    <meta name="product_price" content="${p.price * 10}">
+    <meta name="product_price" content="${p.price}">
     <meta name="availability" content="${p.stock > 0 ? 'instock' : 'outofstock'}">
     <meta name="guarantee" content="اصالت کالا">
     <meta property="og:title" content="${p.title} | کافه ترشی">
