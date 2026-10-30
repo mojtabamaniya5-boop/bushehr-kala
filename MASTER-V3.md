@@ -931,3 +931,6 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 ## 🔄 v6.4.0 — بهینه‌سازی نهایی Vite
 - تنظیمات `vite.config.js` برای جداسازی `vendor-react`, `vendor-supabase`, `vendor-icons` اعمال شد.
 - سایت روی CDN آروان با موفقیت کش و توزیع می‌شود.
+
+## 🔄 v6.5.0 — تایید ترب
+- ربات ترب متاتگ‌های محصولات را پذیرفت. محصولات در صف ۷ روزه دسته‌بندی قرار گرفتند.
