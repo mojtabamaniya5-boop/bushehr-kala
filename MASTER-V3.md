@@ -927,3 +927,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 ## 🔄 v6.3.0 — تغییرات بحرانی سرور
 - **هشدار:** `update-site.sh` غیرفعال است. تا زمان ساخت توکن جدید گیت‌هاب، دیپلوی باید دستی با `./deploy-all.sh` انجام شود.
 - **Service Worker:** استراتژی خودتخریبی برای رفع کش‌های خراب اعمال شد.
+
+## 🔄 v6.4.0 — بهینه‌سازی نهایی Vite
+- تنظیمات `vite.config.js` برای جداسازی `vendor-react`, `vendor-supabase`, `vendor-icons` اعمال شد.
+- سایت روی CDN آروان با موفقیت کش و توزیع می‌شود.
