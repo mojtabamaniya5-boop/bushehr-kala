@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import ErrorBoundary from './ErrorBoundary'
 import { useEffect, useState } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
