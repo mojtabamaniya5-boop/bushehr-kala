@@ -40,7 +40,7 @@ async function prerender() {
     <meta property="og:image:width" content="800">
     <meta property="og:image:height" content="800">
     <meta property="og:image:type" content="image/png">
-    <meta name="product_price" content="${p.price * 10}">
+    <meta name="product_price" content="${p.price}">
     <meta name="availability" content="${p.stock > 0 ? 'instock' : 'outofstock'}">
     <meta name="guarantee" content="اصالت کالا">
     <meta property="og:title" content="${p.title} | کافه ترشی">
@@ -143,7 +143,7 @@ async function prerender() {
     if (products) {
       for (const p of products) {
         if (p.active !== false) {
-          torobXml += `<item>\n<title>${p.title}</title>\n<link>https://cafetorshi.ir/product/${p.id}?utm_source=torob</link>\n<description>${p.description || ''}</description>\n<g:id>${p.id}</g:id>\n<g:price>${p.price * 10} IRR</g:price>\n<g:availability>${p.stock > 0 ? 'in stock' : 'out of stock'}</g:availability>\n<g:image_link>${p.image || 'https://cafetorshi.ir/icon.png'}</g:image_link>\n<g:condition>new</g:condition>\n</item>\n`
+          torobXml += `<item>\n<title>${p.title}</title>\n<link>https://cafetorshi.ir/product/${p.id}?utm_source=torob</link>\n<description>${p.description || ''}</description>\n<g:id>${p.id}</g:id>\n<g:price>${p.price} تومان</g:price>\n<g:availability>${p.stock > 0 ? 'in stock' : 'out of stock'}</g:availability>\n<g:image_link>${p.image || 'https://cafetorshi.ir/icon.png'}</g:image_link>\n<g:condition>new</g:condition>\n</item>\n`
         }
       }
     }
