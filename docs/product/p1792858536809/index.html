@@ -19,9 +19,16 @@
         if (s) { var r = document.documentElement.style; for (var k in s) r.setProperty(k, s[k]); }
       } catch(e) {}
     })();
-    </script>  <script type="module" crossorigin src="/assets/index-DsxNb7p_.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DbwHDit2.css">
-<link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script>
+    </script>
+    <script>
+      window.onerror = function(msg, url, line, col, error) {
+        document.body.innerHTML = '<div style="padding: 20px; font-family: sans-serif; direction: rtl; text-align: right; background-color: #FFF8E8; min-height: 100vh; color: #d32f2f;"><h1>خطای جاوااسکریپت!</h1><p style="font-size: 16px; font-weight: bold; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">' + msg + '</p><p>فایل: ' + url + '</p><p>خط: ' + line + '</p><p>جزئیات: ' + (error ? error.stack : '') + '</p></div>';
+        return false;
+      };
+    </script>
+    <script type="module" crossorigin src="/assets/index-DsxNb7p_.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DbwHDit2.css">
+  <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script>
     <meta name="product_id" content="p1792858536809">
     <meta name="product_name" content="ترشی انبه تند و شیرین بوشهری یک کیلویی | طعم تند و شیرین با انبه امسال">
     <meta property="og:image" content="https://slckuoggdkyljvwgtczf.supabase.co/storage/v1/object/public/product-images/product-1792858483999.jpg">
