@@ -37,6 +37,9 @@ async function prerender() {
     <meta name="product_id" content="${p.id}">
     <meta name="product_name" content="${p.title}">
     <meta property="og:image" content="${p.image || 'https://cafetorshi.ir/icon.png'}">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="800">
+    <meta property="og:image:type" content="image/png">
     <meta name="product_price" content="${p.price * 10}">
     <meta name="availability" content="${p.stock > 0 ? 'instock' : 'outofstock'}">
     <meta name="guarantee" content="اصالت کالا">
