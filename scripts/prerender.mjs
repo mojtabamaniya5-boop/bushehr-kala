@@ -160,7 +160,33 @@ async function prerender() {
     }
 
     // ۵. صفحه اصلی (Home) و لیست بلاگ
-    const homeHtml = baseHtml.replace(/<title>.*?<\/title>/, `<title>کافه ترشی | فروشگاه آنلاین ترشیجات خانگی</title>`)
+    // رفع «صفحه کرمی»: مثل صفحه‌های مقاله، محتوای واقعی را داخل root تزریق
+    // می‌کنیم تا بازدیدکننده در اولین بارگذاری — قبل از اجرای جاوااسکریپت و
+    // دریافت محصولات از Supabase — بلافاصله محتوا ببیند. ری‌اکت هنگام mount
+    // این محتوای ایستا را با محتوای زنده جایگزین می‌کند. قیمت در این بخش
+    // گذاشته نمی‌شود (قیمت‌ها در صفحه‌های پررندرشده محصول هستند).
+    // دسته‌بندی‌ها ثابت‌اند؛ منبع حقیقت: CATEGORIES در src/data/products.js
+    const homeCategories = [
+      { name: 'خیارشور', icon: '🥒' },
+      { name: 'ترشی مخلوط', icon: '🥕' },
+      { name: 'زیتون', icon: '🫒' },
+      { name: 'سیرترشی', icon: '🧄' },
+      { name: 'سبزیجات', icon: '🥬' },
+      { name: 'سالادها', icon: '🥗' },
+      { name: 'ترشی ویژه', icon: '🌶️' },
+      { name: 'سایر ترشیجات', icon: '🫙' },
+    ]
+    const homeIntro = 'فروشگاه آنلاین ترشی خانگی اصیل بوشهر — ارسال رایگان در شهر بوشهر و ارسال به سراسر کشور.'
+    const homeProductItems = products
+      .filter(p => p.active !== false)
+      .map(p => `      <li><a href="https://cafetorshi.ir/product/${escapeHtml(p.id)}">${escapeHtml(p.title)}</a></li>`)
+      .join('\n')
+    const homeCategoryItems = homeCategories
+      .map(c => `      <li>${escapeHtml(c.icon)} ${escapeHtml(c.name)}</li>`)
+      .join('\n')
+    const homeShell = `<div style="font-family:Tahoma,sans-serif;max-width:640px;margin:0 auto;padding:24px 16px;line-height:1.9;direction:rtl;text-align:right;color:#222"><h1>کافه ترشی | فروشگاه آنلاین ترشیجات خانگی</h1><p>${escapeHtml(homeIntro)}</p><h2>دسته‌بندی‌ها</h2><ul>${homeCategoryItems}</ul><h2>محصولات</h2><ul>${homeProductItems}</ul><p><a href="https://cafetorshi.ir/blog">مجله کافه ترشی</a></p></div>`
+    let homeHtml = baseHtml.replace(/<title>.*?<\/title>/, `<title>کافه ترشی | فروشگاه آنلاین ترشیجات خانگی</title>`)
+    homeHtml = homeHtml.replace('<div id="root"></div>', `<div id="root">${homeShell}</div>`)
     fs.writeFileSync(path.join(docsDir, 'index.html'), homeHtml)
 
     // ۵. صفحه اصلی بلاگ (بدون تداخل)
