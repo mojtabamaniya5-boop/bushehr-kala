@@ -28,3 +28,13 @@ else
   echo "   HTTP:     $CODE"
   exit 1
 fi
+
+echo "🔍 Verify sitemap..."
+LOCAL_COUNT=$(grep -c "<loc>" docs/sitemap.xml || true)
+sleep 2
+LIVE_COUNT=$(curl -s --max-time 15 https://cafetorshi.ir/sitemap.xml | grep -c "<loc>" || true)
+echo "   sitemap URLs: local=$LOCAL_COUNT live=$LIVE_COUNT"
+if [ "$LIVE_COUNT" = "0" ] || [ "$LIVE_COUNT" != "$LOCAL_COUNT" ]; then
+  echo "⚠️ هشدار سئو: تعداد آدرس‌های نقشه سایت روی سرور با خروجی بیلد فرق دارد."
+  echo "   ممکن است پررندر ناقص بوده یا کش سرور قدیمی است؛ قبل از ادامه بررسی کنید."
+fi

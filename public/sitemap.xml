@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- نقشه سایت پیش‌فرض؛ هنگام بیلد (pnpm build) اسکریپت
+     scripts/prerender.mjs آن را با فهرست کامل محصولات و مقالات
+     بازنویسی می‌کند. این فایل فقط برای حالتی است که سایتی بدون
+     پررندر ساخته شود تا گوگل حداقل صفحه اصلی و بلاگ را ببیند. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://cafetorshi.ir/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://cafetorshi.ir/blog</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
