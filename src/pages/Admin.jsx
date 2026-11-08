@@ -532,7 +532,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
                 { id: 'pending', label: 'در انتظار' },
                 { id: 'paid', label: 'پرداخت شده' },
                 { id: 'sent', label: 'ارسال شده' },
-                { id: 'delivered', label: 'تحویل شده' },
+                { id: 'done', label: 'تحویل شده' },
                 { id: 'canceled', label: 'لغو شده' },
               ].map(s => (
                 <button

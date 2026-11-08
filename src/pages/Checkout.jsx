@@ -57,10 +57,10 @@ export default function Checkout() {
   const validate = () => {
     const e = {}
     if (!form.name.trim() || form.name.trim().length < 3) e.name = 'نام را کامل وارد کن'
-    if (!/^09\d{9}$/.test(form.phone.trim())) e.phone = 'شماره موبایل معتبر وارد کن (۰۹...)'
+    if (!/^09\d{9}$/.test(form.phone.replace(/[\s-]/g, '').trim())) e.phone = 'شماره موبایل معتبر وارد کن (۰۹...)'
     if (!form.city.trim()) e.city = 'شهر را وارد کنید'
     if (!form.address.trim() || form.address.trim().length < 10) e.address = 'آدرس را کامل وارد کن'
-    if (!form.postalCode.trim() || !/^\d{10}$/.test(form.postalCode.trim())) e.postalCode = 'کد پستی ۱۰ رقمی وارد کن'
+    if (!form.postalCode.trim() || !/^\d{10}$/.test(form.postalCode.replace(/[\s-]/g, '').trim())) e.postalCode = 'کد پستی ۱۰ رقمی وارد کن'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -97,12 +97,14 @@ export default function Checkout() {
       const result = await saveOrderToDB(order)
       if (!result.ok) {
         toast.error('خطا در ثبت سفارش: ' + (result.error || 'مشکل در دیتابیس'))
+        setSubmitting(false)
         return // توقف: اگر ثبت نشد، به صفحه پرداخت نرو
       }
       toast.success('سفارش ثبت شد')
     } catch (e) {
       console.warn(e)
       toast.error('خطای شبکه در ثبت سفارش')
+      setSubmitting(false)
       return
     }
 
@@ -111,9 +113,9 @@ export default function Checkout() {
 
   useEffect(() => {
     const handleUpdate = (e) => {
-      if (e.detail.table === 'shop_settings' || e.detail.table === 'shop_settings') {
-        // رفرش دیتای صفحه با متدهای موجود
-        window.location.reload() // فعلاً ساده‌ترین راه برای این ۳ صفحه
+      if (e.detail.table === 'shop_settings') {
+        // فقط تنظیمات را دوباره بخوان؛ فرم مشتری دست نخورده می‌ماند
+        getShopSettings().then(setShopSettings).catch(() => {})
       }
     }
     window.addEventListener('shop-data-updated', handleUpdate)
@@ -126,7 +128,7 @@ export default function Checkout() {
       <main className="max-w-lg mx-auto px-4 pb-64 pt-3 fade-up space-y-3">
 
         {!loggedUser && (
-          <Link to="/login"
+          <Link to="/login" state={{ from: '/checkout' }}
             className="flex items-center gap-3 bg-accent/10 border border-accent/30 rounded-2xl p-3.5 active:scale-[0.98] transition">
             <div className="w-10 h-10 rounded-full bg-accent/30 flex items-center justify-center flex-shrink-0">
               <LogIn size={18} className="text-ink" />
@@ -345,8 +347,8 @@ export default function Checkout() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted">هزینه ارسال</span>
-              <span className={shipping === 0 ? 'text-brand font-bold' : 'text-ink font-medium'}>
-                {shipping === 0 ? '🎉 رایگان' : formatPrice(shipping)}
+              <span className={shipping === 0 && !shipInfo.postPaid ? 'text-brand font-bold' : 'text-ink font-medium'}>
+                {shipInfo.postPaid ? 'پس‌کرایه (در محل)' : shipping === 0 ? '🎉 رایگان' : formatPrice(shipping)}
               </span>
             </div>
             {isBushehr && (

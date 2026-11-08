@@ -72,7 +72,10 @@ export async function fetchOrderById(id) {
   } catch (e) { console.warn('fetchOrderById:', e.message) }
 
   const ls = JSON.parse(localStorage.getItem('bk-orders') || '[]')
-  return ls.find(o => o.id === q || o.id?.toUpperCase() === q) || null
+  const ls2 = JSON.parse(localStorage.getItem('orders') || '[]')
+  const fromLs = ls.find(o => o.id === q || o.id?.toUpperCase() === q)
+  if (fromLs) return fromLs
+  return ls2.find(o => o.id === q || o.id?.toUpperCase() === q) || null
 }
 
 export async function deleteOrder(orderCode) {
@@ -93,15 +96,18 @@ export async function deleteOrder(orderCode) {
 }
 
 export function markOrderPaidClaimed(orderId) {
-  const ls = JSON.parse(localStorage.getItem('bk-orders') || '[]')
-  const idx = ls.findIndex(o => o.id === orderId)
-  if (idx > -1) {
-    ls[idx].paymentClaimed = true
-    ls[idx].paymentClaimedAt = new Date().toISOString()
-    localStorage.setItem('bk-orders', JSON.stringify(ls))
-    return true
+  let found = false
+  for (const key of ['bk-orders', 'orders']) {
+    const ls = JSON.parse(localStorage.getItem(key) || '[]')
+    const idx = ls.findIndex(o => String(o.id).toUpperCase() === String(orderId).toUpperCase())
+    if (idx > -1) {
+      ls[idx].paymentClaimed = true
+      ls[idx].paymentClaimedAt = new Date().toISOString()
+      localStorage.setItem(key, JSON.stringify(ls))
+      found = true
+    }
   }
-  return false
+  return found
 }
 
 export async function updateOrderPaid(orderId, { paymentRef, trackId } = {}) {

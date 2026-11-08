@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useRef, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '../components/Header'
 import { isValidPhone, loginUser, normalizePhone, normalizeDigits } from '../utils/auth'
 import { toast } from '../components/Toast'
@@ -27,12 +27,20 @@ const invokeRelay = async (path, body, timeoutMs = 20000) => {
 
 export default function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [step, setStep] = useState('phone')
   const [phone, setPhone] = useState('')
   const [name, setName] = useState('')
   const [otpInput, setOtpInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
   const sending = useRef(false)
+
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const t = setTimeout(() => setCooldown(c => c - 1), 1000)
+    return () => clearTimeout(t)
+  }, [cooldown])
 
   const sendOTP = async () => {
     if (sending.current) return
@@ -49,6 +57,7 @@ export default function Login() {
       if (!data?.ok) throw new Error(data?.error || 'خطا در ارسال')
       setStep('otp')
       setOtpInput('')
+      setCooldown(60)
       toast.success('کد تأیید پیامک شد')
     } catch (err) {
       const msg = err.name === 'AbortError' ? 'سرور پاسخ نداد' : err.message
@@ -70,7 +79,7 @@ export default function Login() {
       if (!data?.ok) throw new Error(data?.error || 'کد اشتباه است')
       loginUser(phone, name, data.token)
       toast.success('خوش آمدید 🌿')
-      navigate('/profile', { replace: true })
+      navigate(location.state?.from || '/profile', { replace: true })
     } catch (err) {
       const msg = err.name === 'AbortError'
         ? 'سرور پاسخ نداد'
@@ -152,7 +161,7 @@ export default function Login() {
                 <ShieldCheck size={14} className="text-ink" />
                 <span className="text-[10px] font-bold text-ink">کد پیامک شد</span>
               </div>
-              <p className="text-[9px] text-muted mt-2">پیامک حاوی کد ۶ رقمی برای شما ارسال شد</p>
+              <p className="text-[9px] text-muted mt-2">پیامک حاوی کد ۶ رقمی برای شما ارسال شد — کد تا ۵ دقیقه معتبر است</p>
             </div>
             <div>
               <label className="text-[10px] font-bold text-muted block mb-1.5 text-center">کد ۶ رقمی پیامک شده</label>
@@ -175,8 +184,8 @@ export default function Login() {
               {loading ? 'در حال بررسی...' : (<><Check size={18} /><span>تأیید و ورود</span></>)}
             </button>
             <div className="flex items-center justify-center gap-3 text-xs">
-              <button onClick={resendOTP} disabled={loading} className="text-brand font-bold flex items-center gap-1.5 disabled:opacity-50">
-                <RefreshCw size={14} /> ارسال مجدد کد
+              <button onClick={resendOTP} disabled={loading || cooldown > 0} className="text-brand font-bold flex items-center gap-1.5 disabled:opacity-50">
+                <RefreshCw size={14} /> {cooldown > 0 ? `ارسال مجدد (${cooldown})` : 'ارسال مجدد کد'}
               </button>
               <span className="text-muted">|</span>
               <button onClick={() => { setStep('phone'); setOtpInput('') }} className="text-muted font-bold">تغییر شماره</button>

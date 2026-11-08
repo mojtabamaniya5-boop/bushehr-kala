@@ -13,9 +13,9 @@ const zibalParams = new URLSearchParams(window.location.search)
 if (zibalParams.has('trackId') || zibalParams.has('success')) {
   // پارامترها رو ذخیره کن
   sessionStorage.setItem('zibal_return', zibalParams.toString())
-  // redirect به صفحه verify
+  // redirect به صفحه verify — پارامترها را نگه دار تا Verify بخواندشان
   const base = window.location.origin + window.location.pathname
-  window.location.replace(base + '#/verify')
+  window.location.replace(base + '#/verify?' + zibalParams.toString())
 } else {
   // اگه چیز خاصی نبود، اپ عادی رو اجرا کن
   // تیره‌کردن خودکار حذف شده

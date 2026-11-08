@@ -45,7 +45,7 @@ export default function ProductDetail() {
   const handleBuyNow = () => {
     if (!product) return
     addToCart(product, qty)
-    navigate('/cart')
+    navigate('/checkout')
   }
 
   if (loading) {
@@ -64,8 +64,6 @@ export default function ProductDetail() {
       </>
     )
   }
-
-  const todayJalali = new Intl.DateTimeFormat('fa-IR', { dateStyle: 'long' }).format(new Date());
 
   const discount = product.oldPrice
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
@@ -123,10 +121,6 @@ export default function ProductDetail() {
               </div>
             )}
 
-            <div className="flex items-center gap-1.5 bg-brand-light/40 text-brand px-3 py-2 rounded-xl border border-brand/20 text-[11px] font-bold">
-              <ShieldCheck size={15} />
-              قیمت و موجودی به‌روز شده در {todayJalali}
-            </div>
           </div>
 
           {product.description && (

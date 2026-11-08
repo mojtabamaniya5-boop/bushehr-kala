@@ -1,7 +1,8 @@
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Home, ShoppingCart, Heart, User, Package } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cartCount } from '../utils/cart'
+import { getCurrentUser } from '../utils/auth'
 
 const items = [
   { path: '/',          label: 'خانه',           icon: Home, end: true },
@@ -14,6 +15,7 @@ const items = [
 export default function BottomNav() {
   const [count, setCount] = useState(cartCount())
   const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const update = () => setCount(cartCount())
@@ -30,8 +32,20 @@ export default function BottomNav() {
         <div className="bg-white rounded-3xl shadow-[0_8px_28px_rgba(0,0,0,0.10)] shadow-[0_8px_28px_rgba(0,0,0,0.10)] px-2 relative"
           style={{ height: '52px' }}>
           <div className="flex justify-around items-center h-full">
-            {items.map(({ path, label, icon: Icon, badge, big, end }) => {
+            {items.map(({ path, label, icon: Icon, badge, big, end, requiresAuth }) => {
               const active = isActive(path, end)
+
+              if (requiresAuth && !getCurrentUser()) {
+                return (
+                  <button key={path} onClick={() => navigate('/login', { state: { from: path } })}
+                    className="flex-1 flex flex-col items-center justify-center gap-0.5">
+                    <Icon size={19} className="text-muted" strokeWidth={2.2} />
+                    <span className="text-[9px] font-bold text-muted">
+                      {label}
+                    </span>
+                  </button>
+                )
+              }
 
               if (big) {
                 return (

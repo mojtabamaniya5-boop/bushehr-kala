@@ -5,7 +5,7 @@ import { fetchOrderById, markOrderPaidClaimed } from '../utils/orders'
 import { SHOP_CONFIG } from '../config/shop'
 import { formatPrice, formatDate } from '../utils/storage'
 import { toast } from '../components/Toast'
-import { Copy, Check, CreditCard, AlertCircle, Send, Loader2, CheckCircle2, Zap, ArrowRight, ArrowLeft } from 'lucide-react'
+import { Copy, Check, CreditCard, AlertCircle, Send, Loader2, CheckCircle2, XCircle, Zap, ArrowRight, ArrowLeft } from 'lucide-react'
 
 export default function Pay() {
   const { orderId } = useParams()
@@ -123,7 +123,30 @@ export default function Pay() {
     )
   }
 
+  if (order.status === 'canceled') {
+    return (
+      <>
+        <CustomHeader />
+        <div className="max-w-lg mx-auto px-4 pt-10 text-center fade-up">
+          <div className="w-20 h-20 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-4">
+            <XCircle size={40} className="text-danger" />
+          </div>
+          <p className="font-extrabold text-ink mb-1">این سفارش لغو شده است</p>
+          <p className="text-xs text-muted mb-6">
+            پرداختی برای این سفارش انجام نشده. برای خرید دوباره، سفارش تازه ثبت کن.
+          </p>
+          <Link to="/"
+            className="inline-block bg-brand text-white font-bold text-xs px-6 py-3 rounded-full">
+            ثبت سفارش جدید
+          </Link>
+        </div>
+      </>
+    )
+  }
+
   if (order.status !== 'pending') {
+    const statusTitle = order.status === 'paid' ? 'این سفارش پرداخت شده' : order.status === 'sent' ? 'این سفارش ارسال شده' : 'این سفارش تحویل شده'
+    const statusLabel = order.status === 'paid' ? 'پرداخت شده' : order.status === 'sent' ? 'ارسال شده' : order.status === 'done' ? 'تحویل شده' : order.status
     return (
       <>
         <CustomHeader />
@@ -131,9 +154,9 @@ export default function Pay() {
           <div className="w-20 h-20 rounded-full bg-brand-light flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 size={40} className="text-brand" />
           </div>
-          <p className="font-extrabold text-ink mb-1">این سفارش پرداخت شده</p>
+          <p className="font-extrabold text-ink mb-1">{statusTitle}</p>
           <p className="text-xs text-muted mb-6">
-            وضعیت: {order.status === 'paid' ? 'پرداخت شده' : order.status === 'sent' ? 'ارسال شده' : 'تحویل شده'}
+            وضعیت: {statusLabel}
           </p>
           <Link to={`/track/${order.id}`}
             className="inline-block bg-brand text-white font-bold text-xs px-6 py-3 rounded-full">

@@ -82,6 +82,16 @@ export default function Home() {
           </div>
         )}
 
+        {!loading && products.length === 0 && (
+          <div className="bg-white rounded-2xl border border-border p-6 text-center mb-6">
+            <p className="font-extrabold text-sm text-ink mb-1">محصولات بارگذاری نشد</p>
+            <p className="text-[11px] text-muted mb-4">اتصال را بررسی کن و دوباره تلاش کن</p>
+            <button onClick={() => window.location.reload()} className="bg-brand text-white text-xs font-extrabold px-5 py-2.5 rounded-full active:scale-95">
+              تلاش دوباره
+            </button>
+          </div>
+        )}
+
         {!loading && (
           <>
             {bestSellers.length > 0 && (
@@ -109,7 +119,7 @@ export default function Home() {
                     <span className="text-[10px] font-extrabold text-ink">پیشنهاد ویژه هفته</span>
                   </div>
                   <h3 className="font-extrabold text-lg text-brand leading-tight mb-1">
-                    تا <span className="text-2xl text-accent">۲۰٪</span> تخفیف
+                    تخفیف‌های هفته
                   </h3>
                   <p className="text-[10px] text-ink/70 mb-3">روی ترشی‌ها و خیارشورهای منتخب</p>
                   <Link to="/category"
@@ -123,9 +133,6 @@ export default function Home() {
                 <div className="flex-shrink-0 relative">
                   <div className="w-24 h-24 rounded-full bg-card/60 backdrop-blur-sm flex items-center justify-center shadow-lg border-2 border-card/70">
                     <img src={`${import.meta.env.BASE_URL}assets/categories/mixed.png`} alt="تخفیف" className="w-20 h-20 object-contain" />
-                  </div>
-                  <div className="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-extrabold rounded-full px-2 py-1 shadow-md border-2 border-card rounded-3xl">
-                    ۲۰٪
                   </div>
                 </div>
               </div>

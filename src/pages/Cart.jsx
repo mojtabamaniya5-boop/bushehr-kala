@@ -31,7 +31,7 @@ export default function Cart() {
     getShopSettings().then(setShopSettings).catch(() => {})
   }, [])
 
-  const shipInfo = calculateShipping(lastPostal, lastAddr, total, 'fast', shopSettings)
+  const shipInfo = calculateShipping(storage.get('last-city', ''), lastPostal, lastAddr, total, 'fast', shopSettings)
   const isBushehr = shipInfo.sameDay
 
   const confirmClear = () => {
@@ -50,9 +50,10 @@ export default function Cart() {
 
   useEffect(() => {
     const handleUpdate = (e) => {
-      if (e.detail.table === 'shop_settings' || e.detail.table === 'shop_settings') {
-        // رفرش دیتای صفحه با متدهای موجود
-        window.location.reload() // فعلاً ساده‌ترین راه برای این ۳ صفحه
+      if (e.detail.table === 'shop_settings') {
+        // فقط تنظیمات و سبد را دوباره بخوان؛ صفحه رفرش نمی‌شود
+        getShopSettings().then(setShopSettings).catch(() => {})
+        setItems(getCart())
       }
     }
     window.addEventListener('shop-data-updated', handleUpdate)
@@ -144,6 +145,7 @@ export default function Cart() {
             <span>قابل پرداخت</span>
             <span className="text-brand">{formatPrice(total)}</span>
           </div>
+          <p className="text-[10px] text-muted text-center mb-3">هزینه ارسال در مرحله بعد بر اساس شهر و کد پستی محاسبه می‌شود</p>
           <button onClick={() => {
             const overStock = items.find(i => i.qty > (i.stock !== null && i.stock !== undefined ? i.stock : 999));
             if (overStock) {

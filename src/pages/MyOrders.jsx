@@ -31,7 +31,7 @@ export default function MyOrders() {
   const [deleteTarget, setDeleteTarget] = useState(null)
 
   useEffect(() => {
-    if (!user) { navigate('/login', { replace: true }); return }
+    if (!user) { navigate('/login', { replace: true, state: { from: '/my-orders' } }); return }
     load()
   }, [user?.phone, navigate])
 
@@ -64,15 +64,21 @@ export default function MyOrders() {
     if (!deleteTarget) return
     const order = deleteTarget
 
+    if (order.status === 'pending') {
+      let ok = false
+      try {
+        ok = await deleteOrder(order.id)
+      } catch (e) { console.warn('Delete:', e) }
+      if (!ok) {
+        toast.error('حذف نشد، دوباره تلاش کن')
+        setDeleteTarget(null)
+        return
+      }
+    }
+
     const ls = JSON.parse(localStorage.getItem('bk-orders') || '[]')
     const newLs = ls.filter(o => String(o.id).toUpperCase() !== String(order.id).toUpperCase())
     localStorage.setItem('bk-orders', JSON.stringify(newLs))
-
-    if (order.status === 'pending') {
-      try {
-        await deleteOrder(order.id)
-      } catch (e) { console.warn('Delete:', e) }
-    }
 
     toast.success('سفارش حذف شد')
     setDeleteTarget(null)

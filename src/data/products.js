@@ -138,7 +138,7 @@ export function calculateShipping(city, postalCode, address, subtotal, shippingT
   const prefixes = settings.freePostalPrefixes || [];
   
   if (isFreeCity || (pc && prefixes.some(p => pc.startsWith(String(p))))) {
-    return { cost: 0, sameDay: false, postPaid: false };
+    return { cost: 0, sameDay: true, postPaid: false };
   }
 
   // ۳. اگر مبلغ سبد از آستانه ارسال رایگان عبور کرده باشد

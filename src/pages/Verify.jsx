@@ -9,21 +9,52 @@ export default function Verify() {
   const navigate = useNavigate()
   const [state, setState] = useState('loading')
   const [result, setResult] = useState(null)
+  const [orderCode, setOrderCode] = useState(null)
+  const [track, setTrack] = useState(null)
+
+  const runVerify = (orderId, trackId) => {
+    setState('loading')
+    verifyZibalPayment({ orderId: orderId || 'UNKNOWN', trackId })
+      .then(async res => {
+        if (res.ok) {
+          sessionStorage.removeItem('zibal_pending_order')
+          sessionStorage.removeItem('zibal_return')
+          clearCart()
+          // فقط همین سفارش را از لیست محلی حذف کن، نه همه سفارش‌ها
+          try {
+            const ls = JSON.parse(localStorage.getItem('bk-orders') || '[]')
+            const kept = ls.filter(o => String(o.id).toUpperCase() !== String(orderId).toUpperCase())
+            localStorage.setItem('bk-orders', JSON.stringify(kept))
+          } catch {}
+          setState('success')
+          setResult(res)
+        } else {
+          setState('error')
+          setResult(res)
+        }
+      })
+      .catch(e => {
+        setState('error')
+        setResult({ error: e.name === 'AbortError' ? 'پاسخی از سرور نیامد' : e.message })
+      })
+  }
 
   useEffect(() => {
-    // خواندن پارامترها از URL (Hash و Search)
+    // خواندن پارامترها از URL (Search و Hash) و بعد از sessionStorage
     const searchParams = new URLSearchParams(window.location.search)
     const hashParams = new URLSearchParams(window.location.hash.split('?')[1] || '')
-    const getParam = (key) => searchParams.get(key) || hashParams.get(key)
-    
+    const storedParams = new URLSearchParams(sessionStorage.getItem('zibal_return') || '')
+    const getParam = (key) => searchParams.get(key) || hashParams.get(key) || storedParams.get(key)
+
     const orderId = getParam('orderId') || sessionStorage.getItem('zibal_pending_order')
     // اگر trackId توی URL نبود، از sessionStorage بخون (که Pay.jsx ذخیره کرده بود)
     const trackId = getParam('trackId') || sessionStorage.getItem('zibal_track_' + orderId)
-    
+
     // اگر trackId وجود داشت یعنی پرداخت انجام شده (حتی اگه پارامتر success نباشه)
     const success = getParam('success') || (trackId ? '1' : null)
 
-
+    setOrderCode(orderId || null)
+    setTrack(trackId || null)
 
     if (!trackId) {
       setState('error')
@@ -37,24 +68,7 @@ export default function Verify() {
       return
     }
 
-    verifyZibalPayment({ orderId: orderId || 'UNKNOWN', trackId })
-      .then(async res => {
-        if (res.ok) {
-          sessionStorage.removeItem('zibal_pending_order')
-          sessionStorage.removeItem('zibal_return')
-          clearCart()
-        localStorage.removeItem('bk-orders')
-          setState('success')
-          setResult(res)
-        } else {
-          setState('error')
-          setResult(res)
-        }
-      })
-      .catch(e => {
-        setState('error')
-        setResult({ error: e.name === 'AbortError' ? 'پاسخی از سرور نیامد' : e.message })
-      })
+    runVerify(orderId, trackId)
   }, [])
 
   return (
@@ -96,6 +110,11 @@ export default function Verify() {
             <Link to="/my-orders" className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98]">
               <Receipt size={16} /> مشاهده سفارشات
             </Link>
+            {orderCode && (
+              <Link to={`/track/${orderCode}`} className="w-full bg-white border border-border text-ink font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98]">
+                پیگیری بدون ورود
+              </Link>
+            )}
             <Link to="/" className="w-full bg-white border border-border text-ink font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98]">
               <Home size={16} /> بازگشت به فروشگاه
             </Link>
@@ -118,11 +137,17 @@ export default function Verify() {
 
           <div className="bg-accent/10 border border-accent/30 rounded-2xl p-4 mb-6 text-right">
             <p className="text-[11px] text-ink leading-6">
-              💡 اگه مبلغ از حسابت کم شده، با پشتیبانی تماس بگیر. اگه کم نشده، می‌تونی دوباره تلاش کنی.
+              💡 اگه مبلغ از حسابت کم شده، اول «تلاش دوباره» را بزن؛ اگر نشد با پشتیبانی تماس بگیر.
             </p>
           </div>
 
           <div className="space-y-2">
+            {orderCode && track && (
+              <button onClick={() => runVerify(orderCode, track)}
+                className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98]">
+                تلاش دوباره برای تایید
+              </button>
+            )}
             <Link to="/my-orders" className="w-full bg-brand text-white font-extrabold py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98]">
               <Receipt size={16} /> مشاهده سفارشات
             </Link>
