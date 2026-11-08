@@ -16,8 +16,10 @@ function normalizeOrder(o) {
     total: o.total, subtotal: o.subtotal, shipping: o.shipping,
     status: o.status,
     items: o.items || [],
-    customer: { name: o.customer_name, phone: o.customer_phone, address: o.customer_address },
+    customer: { name: o.customer_name, phone: o.customer_phone, address: o.customer_address, city: o.customer_city, postalCode: o.customer_postal_code },
     paymentRef: o.payment_ref,
+    paymentClaimed: o.payment_claimed || false,
+    paymentClaimedAt: o.payment_claimed_at || null,
     trackingCode: o.tracking_code,
     shippingMethod: o.shipping_method,
     source: 'db',
@@ -95,7 +97,7 @@ export async function deleteOrder(orderCode) {
   }
 }
 
-export function markOrderPaidClaimed(orderId) {
+export async function markOrderPaidClaimed(orderId) {
   let found = false
   for (const key of ['bk-orders', 'orders']) {
     const ls = JSON.parse(localStorage.getItem(key) || '[]')
@@ -106,6 +108,23 @@ export function markOrderPaidClaimed(orderId) {
       localStorage.setItem(key, JSON.stringify(ls))
       found = true
     }
+  }
+  // Persist to the DB via the relay (service key) so the admin panel can see
+  // the claim. LocalStorage above is the fallback (e.g. guest checkout, no login).
+  try {
+    const token = (await import('./auth')).getToken()
+    if (token) {
+      const r = await withTimeout(fetch(`${RELAY_URL}/api/mark-paid-claimed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ code: orderId }),
+      }), 8000)
+      const j = await r.json().catch(() => ({}))
+      if (j.ok && j.claimed) found = true
+      else console.warn('mark-paid-claimed relay:', j.error || ('HTTP ' + r.status))
+    }
+  } catch (e) {
+    console.warn('mark-paid-claimed relay error:', e.message)
   }
   return found
 }

@@ -1049,9 +1049,34 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON shop_settings TO authenticated;
 - بنر خانه «تا ۲۰٪ تخفیف» حذف شد (بیشترین تخفیف واقعی ۱۷٪ بود) → «تخفیف‌های هفته»؛ جمله گمراه‌کننده «قیمت و موجودی به‌روز شده در امروز» از صفحه محصول حذف شد؛ خانه در صورت خطای بارگذاری دکمه «تلاش دوباره» نشان می‌دهد.
 
 ### کارت‌به‌کارت (orders.js + Pay.jsx)
-- دکمه «پرداخت کردم» هیچ‌جا ثبت نمی‌شد (کلید اشتباه `bk-orders`؛ تسویه در کلید `orders` ذخیره می‌کند): حالا هر دو کلید به‌روز می‌شوند و با رفرش برمی‌گردد. (ثبت دائمی در دیتابیس نیازمند ستون `payment_claimed` است — مانده.)
+- دکمه «پرداخت کردم» هیچ‌جا ثبت نمی‌شد (کلید اشتباه `bk-orders`؛ تسویه در کلید `orders` ذخیره می‌کند): حالا هر دو کلید به‌روز می‌شوند و با رفرش برمی‌گردد. (ثبت دائمی در دیتابیس نیازمند ستون `payment_claimed` است — در v6.9.1 انجام شد.)
 
 ### مانده (نیازمند کار جدا)
-- ستون‌های `customer_city` ،`customer_postal_code` ،`payment_claimed` در جدول `orders` وجود ندارند — برای ذخیره شهر/کد پستی جدا و ثبت دائمی ادعای کارت‌به‌کارت باید در داشبورد Supabase اضافه شوند:
-  `alter table orders add column customer_city text, add column customer_postal_code text, add column payment_claimed boolean default false, add column payment_claimed_at timestamptz;`
+- ~~ستون‌های `customer_city` ،`customer_postal_code` ،`payment_claimed` در جدول `orders` وجود ندارند~~ — **انجام شد در v6.9.1 (۱۴۰۵/۰۸/۱۷، ساعت ۲۲:۴۱):** کاربر با پس‌کی گیت‌هاب وارد داشبورد Supabase شد و دستور ALTER TABLE اجرا شد؛ هر ۴ ستون (`customer_city`, `customer_postal_code`, `payment_claimed`, `payment_claimed_at`) ساخته و تایید شدند. اتصال کد سایت به این ستون‌ها هم در v6.9.1 انجام شد.
 - پیامک تایید پرداخت/تحویل نیازمند تمپلیت جدید sms.ir است؛ محدودیت پیامک ورود فعلاً بر اساس IP است (روی IP مشترک موبایل تنگ است).
+
+## 🔄 v6.9.1 — اتصال ستون‌های سفارش به کد سایت (۱۴۰۵/۰۸/۱۷)
+
+ادامه مانده‌های v6.9.0 — بعد از اینکه ستون‌های جدول `orders` در Supabase ساخته شدند، کد سایت به آن‌ها وصل شد.
+
+### ستون‌های جدید در Supabase (داشبورد، SQL Editor)
+- `alter table orders add column if not exists customer_city text, add column if not exists customer_postal_code text, add column if not exists payment_claimed boolean default false, add column if not exists payment_claimed_at timestamptz;` — اجرا شد و با `information_schema.columns` هر ۴ ستون تایید شد.
+- نکته ورود: لاگین ذخیره‌شده گیت‌هاب (`mojtabamaniya5@gmail.com`) ورود با رمز را پشتیبانی نمی‌کند («This account does not support password sign-in») — حساب با پس‌کی کار می‌کند؛ کاربر خودش با پس‌کی وارد شد. برای ورود به داشبورد Supabase از راه گیت‌هاب، ورود با پس‌کی لازم است.
+
+### شهر و کد پستی در سفارش (supabase.js)
+- `saveOrderToDB` حالا `customer_city` (از `order.customer.city`) و `customer_postal_code` (از `order.customer.postalCode`) را هم در `orders` ذخیره می‌کند. فقط سفارش‌های جدید این دو ستون را دارند؛ سفارش‌های قبلی خالی می‌مانند.
+
+### ثبت دائمی «کارت‌به‌کارت پرداخت کردم» (relay/server.js + orders.js + Pay.jsx)
+- مسیر جدید در رله: `POST /api/mark-paid-claimed` — احراز JWT (مثل delete-order)، فقط سفارش `pending` همان موبایل؛ `payment_claimed=true` و `payment_claimed_at=now()` را می‌نویسد. تست زنده: بدون توکن ۴۰۱، با توکن خراب ۴۰۱.
+- `markOrderPaidClaimed` در `orders.js` حالا async است: اول مثل قبل localStorage (هر دو کلید) را می‌نویسد، بعد اگر کاربر وارد شده باشد رله را صدا می‌زند (تایم‌اوت ۸ ثانیه؛ اگر رله جواب ندهد، ثبت محلی سر جایش است). `Pay.jsx` بدون تغییر کار می‌کند.
+- محدودیت: مشتری مهمان (بدون ورود) فقط ثبت محلی دارد — پرچم به پنل ادمین نمی‌رسد؛ رسید بله همچنان مسیر اصلی تایید است. اگر ثبت مهمان هم لازم شد، مسیر رله باید با کد+موبایل کار کند (تصمیم جدا).
+- `normalizeOrder` حالا `paymentClaimed` و `paymentClaimedAt` را از دیتابیس می‌خواند (اگر تابع `get_order_by_code` ستون‌ها را برگرداند).
+
+### پنل ادمین (Admin.jsx)
+- کارت سفارش اگر `payment_claimed` باشد، نشان «💳 کارت‌به‌کارت ثبت شده» (با تاریخ و ساعت) می‌گیرد — ادمین قبل از اینکه رسید بله را ببیند می‌فهمد مشتری ادعای پرداخت کرده.
+- در آکاردئون اقلام سفارش، خط «شهر / کد پستی» اضافه شد (فقط وقتی مقدار دارند).
+
+### مانده (نیازمند کار جدا)
+- پیامک تایید پرداخت/تحویل نیازمند تمپلیت جدید sms.ir است؛ محدودیت پیامک ورود فعلاً بر اساس IP است (روی IP مشترک موبایل تنگ است).
+- مسیر خوش «مشتری واردشده دکمه پرداخت کردم را می‌زند → نشان در پنل ادمین» هنوز با سفارش واقعی تست نشده (تست منفی رله انجام شد)؛ اولین ثبت واقعی تایید نهایی است.
+- ری‌استارت رله کدهای OTP در حال انتظار را باطل می‌کند (حافظه داخلی) — موقع ری‌استارت رله در نظر بگیر.

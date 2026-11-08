@@ -64,6 +64,8 @@ export async function saveOrderToDB(order) {
       customer_name: order.customer.name,
       customer_phone: order.customer.phone,
       customer_address: order.customer.address,
+      customer_city: order.customer.city || null,
+      customer_postal_code: order.customer.postalCode || null,
       customer_note: order.customer.note || null,
       shipping_method: order.customer.shippingType || null,
       items: order.items,

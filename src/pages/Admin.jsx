@@ -10,7 +10,7 @@ import AdminSettings from './AdminSettings'
 import AdminBlog from './AdminBlog'
 import AdminStats from './AdminStats'
 import { checkAdminSession, updateSessionTimestamp, clearSession, sendPasswordReset, changePassword, isRecoveryMode } from '../utils/admin-auth'
-import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Settings, Hash, ShieldCheck, Users, Mail, KeyRound, Search, FileText, ChevronDown } from 'lucide-react'
+import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Settings, Hash, ShieldCheck, Users, Mail, KeyRound, Search, FileText, ChevronDown, CreditCard } from 'lucide-react'
 
 export default function Admin() {
   const [session, setSession] = useState(null)
@@ -620,6 +620,12 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
                           <span>جمع کل</span>
                           <span>{formatPrice(o.total)}</span>
                         </div>
+                        {(o.customer_city || o.customer_postal_code) && (
+                          <div className="flex justify-between text-[11px] border-t border-dashed border-border pt-1.5 mt-1.5">
+                            <span>شهر: {o.customer_city || '—'}</span>
+                            <span>کد پستی: {o.customer_postal_code || '—'}</span>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="text-[11px] text-muted">اقلام این سفارش ثبت نشده است.</div>
@@ -631,6 +637,13 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
                   <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-2 mb-3 flex items-center gap-2">
                     <Truck size={12} className="text-blue-600 flex-shrink-0" />
                     <span className="text-[10px] font-bold text-blue-600">کد رهگیری: {o.tracking_code}</span>
+                  </div>
+                )}
+
+                {o.payment_claimed && (
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2 mb-3 flex items-center gap-2">
+                    <CreditCard size={12} className="text-amber-600 flex-shrink-0" />
+                    <span className="text-[10px] font-bold text-amber-700">💳 کارت‌به‌کارت ثبت شده{o.payment_claimed_at ? ' — ' + new Date(o.payment_claimed_at).toLocaleString('fa-IR', { dateStyle: 'short', timeStyle: 'short' }) : ''}</span>
                   </div>
                 )}
 
