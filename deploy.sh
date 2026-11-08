@@ -7,7 +7,7 @@ EXPECTED=$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' docs/index.html | head -1)
 echo "📦 New bundle: $EXPECTED"
 
 echo "🚀 Deploy..."
-rsync -avz --delete \
+rsync -avz \
   --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r \
   --chown=www-data:www-data \
   -e "ssh -i $HOME/.ssh/arvan.pem" \

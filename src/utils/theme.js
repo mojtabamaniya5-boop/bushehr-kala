@@ -32,12 +32,13 @@ export function applyTheme(themeId) {
   root.style.setProperty('--color-card', theme.card);
   root.style.setProperty('--color-on-page', theme.onPage);
   root.style.setProperty('--color-on-card', theme.onCard);
-  
-  localStorage.setItem('shop-theme-id', themeId);
+
+  try { localStorage.setItem('shop-theme-id', themeId); } catch {}
 }
 
 export function loadSavedTheme() {
-  const savedTheme = localStorage.getItem('shop-theme-id') || 'green';
-  applyTheme(savedTheme);
+  let savedTheme = 'green';
+  try { savedTheme = localStorage.getItem('shop-theme-id') || 'green'; } catch {}
+  try { applyTheme(savedTheme); } catch {}
 }
 loadSavedTheme();

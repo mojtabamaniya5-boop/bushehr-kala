@@ -10,7 +10,7 @@ import AdminSettings from './AdminSettings'
 import AdminBlog from './AdminBlog'
 import AdminStats from './AdminStats'
 import { checkAdminSession, updateSessionTimestamp, clearSession, sendPasswordReset, changePassword, isRecoveryMode } from '../utils/admin-auth'
-import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Settings, Hash, ShieldCheck, Users, Mail, KeyRound, Search, FileText } from 'lucide-react'
+import { ArrowRight, Plus, Edit2, Trash2, LogOut, ShoppingBag, Package, BarChart3, X, Check, Loader2, Upload, Image as ImageIcon, Truck, Settings, Hash, ShieldCheck, Users, Mail, KeyRound, Search, FileText, ChevronDown } from 'lucide-react'
 
 export default function Admin() {
   const [session, setSession] = useState(null)
@@ -284,6 +284,7 @@ function Login({ onLogin }) {
 function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
   const [orderSearch, setOrderSearch] = useState('')
   const [orderStatus, setOrderStatus] = useState('all')
+  const [expandedOrder, setExpandedOrder] = useState(null)
 
   const [products, setProducts] = useState([])
   const [productGroups, setProductGroups] = useState([])
@@ -350,8 +351,6 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
     setSavingSettings(true)
     try {
       const payload = {
-        weight: form.weight,
-        rating: form.rating ? Number(form.rating) : 0,
         name: shopSettings.name,
         tagline: shopSettings.tagline,
         phone: shopSettings.phone,
@@ -574,14 +573,20 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
               return true;
             }).map(o => (
               <div key={o.id} className="bg-white rounded-2xl p-4 border border-border">
-                <div className="flex items-start justify-between mb-2">
+                <div
+                  className="flex items-start justify-between mb-2 cursor-pointer select-none"
+                  onClick={() => setExpandedOrder(expandedOrder === o.id ? null : o.id)}
+                >
                   <div>
                     <div className="text-xs font-extrabold">{o.customer_name}</div>
                     <div className="text-[10px] text-muted">{o.customer_phone}</div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-xs font-extrabold text-brand">{formatPrice(o.total)}</div>
-                    <div className="text-[10px] text-muted font-mono">{o.code}</div>
+                  <div className="flex items-start gap-2">
+                    <div className="text-right">
+                      <div className="text-xs font-extrabold text-brand">{formatPrice(o.total)}</div>
+                      <div className="text-[10px] text-muted font-mono">{o.code}</div>
+                    </div>
+                    <ChevronDown size={16} className={`text-muted flex-shrink-0 mt-0.5 transition-transform ${expandedOrder === o.id ? 'rotate-180' : ''}`} />
                   </div>
                 </div>
                 <div className="text-[10px] text-muted mb-3 truncate">{o.customer_address}</div>
@@ -589,6 +594,38 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
                 <div className="text-[10px] text-muted mb-3">
                   {new Date(o.created_at).toLocaleString('fa-IR', { dateStyle: 'short', timeStyle: 'short' })}
                 </div>
+
+                {expandedOrder === o.id && (
+                  <div className="bg-cream/60 border border-border rounded-xl p-3 mb-3">
+                    <div className="text-[11px] font-extrabold mb-2">🧾 اقلام سفارش</div>
+                    {Array.isArray(o.items) && o.items.length > 0 ? (
+                      <div className="space-y-1.5">
+                        {o.items.map((it, i) => (
+                          <div key={i} className="flex justify-between text-[11px]">
+                            <span className="text-ink truncate ml-2">{it.title} × {it.qty}</span>
+                            <span className="text-muted flex-shrink-0">{formatPrice((it.price || 0) * (it.qty || 1))}</span>
+                          </div>
+                        ))}
+                        <div className="flex justify-between text-[11px] font-extrabold border-t border-dashed border-border pt-1.5 mt-1.5">
+                          <span>جمع اقلام</span>
+                          <span>{formatPrice(o.items.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0))}</span>
+                        </div>
+                        {(o.shipping || 0) > 0 && (
+                          <div className="flex justify-between text-[11px]">
+                            <span>هزینه ارسال</span>
+                            <span>{formatPrice(o.shipping)}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between text-[11px] font-extrabold">
+                          <span>جمع کل</span>
+                          <span>{formatPrice(o.total)}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-[11px] text-muted">اقلام این سفارش ثبت نشده است.</div>
+                    )}
+                  </div>
+                )}
 
                 {o.tracking_code && (
                   <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-2 mb-3 flex items-center gap-2">

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingBag, Zap, ShieldCheck, ChevronLeft } from 'lucide-react'
 import { storage } from '../utils/storage'
@@ -29,6 +29,16 @@ export default function Onboarding({ onDone }) {
   const slide = SLIDES[idx]
   const Icon = slide.icon
   const isLast = idx === SLIDES.length - 1
+
+  // خودش بعد از یه لحظه رد می‌شه تا فروشگاه جلوی بازدیدکننده و گوگل نمونه
+  // (قبلاً تا دکمه زده نمی‌شد فروشگاه اصلاً دیده نمی‌شد)
+  useEffect(() => {
+    const t = setTimeout(() => {
+      storage.set('onboarded', true)
+      onDone()
+    }, 2500)
+    return () => clearTimeout(t)
+  }, [onDone])
 
   const next = () => {
     if (isLast) {

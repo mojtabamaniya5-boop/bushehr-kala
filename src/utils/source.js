@@ -11,12 +11,12 @@ export const captureSource = () => {
 
   // اگه UTM داره، ذخیره کن
   if (utm.source) {
-    localStorage.setItem('bk-source', JSON.stringify({ ...utm, detected: 'utm' }))
+    try { localStorage.setItem('bk-source', JSON.stringify({ ...utm, detected: 'utm' })) } catch {}
     return
   }
 
   // اگه قبلاً ذخیره شده بود، کاری نکن
-  if (localStorage.getItem('bk-source')) return
+  try { if (localStorage.getItem('bk-source')) return } catch {}
 
   // تشخیص از Referrer
   let detected = 'direct'
@@ -30,7 +30,7 @@ export const captureSource = () => {
     else if (ref && !ref.includes(window.location.host)) detected = 'other'
   } catch {}
   
-  localStorage.setItem('bk-source', JSON.stringify({ source: detected, detected: 'referrer' }))
+  try { localStorage.setItem('bk-source', JSON.stringify({ source: detected, detected: 'referrer' })) } catch {}
 }
 
 export const getSource = () => {

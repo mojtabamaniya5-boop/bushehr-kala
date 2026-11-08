@@ -5,19 +5,10 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   build: {
-    outDir: 'docs',
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react-router')) return 'vendor-router';
-            if (id.includes('lucide-react')) return 'vendor-icons';
-            if (id.includes('supabase')) return 'vendor-supabase';
-            if (id.includes('react')) return 'vendor-react';
-            return 'vendor'; // بقیه پکیج‌ها
-          }
-        }
-      }
-    }
+    outDir: 'docs'
+    // NOTE: no manualChunks — splitting vendor by name created a circular
+    // chunk dependency (react-dom <-> scheduler) that crashed the app with
+    // "Cannot read properties of undefined (reading 'createContext')" on
+    // some browsers. Rollup's default chunking keeps evaluation order safe.
   }
 })

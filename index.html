@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#DC2626" />
     <meta name="description" content="کافه ترشی — فروشگاه آنلاین ترشی خانگی اصیل و باکیفیت. ارسال سریع بوشهر و سراسر ایران. سفارش آنلاین با ارسال رایگان در بوشهر." />
 <title>کافه ترشی | فروشگاه آنلاین ترشی خانگی بوشهر</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
+    <link href="/Vazirmatn-font-face.css" rel="stylesheet" />
 <meta name="enamad" content="5536523" />
 
     
@@ -24,6 +24,85 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+    // گزارش خطای بوت: هر خطای لود فایل یا خطای جاوااسکریپت را بالای صفحه می‌نویسد تا با اسکرین‌شات دیده شود
+    (function () {
+      var errs = [];
+      function show() {
+        try {
+          var root = document.getElementById('root');
+          if (!root) return;
+          var old = document.getElementById('boot-errors');
+          if (old) old.remove();
+          if (!errs.length) return;
+          var box = document.createElement('div');
+          box.id = 'boot-errors';
+          box.style.cssText = 'margin:12px auto;max-width:640px;text-align:left;direction:ltr;font-family:monospace;font-size:12px;padding:10px;border:1px solid #d32f2f;border-radius:10px;background:#ffebee;color:#7f0000;white-space:pre-wrap;word-break:break-all;';
+          box.textContent = 'BOOT ERRORS:\n' + errs.slice(0, 8).join('\n');
+          if (root.firstChild) root.insertBefore(box, root.firstChild); else root.appendChild(box);
+        } catch (e) {}
+      }
+      window.addEventListener('error', function (e) {
+        try {
+          var t = e.target || {};
+          var src = t.src || t.href || '';
+          // فقط فایل‌های خود سایت؛ خرابی نشان‌های بیرونی (مثل اینماد) فروشگاه را خراب نمی‌کند
+          if (src && src.indexOf(location.origin) !== 0) return;
+          if (src) errs.push('LOAD FAIL: ' + src);
+          else if (e.message) errs.push('JS ERROR: ' + e.message + ' @ ' + (e.filename || '') + ':' + (e.lineno || ''));
+          else errs.push('ERROR: unknown');
+          show();
+        } catch (e2) {}
+      }, true);
+      window.addEventListener('unhandledrejection', function (e) {
+        try { errs.push('PROMISE: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason))); show(); } catch (e2) {}
+      });
+      setTimeout(function () {
+        try {
+          // فقط وقتی خطای واقعی هست جعبه را نشان بده؛ خلاصه فایل‌ها فقط برای تشخیص همراه خطا اضافه می‌شود
+          if (!document.documentElement.getAttribute('data-app-mounted')) errs.push('NOT MOUNTED after 15s');
+          if (errs.length) {
+            var res = (performance.getEntriesByType('resource') || []).filter(function (r) { return /\.js(\?|$)/.test(r.name); });
+            var lines = res.map(function (r) { return (r.transferSize === 0 && r.decodedBodySize === 0 ? '?' : 'OK') + ' ' + r.name.split('/').pop() + ' (' + Math.round(r.duration) + 'ms)'; });
+            if (lines.length) errs.push('JS FILES:\n' + lines.join('\n'));
+            show();
+          }
+        } catch (e2) {}
+      }, 15000);
+    })();
+    </script>
+    <script>
+    // نگهبان بوت: اگه ری‌اکت تا ۱۲ ثانیه مونت نشد (مثلاً فایل‌ها روی اینترنت کند ناقص موندن)، دکمه تلاش دوباره نشون بده و یک بار خودکار رفرش کن
+    (function () {
+      var done = false;
+      function mounted() { try { return document.documentElement.getAttribute('data-app-mounted') === '1'; } catch (e) { return false; } }
+      function showRetry() {
+        if (done || mounted()) return;
+        var root = document.getElementById('root');
+        if (!root || document.getElementById('boot-retry')) return;
+        var oldStatus = root.querySelector('p');
+        if (oldStatus) oldStatus.textContent = '⚠️ فروشگاه هنوز باز نشده است.';
+        var box = document.createElement('div');
+        box.id = 'boot-retry';
+        box.style.cssText = 'margin:24px auto;max-width:420px;text-align:center;font-family:inherit;padding:16px;border:1px solid #e5d9b8;border-radius:12px;background:#fffdf5;';
+        box.innerHTML = '<div style="font-size:15px;margin-bottom:12px;">فروشگاه هنوز کامل باز نشده؛ احتمالاً دانلود فایل‌ها روی اینترنت شما ناقص مانده است.</div><button type="button" onclick="location.reload()" style="padding:10px 28px;font-size:16px;border:none;border-radius:10px;background:#2e7d32;color:#fff;cursor:pointer;">تلاش دوباره</button>';
+        if (root.firstChild) root.insertBefore(box, root.firstChild); else root.appendChild(box);
+      }
+      setTimeout(function () {
+        if (mounted()) { done = true; return; }
+        showRetry();
+        setTimeout(function () {
+          if (mounted()) { done = true; return; }
+          try {
+            if (!sessionStorage.getItem('shop-boot-retry')) {
+              sessionStorage.setItem('shop-boot-retry', '1');
+              location.reload();
+            }
+          } catch (e) {}
+        }, 13000);
+      }, 12000);
+    })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   
     

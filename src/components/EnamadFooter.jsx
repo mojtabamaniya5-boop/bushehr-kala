@@ -11,11 +11,13 @@ export default function EnamadFooter() {
         href={`https://trustseal.enamad.ir/?id=${enamadId}&Code=${enamadCode}`}
         className="block"
       >
-        <img 
-          referrerPolicy="origin" 
-          src={`https://trustseal.enamad.ir/logo.aspx?id=${enamadId}&Code=${enamadCode}`} 
-          alt="نماد اعتماد الکترونیکی" 
-          style={{ cursor: 'pointer', width: '100px', height: 'auto' }} 
+        <img
+          referrerPolicy="origin"
+          src={`https://trustseal.enamad.ir/logo.aspx?id=${enamadId}&Code=${enamadCode}`}
+          alt="نماد اعتماد الکترونیکی"
+          loading="lazy"
+          onError={(e) => { try { e.currentTarget.closest('div').style.display = 'none' } catch (_) {} }}
+          style={{ cursor: 'pointer', width: '100px', height: 'auto' }}
         />
       </a>
       <span className="text-[10px] text-muted mt-2">نماد اعتماد الکترونیکی</span>

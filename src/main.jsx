@@ -23,10 +23,10 @@ if (zibalParams.has('trackId') || zibalParams.has('success')) {
   document.documentElement.classList.remove('dark')
   document.documentElement.setAttribute('data-theme', 'light')
 
-  setupRealtime() // فعال‌سازی Realtime
-  captureSource() // ثبت منبع ورودی
+  try { setupRealtime() } catch (e) { console.warn('realtime setup failed', e) } // فعال‌سازی Realtime
+  try { captureSource() } catch (e) { console.warn('source capture failed', e) } // ثبت منبع ورودی
 
-  loadSavedTheme()
+  try { loadSavedTheme() } catch (e) { console.warn('theme load failed', e) }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>

@@ -44,6 +44,7 @@ export default function App() {
   const location = useLocation()
 
   useEffect(() => {
+    try { document.documentElement.setAttribute('data-app-mounted', '1') } catch {}
     setShowOnboarding(!storage.get('onboarded'))
     setReady(true)
     const openHandler = () => setDrawerOpen(true)

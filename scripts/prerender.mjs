@@ -184,14 +184,24 @@ async function prerender() {
     const homeCategoryItems = homeCategories
       .map(c => `      <li>${escapeHtml(c.icon)} ${escapeHtml(c.name)}</li>`)
       .join('\n')
-    const homeShell = `<div style="font-family:Tahoma,sans-serif;max-width:640px;margin:0 auto;padding:24px 16px;line-height:1.9;direction:rtl;text-align:right;color:#222"><h1>کافه ترشی | فروشگاه آنلاین ترشیجات خانگی</h1><p>${escapeHtml(homeIntro)}</p><h2>دسته‌بندی‌ها</h2><ul>${homeCategoryItems}</ul><h2>محصولات</h2><ul>${homeProductItems}</ul><p><a href="https://cafetorshi.ir/blog">مجله کافه ترشی</a></p></div>`
+    const homeShell = `<div style="font-family:Tahoma,sans-serif;max-width:640px;margin:0 auto;padding:24px 16px;line-height:1.9;direction:rtl;text-align:right;color:#222"><p style="background:#fff8e1;border:1px solid #e5d9b8;border-radius:10px;padding:8px 12px;">⏳ در حال بارگذاری فروشگاه…</p><h1>کافه ترشی | فروشگاه آنلاین ترشیجات خانگی</h1><p>${escapeHtml(homeIntro)}</p><h2>دسته‌بندی‌ها</h2><ul>${homeCategoryItems}</ul><h2>محصولات</h2><ul>${homeProductItems}</ul><p><a href="https://cafetorshi.ir/blog">مجله کافه ترشی</a></p></div>`
     let homeHtml = baseHtml.replace(/<title>.*?<\/title>/, `<title>کافه ترشی | فروشگاه آنلاین ترشیجات خانگی</title>`)
     homeHtml = homeHtml.replace('<div id="root"></div>', `<div id="root">${homeShell}</div>`)
     fs.writeFileSync(path.join(docsDir, 'index.html'), homeHtml)
 
-    // ۵. صفحه اصلی بلاگ (بدون تداخل)
+    // ۵. صفحه اصلی بلاگ (با محتوای واقعی: لیست مقاله‌ها — مثل صفحه اصلی، تا بازدید مستقیم خالی نماند)
+    const blogArticlesSorted = [...articles].sort((a, b) => {
+      const da = a.created_at ? new Date(a.created_at).getTime() : 0
+      const db = b.created_at ? new Date(b.created_at).getTime() : 0
+      return db - da
+    })
+    const blogArticleItems = blogArticlesSorted
+      .map(a => `      <li><a href="https://cafetorshi.ir/blog/${escapeHtml(a.slug)}">${escapeHtml(a.title)}</a></li>`)
+      .join('\n')
+    const blogShell = `<div style="font-family:Tahoma,sans-serif;max-width:640px;margin:0 auto;padding:24px 16px;line-height:1.9;direction:rtl;text-align:right;color:#222"><h1>مجله کافه ترشی | مقالات و دستور پخت</h1><p>جدیدترین مقالات، دستور پخت‌ها و نکات تغذیه‌ای در مجله کافه ترشی</p><ul>${blogArticleItems}</ul><p><a href="https://cafetorshi.ir/">بازگشت به فروشگاه کافه ترشی</a></p></div>`
     const blogIndexHtml = baseHtml.replace(/<title>.*?<\/title>/, `<title>مجله کافه ترشی | مقالات و دستور پخت</title>`)
     const blogIndexWithMeta = blogIndexHtml.replace('</head>', `<meta name="description" content="جدیدترین مقالات، دستور پخت‌ها و نکات تغذیه‌ای در مجله کافه ترشی">\n</head>`)
+      .replace('<div id="root"></div>', `<div id="root">${blogShell}</div>`)
     fs.writeFileSync(path.join(blogDir, 'index.html'), blogIndexWithMeta)
     sitemapUrls.push('https://cafetorshi.ir/blog')
 

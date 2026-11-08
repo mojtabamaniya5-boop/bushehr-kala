@@ -32,7 +32,6 @@ export default function Cart() {
   }, [])
 
   const shipInfo = calculateShipping(lastPostal, lastAddr, total, 'fast', shopSettings)
-  const shipping = items.length ? shipInfo.cost : 0
   const isBushehr = shipInfo.sameDay
 
   const confirmClear = () => {
@@ -141,15 +140,9 @@ export default function Cart() {
             <span className="text-muted">جمع کالاها</span>
             <span className="text-ink">{formatPrice(total)}</span>
           </div>
-          <div className="flex justify-between text-xs mb-2.5">
-            <span className="text-muted">هزینه ارسال</span>
-            <span className={shipping === 0 ? 'text-brand font-bold' : 'text-ink'}>
-              {shipping === 0 ? '🎉 رایگان' : formatPrice(shipping)}
-            </span>
-          </div>
           <div className="flex justify-between font-extrabold text-sm mb-3 pt-2.5 border-t border-dashed border-border">
             <span>قابل پرداخت</span>
-            <span className="text-brand">{formatPrice(total + shipping)}</span>
+            <span className="text-brand">{formatPrice(total)}</span>
           </div>
           <button onClick={() => {
             const overStock = items.find(i => i.qty > (i.stock !== null && i.stock !== undefined ? i.stock : 999));
