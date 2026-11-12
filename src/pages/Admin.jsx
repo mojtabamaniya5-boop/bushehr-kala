@@ -472,6 +472,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
       </div>
 
       <div className="max-w-4xl mx-auto p-3">
+        <LiveVisitors />
         <div className="grid grid-cols-4 gap-2 mb-4">
           <Stat label="محصول" value={stats.products} />
           <Stat label="سفارش" value={stats.orders} />
@@ -479,7 +480,7 @@ function Dashboard({ user, tab, setTab, onShowCustomers, onLogout }) {
           <Stat label="فروش" value={formatPrice(stats.revenue).replace(' تومان', '')} small />
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="grid grid-cols-5 gap-1.5 mb-4">
           <TabBtn active={tab === 'products'} onClick={() => setTab('products')} icon={Package} label="محصولات" />
           <TabBtn active={tab === 'orders'} onClick={() => setTab('orders')} icon={ShoppingBag} label="سفارش‌ها" />
           <TabBtn active={tab === 'stats'} onClick={() => setTab('stats')} icon={BarChart3} label="آمار" />
@@ -835,6 +836,33 @@ function TrackingModal({ data, onClose, onSave }) {
   )
 }
 
+// بازدیدکننده‌های آنلاین همین لحظه (از رله؛ هر ۲۰ ثانیه به‌روز می‌شود)
+function LiveVisitors() {
+  const [count, setCount] = useState(null)
+  useEffect(() => {
+    let alive = true
+    const load = () => {
+      fetch('https://relay.cafetorshi.ir/api/presence/count')
+        .then(r => r.json())
+        .then(d => { if (alive && typeof d.count === 'number') setCount(d.count) })
+        .catch(() => {})
+    }
+    load()
+    const t = setInterval(load, 20000)
+    return () => { alive = false; clearInterval(t) }
+  }, [])
+  return (
+    <div className="bg-white rounded-2xl px-3 py-2.5 border border-border mb-2 flex items-center gap-2">
+      <span className="relative flex w-2.5 h-2.5 flex-shrink-0">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-60" />
+        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+      </span>
+      <span className="text-xs font-extrabold">الان {count === null ? '…' : count} نفر تو سایتن</span>
+      <span className="text-[10px] text-muted">زنده — هر ۲۰ ثانیه به‌روز می‌شود</span>
+    </div>
+  )
+}
+
 function Stat({ label, value, small }) {
   return (
     <div className="bg-white rounded-2xl p-3 border border-border text-center">
@@ -847,9 +875,10 @@ function Stat({ label, value, small }) {
 function TabBtn({ active, onClick, icon: Icon, label }) {
   return (
     <button onClick={onClick}
-      className={'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-2xl text-xs font-bold transition ' +
+      className={'flex flex-col items-center justify-center gap-1 py-2.5 rounded-2xl text-[10px] font-bold transition ' +
         (active ? 'bg-brand text-white shadow-md' : 'bg-white text-muted border border-border')}>
-      <Icon size={14} /> {label}
+      <Icon size={16} />
+      <span className="leading-none">{label}</span>
     </button>
   )
 }

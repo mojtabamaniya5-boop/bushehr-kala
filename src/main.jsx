@@ -26,6 +26,39 @@ if (zibalParams.has('trackId') || zibalParams.has('success')) {
   try { setupRealtime() } catch (e) { console.warn('realtime setup failed', e) } // فعال‌سازی Realtime
   try { captureSource() } catch (e) { console.warn('source capture failed', e) } // ثبت منبع ورودی
 
+  // ضربان حضور زنده: هر ۳۰ ثانیه به رله می‌گوید این بازدیدکننده هنوز تو سایت است
+  // (بدون هیچ اطلاعات شخصی؛ فقط یک شناسه تصادفی در مرورگر خودش)
+  try {
+    const RELAY_PRESENCE = 'https://relay.cafetorshi.ir'
+    const getVid = () => {
+      try {
+        let v = localStorage.getItem('bk-visitor')
+        if (!v) {
+          v = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('v-' + Math.random().toString(36).slice(2) + Date.now().toString(36))
+          localStorage.setItem('bk-visitor', v)
+        }
+        return v
+      } catch { return null }
+    }
+    const beat = () => {
+      try {
+        if (document.visibilityState !== 'visible') return
+        if (window.location.hash.startsWith('#/admin')) return // پنل ادمین شمرده نمی‌شود
+        const vid = getVid()
+        if (!vid) return
+        fetch(RELAY_PRESENCE + '/api/presence/heartbeat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ vid }),
+          keepalive: true,
+        }).catch(() => {})
+      } catch {}
+    }
+    beat()
+    setInterval(beat, 30000)
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') beat() })
+  } catch (e) { console.warn('presence heartbeat failed', e) }
+
   try { loadSavedTheme() } catch (e) { console.warn('theme load failed', e) }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
