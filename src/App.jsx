@@ -4,9 +4,7 @@ import { useEffect, useState } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import BottomNav from './components/BottomNav'
 import ToastHost from './components/Toast'
-import Onboarding from './components/Onboarding'
 import Drawer from './components/Drawer'
-import { storage } from './utils/storage'
 
 import Home from './pages/Home'
 const Blog = lazy(() => import('./pages/Blog'))
@@ -38,14 +36,12 @@ export default function App() {
 
   
 
-  const [showOnboarding, setShowOnboarding] = useState(false)
   const [ready, setReady] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const location = useLocation()
 
   useEffect(() => {
     try { document.documentElement.setAttribute('data-app-mounted', '1') } catch {}
-    setShowOnboarding(!storage.get('onboarded'))
     setReady(true)
     const openHandler = () => setDrawerOpen(true)
     window.addEventListener('open-drawer', openHandler)
@@ -64,7 +60,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-cream text-ink">
-      {showOnboarding && !isAdmin && <Onboarding onDone={() => setShowOnboarding(false)} />}
       <ToastHost />
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
